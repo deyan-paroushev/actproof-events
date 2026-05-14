@@ -1,0 +1,53 @@
+{
+  "schema": "openproof.act_catalogue_entry.v2",
+  "act_type_id": "op:eu.nis2.art20.management_body_approval.v1",
+  "claim_type": "management_body_approval",
+  "display_name": "NIS2 Article 20 management body approval of cybersecurity risk-management measures",
+  "regulatory_citation": {
+    "instrument": "Directive (EU) 2022/2555",
+    "article": "20",
+    "jurisdiction": "EU",
+    "in_force_from": "2024-10-18"
+  },
+  "required_claim_fields": [
+    "approving_body_name",
+    "decision_date",
+    "approved_measures_summary",
+    "authority_basis_reference",
+    "responsible_officers",
+    "implementation_oversight_reference"
+  ],
+  "optional_claim_fields": [
+    "meeting_minutes_reference",
+    "supersedes_attestation_id",
+    "next_review_date"
+  ],
+  "required_evidence_labels": [
+    "signed_resolution_or_minutes",
+    "risk_management_measures_document"
+  ],
+  "eligible_issuer_roles": [
+    "essential_entity",
+    "important_entity"
+  ],
+  "recommended_witness_roles": [
+    "external_auditor",
+    "competent_authority_supervisor",
+    "outside_counsel",
+    "internal_audit",
+    "do_insurer"
+  ],
+  "signature_policy": {
+    "minimum": "issuer_record",
+    "supports": [
+      "external_qes_pdf",
+      "external_aes_certificate",
+      "signed_board_minutes",
+      "internal_attestation_record"
+    ]
+  },
+  "version": 1,
+  "supersedes": "op:eu.nis2.art20.approval",
+  "maintainer": "openproof-events",
+  "test_vector_reference": "catalogue/acts/eu/nis2/art20/management_body_approval.v1.test_vectors.json"
+}

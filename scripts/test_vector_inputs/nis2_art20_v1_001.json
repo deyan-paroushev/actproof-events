@@ -1,0 +1,52 @@
+{
+  "schema": "openproof.attestation_manifest.v1",
+  "manifest_version": 1,
+  "act_type_id": "op:eu.nis2.art20.management_body_approval.v1",
+  "catalogue_entry_version": 1,
+  "tenant_id": "test-tenant-acme-001",
+  "issuer_org_name": "Acme Essential Entity Ltd.",
+  "authority_label": "Management body of Acme Essential Entity Ltd.",
+  "title": "Q2 2026 NIS2 risk-management measures approval",
+  "subtitle": "Board approval of cybersecurity measures",
+  "system_created_at": "2026-05-14T10:00:00Z",
+  "claim_fields": {
+    "approving_body_name": "Acme Board of Directors",
+    "decision_date": "2026-05-14",
+    "approved_measures_summary": "Approval of the 2026 cybersecurity risk-management framework including incident response procedures, access controls, encryption standards, vendor risk assessments, and business continuity plans.",
+    "authority_basis_reference": "Board resolution 2026/05/14-01",
+    "responsible_officers": [
+      "Jane Doe (CISO)",
+      "John Smith (CEO)"
+    ],
+    "implementation_oversight_reference": "Q3 2026 internal audit schedule",
+    "meeting_minutes_reference": "Board minutes 2026-05-14"
+  },
+  "evidence": [
+    {
+      "label": "signed_resolution_or_minutes",
+      "filename": "board-resolution-2026-05-14.pdf",
+      "sha256_hex": "e70e000faf7b5f745d460da46e9a12f4d051eb7e3315af8130e2c2a864d0bcbc",
+      "byte_size": 64
+    },
+    {
+      "label": "risk_management_measures_document",
+      "filename": "nis2-risk-measures-2026.pdf",
+      "sha256_hex": "9be63853a94ac3bcdc0993b4bee4d4bc87b800b343ea3c5a570cc1b9117defaa",
+      "byte_size": 85
+    }
+  ],
+  "recipients": [
+    {
+      "role": "external_auditor",
+      "org_name": "Acme Auditors LLC",
+      "email": "evidence@acme-auditors.example",
+      "purpose": "Annual NIS2 compliance audit"
+    },
+    {
+      "role": "do_insurer",
+      "org_name": "Underwriters AG",
+      "email": "do-underwriting@underwriters.example",
+      "purpose": "D&O policy renewal underwriting"
+    }
+  ]
+}

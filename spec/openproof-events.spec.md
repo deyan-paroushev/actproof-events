@@ -1,445 +1,472 @@
-# OpenProof Events Master Specification
+# OpenProof Events Specification
 
-## Amendment to Section 9: Typed Anchor Payload (v1.2 → v1.3)
-
-<!--
-SPDX-License-Identifier: Apache-2.0
-SPDX-FileCopyrightText: 2026 Advisa EOOD (Sofia, Bulgaria)
--->
-
-**Status**: settled architecture, ready for implementation
-**Amendment version**: 1.3 (additive, non-breaking)
-**Revision**: r2, post-reconnaissance against the SCITT, EAS, OpenTimestamps, C2PA, Snapshot, ARC-2, and W3C DID/did:web ecosystems
-**Amends**: `quoruna_algorand_anchoring_master_spec_v1_2.md`, Section 9 (Compact on-chain note)
-**Date**: 13 May 2026
-**Audience**: implementers, indexer authors, catalogue contributors, third-party issuers
-**Scope**: schema extension, namespace grammar, catalogue resolution, verifier semantics, test vectors
+**Version**: v1.4-rc1
+**Status**: Pre-release candidate
+**License**: Spec text is CC0. Schemas and test vectors are Apache-2.0.
+**Maintainer**: openproof-events project
 
 ---
 
-## What changed in this revision
+## Abstract
 
-This is r2 of the v1.3 amendment, produced after a reconnaissance pass across the production open-source projects that occupy adjacent niches. The substance of the schema, grammar, modes, and verifier semantics is unchanged. Three citation additions and one new deferred item:
+OpenProof Events specifies an open substrate for issuing verifiable attestations of regulated or governance acts. The substrate defines a catalogue of act types, a manifest format for attestation content, an envelope structure for anchoring, a canonical hashing pipeline, and an on-chain note format for public ledger commitment. Any conforming implementation that follows this specification produces test vector-reproducible attestations whose proof trails can be verified independently by any third party against the public ledger, without trusting either the issuer or any intermediary platform.
 
-1. Section 9.2 now explicitly cites ARC-2 (Algorand Foundation transaction-note convention) and confirms the OpenProof Events compact note format is ARC-2 compliant out of the box. This unlocks Algorand block-explorer and indexer parsing without further work.
-2. Section 9.3 now documents the structural alignment between the `x.<reverse-dns>:` third-party namespace and the W3C did:web method, so implementers who already operate did:web identities can adopt OpenProof Events catalogue contributions on the same DNS-rooted trust chain.
-3. The "Open implementation items for v1.3 to v1.4" section adds a fourth deferred item: a COSE_Sign1 SCITT receipt bridge that brings Quoruna receipts into direct interoperability with SCITT-conformant verifiers (Sigstore Rekor v2, Microsoft scitt-ccf-ledger, GoDaddy ans).
-
-No fields, modes, or test vectors changed. r1 implementations remain conformant.
+The v1.4 release is the first act-native release. Earlier v1.x releases modelled regulated acts as voting events. The v2 catalogue entry schema documented here removes those voting derivatives. This is a substrate change, not a behaviour change: any attestations issued under the deprecated v1 entries can still be resolved for historical reference.
 
 ---
 
-## Why this amendment exists
+## 1. Introduction
 
-Master spec v1.2 defined the compact on-chain note as a typed envelope with two reserved type tags: `t: "a"` for decision anchors and `t: "r"` for release anchors. The note carries the Merkle root over a batch of manifests plus an envelope hash. The note is private by construction: nothing about what the anchored manifests represent is visible from chain bytes alone.
+### 1.1 Scope
 
-That privacy default is correct as a baseline. It is the wrong default for the cases where the issuer wants the anchor to be publicly indexable by act category, where a third-party indexer wants to enumerate all anchors of a specific regulated act type across all issuers without contacting the originating platform, where a regulator wants to scan for the presence or absence of expected attestations on a public ledger, and where a researcher wants to study regulatory compliance patterns at scale.
+This specification defines:
 
-This amendment adds an optional disclosed mode to the compact note schema. In disclosed mode, the note carries a small act-type identifier alongside the existing hash commitments. The identifier resolves to a catalogue entry that describes the act semantics, the required manifest fields, the regulatory citation, and the canonical receipt example. The identifier namespace is federated, not centrally controlled: any project that controls a DNS domain can mint act-types under that domain without asking Quoruna or anyone else, and those act-types coexist with the canonical OpenProof Events catalogue.
+- The catalogue entry schema (`openproof.act_catalogue_entry.v2`)
+- The attestation manifest schema (`openproof.attestation_manifest.v1`)
+- The envelope schema (`openproof.attestation_envelope.v1`)
+- The canonicalization pipeline (RFC 8785 JCS)
+- The on-chain anchoring format (ARC-2 JCS note, disclosed mode)
+- The verifier conformance test vector format (`openproof.test_vector.v1`)
+- The witness recipient model
+- The approval evidence model and its boundary with eIDAS
 
-The change is additive. Existing private-mode anchors validate unchanged under v1.3 verifiers. The version field `q: "1"` is preserved because the schema extension is backward-compatible.
+This specification does NOT define:
 
----
+- The internal database schema of any specific implementation
+- The user interface of any specific implementation
+- The transport layer between implementations and recipients (email, webhook, etc.)
+- The retention or archival policies of implementations beyond evidence durability requirements
 
-## Design goals for the open-source unlocking
+### 1.2 Relationship to SCITT
 
-The amendment is structured to maximise the number of independent projects that can build on top of OpenProof Events anchors without coordination. Five design goals govern the choices below.
+OpenProof Events is architecturally aligned with the IETF SCITT architecture (`draft-ietf-scitt-architecture`, RFC 9943 to-be, currently at AUTH48 as of the publication of this specification). The mapping of OpenProof Events concepts to SCITT concepts is documented in Section 6. A COSE_Sign1 wire-format bridge is planned and will land in a v1.5 specification iteration once RFC 9943 is published. Until that bridge ships, OpenProof Events implementations emit JSON-canonical receipts. They are NOT yet SCITT-compatible at the wire level.
 
-**Permissionless extension.** Any project that controls a DNS domain can mint its own act-types under `x.<reverse-dns>:` and have those act-types coexist with the canonical catalogue. No registration, no approval, no fee, no Quoruna involvement. The DNS root is the authority.
+### 1.3 Conformance language
 
-**Zero-coordination interoperability.** A verifier written by Project A in Rust can parse and validate anchors produced by Project B's Python issuer for Project C's regulatory domain, given only the chain bytes plus the public catalogue endpoints. No bilateral agreement is required.
-
-**Self-describing receipts.** A receipt found in isolation, with no platform context, can be resolved to its act-type semantics by following the identifier into the catalogue. The chain bytes plus the identifier plus a single HTTPS fetch is enough.
-
-**Chain-agnostic format.** The note grammar is bytes-in, bytes-out. The JSON envelope works on Algorand transaction notes, Bitcoin OP_RETURN (with compression), Ethereum calldata, any blob substrate. The act-type semantics are independent of the witness chain.
-
-**Implementer-friendly.** No proprietary dependencies. Off-the-shelf RFC 8785 JCS plus JSON Schema 2020-12 is enough to validate. The grammar fits in two pages. Any language with a UTF-8 string library can parse it.
-
----
-
-## 9.2 Amended note schema
-
-The compact on-chain note schema in v1.3 is:
-
-```json
-{
-  "q": "1",
-  "t": "a",
-  "r": "base64url_merkle_root",
-  "e": "base64url_envelope_hash",
-  "m": 37,
-  "s": "op:eu.nis2.art20.approval"
-}
-```
-
-The five v1.2 fields (`q`, `t`, `r`, `e`, `m`) retain their existing semantics from master spec section 9.
-
-The new field `s` (act-type identifier) is **OPTIONAL**. Its presence or absence selects between the two operating modes defined in section 9.4. When present, `s` MUST conform to the grammar in section 9.3.
-
-The note prefix `quoruna/v1:` is unchanged. The full encoded note MUST remain under 1000 bytes after JCS canonicalisation. The `s` field MUST be a JSON string with byte length at most 128 octets after UTF-8 encoding.
-
-### 9.2.1 ARC-2 compliance
-
-The compact note format defined here is fully compliant with ARC-2, the Algorand Foundation's transaction-note-field convention. ARC-2 specifies the format `<dapp-name>:<format><data>` where `<dapp-name>` is between 5 and 32 characters, and `<format>` is one of `m` (MsgPack), `b` (byte string), `u` (UTF-8 string), or `j` (JSON). The OpenProof Events compact note satisfies this shape with `<dapp-name>` = `quoruna/v1`, `<format>` = `j`, and `<data>` = the JCS-canonicalised JSON payload. Standard Algorand block explorers and ARC-2-aware indexers will therefore identify and filter OpenProof Events anchors without any custom parsing, both in private mode (no `s` field) and in disclosed mode (with `s`).
-
-The Algorand Foundation maintains an open Request-for-Comments process at the `algorandfoundation/ARCs` GitHub repository. The OpenProof Events compact note schema will be submitted as a new ARC alongside the IETF SCITT engagement, establishing formal Algorand-ecosystem recognition in parallel with the IETF temporal-anchoring conversation. This is a parallel standardisation track: the IETF route addresses the broader transparency-service ecosystem, the ARC route addresses Algorand-specific block-explorer and indexer interoperability.
+The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL in this document are to be interpreted as described in RFC 2119.
 
 ---
 
-## 9.3 Act-type identifier grammar
+## 2. Catalogue
 
-The `s` field uses one of two reserved namespace prefixes.
+### 2.1 Catalogue entry schema v2
 
-### Canonical namespace: `op:`
+A catalogue entry describes a single regulated or governance act type. The schema is at `spec/schemas/act_catalogue_entry.v2.json` and validates against JSON Schema draft 2020-12.
 
-Reserved for the OpenProof Events catalogue maintained at `openproof-events/catalogue/acts/`. Identifiers under this namespace resolve to canonical catalogue entries reviewed by the OpenProof Events maintainers and the SCITT-aligned working group when one exists.
+A v2 catalogue entry MUST include the following top-level fields:
+
+- `schema`: the literal string `"openproof.act_catalogue_entry.v2"`
+- `act_type_id`: canonical identifier under the `op:` namespace
+- `claim_type`: short snake_case identifier describing the semantic shape
+- `display_name`: human-readable display name
+- `regulatory_citation`: object with `instrument`, `article`, `jurisdiction`, `in_force_from`, or null for non-regulatory acts
+- `required_claim_fields`: array of manifest field identifiers
+- `optional_claim_fields`: array of manifest field identifiers
+- `required_evidence_labels`: array of evidence label identifiers
+- `eligible_issuer_roles`: array of role identifiers
+- `recommended_witness_roles`: array of role identifiers
+- `signature_policy`: object with `minimum` and `supports` keys
+- `version`: monotonic integer
+- `supersedes`: previous act_type_id or null
+- `maintainer`: maintainer identifier
+- `test_vector_reference`: repository-relative path to the entry's test vector file
+
+A v2 catalogue entry MUST NOT include any of the following fields, which were present in v1 entries:
+
+- `method_constraints` or any `method_*` field
+- `receipt_profile_recommendations`
+- `eligibility_snapshot_hash`
+- `action_set_hash`
+- `tally_output_hash`
+- `result_hash`
+
+These fields encoded voting-event assumptions that do not describe regulated acts.
+
+### 2.2 act_type_id namespace
+
+Canonical `op:` identifiers MUST match the pattern:
 
 ```
-canonical_id = "op:" segment ("." segment)*
+^op:[a-z0-9_]+(\.[a-z0-9_]+)+\.v[0-9]+$
 ```
 
 Examples:
-- `op:eu.nis2.art20.approval`
-- `op:eu.ai_act.art26.risk_assessment`
-- `op:corporate.board.resolution.v1`
-- `op:eu.csrd.director.attestation`
 
-### Third-party namespace: `x.<reverse-dns>:`
+- `op:eu.nis2.art20.management_body_approval.v1`
+- `op:eu.eudr.dds_preparation.v1`
+- `op:openproof.software_release.v1`
 
-Reserved for projects that control a DNS domain. The DNS label after `x.` is the authoritative domain in reverse-DNS form. Anyone who can prove control of the DNS root can publish a catalogue entry under that namespace. No coordination with Quoruna or OpenProof Events maintainers is required.
+The trailing `.v[0-9]+` segment is REQUIRED for new act_type_ids. Legacy v1 identifiers without an explicit version segment (e.g., `op:eu.nis2.art20.approval`) are preserved in the namespace for historical reference but MUST NOT be used for new issuance.
+
+### 2.3 Deprecated v1 entries
+
+Catalogue directories MAY contain a `_deprecated/` subdirectory holding v1 entries that have been superseded by v2 entries. Each `_deprecated/` directory MUST contain a README documenting the migration map from v1 to v2.
+
+Conforming catalogue loaders:
+
+- MUST surface only v2 entries for new issuance.
+- MUST refuse to load v1 entries for new issuance.
+- MUST allow read-only access to v1 entries for historical attestation rendering (a receipt for an attestation issued against `op:eu.nis2.art20.approval` in v1 must still render).
+- MUST cache catalogue entries in memory at process startup and reload only on explicit signal (no per-request filesystem reads).
+
+### 2.4 Migration path
+
+When a v1 entry is superseded by a v2 entry, the v1 file is moved into the `_deprecated/` subdirectory with git history preserved. The v2 entry's `supersedes` field references the v1 act_type_id. Issuers who previously issued attestations against the v1 act_type_id can still resolve their historical commitments because the namespace is preserved.
+
+The reference v2 entries included with this release supersede the following v1 entries:
+
+| v1 act_type_id | v2 act_type_id |
+| --- | --- |
+| `op:eu.nis2.art20.approval` | `op:eu.nis2.art20.management_body_approval.v1` |
+
+New v2 entries with no v1 predecessor set `supersedes` to null.
+
+---
+
+## 3. Attestation manifest
+
+### 3.1 Schema
+
+An attestation manifest is the issuer-side representation of a single regulated act. The manifest carries the act type identifier, the issuer fields, the claim fields specified by the catalogue entry, the evidence references, and the designated recipients. The schema identifier is `openproof.attestation_manifest.v1`.
+
+A manifest MUST include:
+
+- `schema`: the literal string `"openproof.attestation_manifest.v1"`
+- `manifest_version`: integer (currently 1)
+- `act_type_id`: matches a v2 catalogue entry
+- `catalogue_entry_version`: integer matching the catalogue entry's `version`
+- `tenant_id`: implementation-specific tenant identifier
+- `issuer_org_name`: legal name of the issuing entity
+- `title`: short title for the act
+- `system_created_at`: ISO 8601 timestamp
+- `claim_fields`: object containing all `required_claim_fields` and any present `optional_claim_fields` per the catalogue entry
+- `evidence`: array of evidence references (label, filename, SHA-256, byte size)
+- `recipients`: array of designated recipients (role, organisation name, email)
+
+A manifest MAY include:
+
+- `subtitle`: short subtitle for the act
+- `authority_label`: human-readable description of the issuer's authority basis
+
+### 3.2 Required fields
+
+A manifest is well-formed if and only if:
+
+1. Every identifier in `catalogue_entry.required_claim_fields` is present as a key in the manifest's `claim_fields`.
+2. Every identifier in `catalogue_entry.required_evidence_labels` is present as the `label` of at least one item in the manifest's `evidence` array.
+3. Every recipient in the manifest's `recipients` array has a `role` listed in or compatible with the catalogue entry's `recommended_witness_roles`. Recipients with non-recommended roles MAY be included but SHOULD be flagged as non-standard by the implementation.
+
+### 3.3 Canonicalization
+
+Manifests MUST be canonicalized using JSON Canonicalization Scheme (JCS) as specified in RFC 8785 before hashing. JCS canonicalization:
+
+- Sorts object keys lexicographically
+- Removes insignificant whitespace
+- Normalises number representations
+- Produces deterministic UTF-8 bytes
+
+Reference implementation: the Python `jcs` package on PyPI. Equivalent libraries exist for JavaScript, Go, Rust, and Java. Any conforming JCS implementation produces byte-identical output for the same input.
+
+### 3.4 Manifest hash
+
+The manifest hash is the SHA-256 hash of the JCS-canonical bytes of the manifest:
 
 ```
-third_party_id = "x." dns_label ("." dns_label)* ":" segment ("." segment)*
+manifest_hash = SHA-256(JCS(manifest))
+```
+
+The hash is represented in test vectors and receipts as a lowercase hex string with no `0x` prefix.
+
+---
+
+## 4. Envelope
+
+### 4.1 Schema
+
+The envelope wraps the manifest hash with metadata required for on-chain anchoring. The schema identifier is `openproof.attestation_envelope.v1`.
+
+An envelope MUST include:
+
+- `schema`: the literal string `"openproof.attestation_envelope.v1"`
+- `envelope_version`: integer (currently 1)
+- `act_type_id`: matches the manifest's `act_type_id`
+- `catalogue_entry_version`: matches the manifest's `catalogue_entry_version`
+- `manifest_hash`: lowercase hex SHA-256 of the canonical manifest bytes
+- `merkle_root`: lowercase hex root of the Merkle tree binding this attestation
+
+### 4.2 Envelope hash
+
+The envelope hash is computed over the JCS-canonical envelope bytes:
+
+```
+envelope_hash = SHA-256(JCS(envelope))
+```
+
+The envelope hash is included in the ARC-2 JCS note (Section 5.1) so a verifier can independently confirm both the manifest binding and the envelope binding from the on-chain commitment.
+
+### 4.3 Merkle root construction
+
+For v2.0 implementations, the Merkle tree is single-leaf. The Merkle root equals the manifest hash:
+
+```
+merkle_root = manifest_hash
+```
+
+Future versions of this specification will define multi-leaf Merkle trees for batched anchoring. The envelope schema does not change; the `merkle_root` field accommodates both single-leaf and multi-leaf constructions.
+
+---
+
+## 5. Anchoring
+
+### 5.1 ARC-2 JCS note format
+
+Attestations are anchored on the Algorand public ledger using the ARC-2 transaction note convention. The note bytes consist of a protocol prefix followed by a JCS-canonical inner JSON object:
+
+```
+note = b"quoruna/v1:" + JCS(inner)
+```
+
+The inner object MUST include the following fields in disclosed mode:
+
+- `r`: base64url-no-padding encoding of the Merkle root bytes
+- `m`: integer count of leaves in the Merkle tree (1 for v2.0 single-leaf)
+- `t`: type discriminator (`"a"` for attestation)
+- `q`: Quoruna protocol version (`"1"`)
+- `e`: base64url-no-padding encoding of the envelope hash bytes
+- `s`: the `act_type_id` of the catalogue entry
+
+Field key length is intentionally minimised because Algorand transaction notes have byte-size limits.
+
+### 5.2 Disclosed mode
+
+In disclosed mode (REQUIRED for v2.0), the inner object includes the `s` (act_type_id) field. This makes the act type publicly inspectable from the on-chain note alone, without requiring the verifier to fetch the manifest or envelope separately.
+
+A future undisclosed mode is reserved for v1.5+ implementations that wish to anchor act_type_id privately. Undisclosed mode is NOT defined in this specification.
+
+### 5.3 Algorand mainnet anchoring
+
+Production implementations SHOULD anchor on Algorand mainnet. Development and testing implementations MAY anchor on Algorand testnet. Per-tenant configuration of the target network is RECOMMENDED.
+
+A reference verifier verifies an anchored attestation by:
+
+1. Fetching the transaction at the recorded `txid` from the Algorand indexer
+2. Reading the transaction note bytes
+3. Confirming the note begins with the `quoruna/v1:` prefix
+4. Canonicalizing the remainder and parsing the inner JSON object
+5. Confirming the `r` field matches the expected Merkle root
+6. Confirming the `e` field matches the expected envelope hash
+7. Confirming the `s` field matches the expected act_type_id
+
+### 5.4 RFC 3161 timestamping
+
+Implementations SHOULD acquire an RFC 3161 timestamp token for the manifest hash from a Qualified Trust Service Provider (QTSP) before submitting the on-chain anchor. The timestamp token provides corroborating evidence of when the manifest existed and is independently verifiable against the QTSP's certificate chain.
+
+Reference implementations use QuoVadis EU QTSP as the primary timestamping authority with a failover chain to additional QTSPs.
+
+---
+
+## 6. SCITT alignment
+
+OpenProof Events is architecturally aligned with the IETF SCITT architecture (`draft-ietf-scitt-architecture`, RFC 9943 to-be, currently at AUTH48). The mapping of OpenProof Events concepts to SCITT concepts is:
+
+| OpenProof Events | SCITT |
+| --- | --- |
+| Issuer | Issuer |
+| Manifest | Signed Statement |
+| Envelope + on-chain anchor | Transparency Service entry |
+| Attestation receipt | Receipt |
+| Anchored manifest | Transparent Statement |
+| Witness recipient | Relying Party |
+| Commit operation | Registration |
+
+A COSE_Sign1 wire-format bridge is planned and will land in a v1.5 specification iteration once RFC 9943 is published. Until that bridge ships, OpenProof Events implementations emit JSON-canonical receipts. They are NOT yet SCITT-compatible at the wire level.
+
+Implementations and external publications MUST NOT describe OpenProof Events as a "SCITT reference implementation" or "SCITT-compatible" prior to the publication of the COSE_Sign1 bridge in v1.5+. The accurate descriptor is "SCITT-aligned, COSE_Sign1 bridge planned."
+
+---
+
+## 7. Witness recipient model
+
+Designated recipients in OpenProof Events are addressed by email. Each recipient has a role drawn from the catalogue entry's `recommended_witness_roles`, describing the recipient's function in relation to the issuing entity (auditor, regulator, counsel, insurer, counterparty).
+
+Whether the email address belongs to an individual or to an organisational intake address is an implementation choice for the issuer. Both are supported. Organisational intake addresses (e.g., `audit-evidence@firm.example`) SHOULD be preferred for durability across staff changes at the receiving organisation.
+
+A `recipient_contact_name` field MAY be carried as informational metadata. It is not used as the authoritative delivery target; the email address is authoritative.
+
+The set of `recommended_witness_roles` in any v2 catalogue entry SHOULD be drawn from a stable role vocabulary:
+
+- `external_auditor`
+- `competent_authority_supervisor`
+- `outside_counsel`
+- `internal_audit`
+- `do_insurer`
+- `cyber_insurer`
+- `downstream_buyer`
+- `supply_chain_finance_provider`
+- `notified_body`
+- `certification_body`
+- `release_subscriber`
+- `downstream_integrator`
+- `package_registry`
+- `security_researcher`
+
+Implementations MAY extend the vocabulary with custom roles for their specific use cases. Custom roles SHOULD follow the snake_case convention and SHOULD be documented in the catalogue entry's accompanying notes.
+
+---
+
+## 8. Approval evidence model
+
+This section is the eIDAS firewall. It bounds the legal claims that any conforming implementation may make about its output.
+
+### 8.1 issuer_record is an evidence record, not an eIDAS signature
+
+The catalogue entry's `signature_policy.minimum` field specifies the floor of what must be present at commit time. The `issuer_record` value means the implementation records the issuer's commit action as an evidence record. This evidence record SHOULD include:
+
+- The issuer's authenticated email address
+- The IP address of the commit request
+- The user agent string of the commit request
+- A single-use token hash for the commit action
+- The manifest hash
+- The version of any consent or attestation text the issuer agreed to
+- The exact UTC timestamp of the commit action
+
+This evidence record is an **evidence record only**. It is NOT an Advanced Electronic Signature (AES), Qualified Electronic Signature (QES), or any other category of electronic signature under Regulation (EU) 910/2014 (eIDAS) or its successor regulations.
+
+Implementations MUST NOT claim that the platform-recorded issuer action is itself an eIDAS-grade signature. Implementations MUST NOT describe the `issuer_record` as a "signature" in user-facing surfaces without explicit qualification (e.g., "evidence record of the issuer's commit action").
+
+### 8.2 External signature evidence
+
+Issuers who require eIDAS AES or QES MUST attach an externally produced signature file as evidence under one of the labels specified in the catalogue entry's `signature_policy.supports`:
+
+- `external_qes_pdf`: a PDF signed with a Qualified Electronic Signature
+- `external_aes_certificate`: a certificate of Advanced Electronic Signature
+- `signed_board_minutes`: board minutes signed by the relevant body
+- `third_party_signing_service_certificate`: a certificate from a third-party signing service
+- `internal_attestation_record`: an internal attestation document
+- `gpg_signed_release`: a GPG-signed software release
+- `sigstore_cosign_signature`: a Sigstore cosign signature
+
+The externally produced signature artifact is treated as evidence in the manifest. Its SHA-256 hash is included in the canonical manifest. The implementation does NOT verify the cryptographic validity of the external signature itself; verification of external signatures is the responsibility of whoever later relies on them. The implementation only commits the binding between the act and the signature artifact.
+
+### 8.3 Allocation of legal responsibility
+
+The substrate externalizes the proof trail. It does NOT externalize legal responsibility. The parties to an attestation (issuer, recipients, future verifiers) remain accountable for the substance and truth of their claims. What changes is the durability and independent verifiability of the evidentiary record on which any later claim, defense, audit, or insurance recovery is argued.
+
+---
+
+## 9. Federation
+
+Federation of the catalogue across third-party namespaces is preserved in this specification for forward compatibility. The grammar for third-party namespaces is:
+
+```
+^x\.<reverse-dns>:[a-z0-9_]+(\.[a-z0-9_]+)+\.v[0-9]+$
 ```
 
 Examples:
-- `x.example.com:internal.budget.approval`
-- `x.acme.org:supplier.code_of_conduct.attestation`
-- `x.bib.bg:notary.act.recordation`
 
-The reverse-DNS form (`x.example.com` rather than `x.com.example`) is chosen for human readability. Implementers MUST NOT attempt to reverse it for canonicalisation purposes; the string is matched as-is.
+- `x.com.example.acme:internal.governance_act.v1`
+- `x.org.example.consortium:joint_disclosure.v1`
 
-### Alignment with W3C did:web
-
-The `x.<reverse-dns>:` namespace is structurally aligned with the W3C `did:web` method, which resolves decentralised identifiers through DNS plus `.well-known` URIs. An implementer who already operates a `did:web:example.com` identity can expose the corresponding OpenProof Events catalogue entries by serving JSON files at `https://example.com/.well-known/openproof-events/acts/<segment>/<segment>.json` alongside the existing `https://example.com/.well-known/did.json`. The two systems coexist on the same domain and share the same trust root: the DNS hierarchy and the domain's HTTPS certificate.
-
-This alignment is intentional. `did:web` is the most widely-deployed decentralised-identifier method as of 2026, used by the AT Protocol (Bluesky) and by parts of the EUDI Wallet ecosystem. Implementers familiar with `did:web` can adopt OpenProof Events catalogue contributions with no new infrastructure or trust assumptions, and a future v1.4 amendment MAY define an explicit canonical mapping from `x.<dns>:<segments>` identifiers to `did:web:<dns>` DID URLs for systems that want to consume OpenProof Events catalogue entries through the W3C DID Resolution stack.
-
-The short `x.<dns>:<segments>` form remains the canonical wire form for the on-chain note, because the 128-byte size budget on `s` is tight and DID URLs are longer than the equivalent OpenProof Events identifiers. The DID URL is a derived rendering, not the canonical form.
-
-### Common grammar rules
-
-Both namespaces share the following lexical rules.
-
-```
-segment    = lowercase_alpha (lowercase_alpha | digit | "_")*
-dns_label  = letter (letter | digit | "-")* letter  ; per RFC 1035 §2.3.1
-lowercase_alpha = "a" .. "z"
-digit      = "0" .. "9"
-letter     = "a" .. "z" | "A" .. "Z"  ; case-preserving for DNS labels
-```
-
-DNS labels follow RFC 1035 case-insensitivity rules but the identifier string is matched octet-for-octet after lowercasing the DNS portion. Segments after the colon are case-sensitive and MUST be all-lowercase.
-
-Total `s` value length MUST NOT exceed 128 bytes.
-
-A note whose `s` field violates this grammar MUST be rejected by conformant verifiers with result code `FAIL_MALFORMED_ACT_TYPE`. This is the only new FAIL case introduced by this amendment.
+Federation is **a v1.5+ feature**. v2.0 reference implementations are expected to ship canonical `op:` entries only. Third-party namespace minting and resolution under `x.<reverse-dns>:` is deferred to a future specification iteration and is NOT REQUIRED for v1.4 conformance. Implementations MAY defer federation support without losing conformance to this version of the specification.
 
 ---
 
-## 9.4 Operating modes
+## 10. Verifier conformance
 
-The presence or absence of the `s` field selects between two operating modes, both of which are first-class.
+A verifier implementation conforms to this specification if, given any test vector input file from `scripts/test_vector_inputs/`, it produces the `manifest_hash_hex`, `envelope_hash_hex`, and `arc2_note.full_note_b64` values recorded in the corresponding test vector file.
 
-### Private mode (default)
+Test vectors are produced by the deterministic generator at `scripts/compute_test_vectors.py`. Verifier conformance can be tested without any network connectivity, by recomputing the hashes locally from the raw manifest input.
 
-The `s` field is absent. The note carries only the hash commitments and the type tag. From chain bytes alone, an observer learns that an OpenProof Events anchor exists, the protocol version, the type (decision or release), the Merkle root, the envelope hash, and the manifest count. Nothing about the anchored act category, the regulatory domain, or the act semantics is disclosed.
+Once `reference_anchor.txid` is populated with a real Algorand testnet transaction, additional conformance checks become available:
 
-Private mode is the recommended default for any anchor whose category is sensitive or whose disclosure could identify the issuer when combined with the sender address.
+- Fetching the on-chain note and confirming byte-identical match against `arc2_note.full_note_b64`
+- Decoding the on-chain note and confirming the inner fields match the test vector's recorded values
 
-### Disclosed mode
+Reference test vectors are included for:
 
-The `s` field is present and well-formed per section 9.3. The note carries everything private mode carries plus the act-type identifier. An indexer can resolve the identifier into a catalogue entry and learn the act semantics, the regulatory citation, and the structural shape of the underlying manifest. The manifest content itself remains off-chain.
+- `op:eu.nis2.art20.management_body_approval.v1` at `catalogue/acts/eu/nis2/art20/management_body_approval.v1.test_vectors.json`
+- `op:eu.eudr.dds_preparation.v1` at `catalogue/acts/eu/eudr/dds_preparation.v1.test_vectors.json`
 
-Disclosed mode is the recommended choice for any anchor whose category is already public information about the issuer (board resolutions of a listed company, regulator-required attestations with public deadlines, public-good civic decisions) or where the issuer affirmatively wants the anchor to be discoverable by third-party indexers.
-
-The choice between modes is per-anchor, not per-issuer. The same issuing key can produce private-mode and disclosed-mode anchors interleaved, and the verifier handles each according to the `s` field on that specific note.
-
----
-
-## 9.5 Catalogue resolution
-
-When the `s` field is present, conformant verifiers and indexers MAY resolve it to a catalogue entry to obtain act semantics. The resolution rules differ by namespace.
-
-### Canonical namespace resolution
-
-For an identifier `op:<segment1>.<segment2>.<segment3>`, the catalogue entry is located at:
-
-```
-openproof-events/catalogue/acts/<segment1>/<segment2>/<segment3>.json
-```
-
-Dots in the identifier map to path separators. The canonical hosting endpoint is `https://openproof.events/catalogue/acts/<segment1>/<segment2>/<segment3>.json`, with a public Git mirror at `https://github.com/openproof-events/spec/tree/main/catalogue/acts/`. Both endpoints serve identical canonical-JSON content addressed by the file path. Content hashing of every catalogue release is published in the Trust Root Package alongside the schemas.
-
-### Third-party namespace resolution
-
-For an identifier `x.<dns>:<segment1>.<segment2>`, the catalogue entry is located at:
-
-```
-https://<dns>/.well-known/openproof-events/acts/<segment1>/<segment2>.json
-```
-
-The `.well-known` path is reserved per RFC 8615. Third-party domain operators publish their catalogue entries at this conventional location. A verifier that wants to resolve a third-party identifier issues a single HTTPS GET to the well-known path and parses the returned JSON against the catalogue entry schema.
-
-Domains MAY publish a catalogue index at `https://<dns>/.well-known/openproof-events/index.json` listing all act-types they mint, but the index is not required for resolution of any specific identifier.
-
-### Catalogue entry schema
-
-Every catalogue entry, canonical or third-party, conforms to a single JSON Schema:
-
-```json
-{
-  "schema": "openproof.act_catalogue_entry.v1",
-  "act_type_id": "op:eu.nis2.art20.approval",
-  "display_name": "NIS2 Article 20 management body approval",
-  "regulatory_citation": {
-    "instrument": "Directive (EU) 2022/2555",
-    "article": "20",
-    "jurisdiction": "EU",
-    "in_force_from": "2024-10-17"
-  },
-  "required_manifest_fields": [
-    "decision_id",
-    "decision_type",
-    "tenant_id",
-    "method_parameters.method_id",
-    "result_hash"
-  ],
-  "method_constraints": {
-    "allowed_method_ids": ["management_body_approval_v1"],
-    "minimum_quorum_basis_points": 5001
-  },
-  "receipt_profile_recommendations": [
-    "regulator",
-    "auditor",
-    "director"
-  ],
-  "version": "1.0",
-  "supersedes": null,
-  "maintainer": "openproof-events",
-  "test_vector_reference": "catalogue/acts/eu/nis2/art20/approval.test_vectors.json"
-}
-```
-
-The schema is intentionally minimal. It carries enough metadata for a verifier to validate that a manifest matches the declared act-type, for a renderer to pick the right receipt profile, and for a regulator or researcher to map the act-type back to its statutory basis. It does not carry the manifest itself or any participant-level data.
-
-The catalogue entry schema is normative and is published under Apache 2.0 alongside this amendment in `openproof-events/spec/schemas/act_catalogue_entry.v1.schema.json`.
+Additional test vectors will be added for other catalogue entries as they land.
 
 ---
 
-## 9.6 Verifier semantics update
+## Appendix A. Schema files
 
-Master spec section 21 (verifier result codes) is extended with three new codes that apply specifically to disclosed-mode anchors. None of them replace existing v1.2 codes; the existing codes remain authoritative for the cryptographic verification path.
+The authoritative JSON Schema files for v1.4-rc1 are:
 
-```
-PASS_WITH_SEMANTICS
-  Disclosed mode. The `s` field is well-formed per §9.3. The verifier
-  resolved the identifier to a catalogue entry. The manifest conforms
-  to the catalogue entry's required fields and method constraints.
-  The cryptographic proof path passes per §2.
+- `spec/schemas/act_catalogue_entry.v2.json`
 
-PASS_SEMANTICS_UNRESOLVED
-  Disclosed mode. The `s` field is well-formed per §9.3. The verifier
-  did not resolve the catalogue entry. Either: (a) the verifier is
-  running in offline-strict mode and was not asked to fetch external
-  resources; (b) the third-party namespace endpoint is unreachable
-  at verification time; (c) the canonical catalogue does not contain
-  an entry for this identifier (act-type minted by an external
-  contributor under a third-party namespace and not yet seen by this
-  verifier). The cryptographic proof path passes per §2. The act
-  semantics are unverified at this evaluation, not invalid.
-
-FAIL_MALFORMED_ACT_TYPE
-  Disclosed mode. The `s` field violates the grammar in §9.3.
-  This is the only new FAIL code introduced by v1.3. It indicates
-  a misconfigured issuer or a tampered note. The anchor is rejected
-  regardless of whether the cryptographic proof path otherwise passes.
-```
-
-The verifier MUST treat `PASS_SEMANTICS_UNRESOLVED` as a PASS, not a WARN. The cryptographic argument the anchor makes is intact; the verifier just does not know what category of act it represents. This distinction matters for downstream tooling: an indexer can record the anchor as "well-formed, semantics pending" and re-resolve later, rather than dropping it as suspect.
-
-Private-mode anchors continue to produce the v1.2 result codes (`PASS_QUALIFIED_TIMESTAMP`, `PASS_TIMESTAMP_VALID_NON_QUALIFIED`, etc.) unchanged.
+The attestation manifest schema and envelope schema are described prose-only in Sections 3 and 4 of this document. JSON Schema files for these schemas are deferred to v1.5.
 
 ---
 
-## 9.7 Privacy and threat-model considerations
+## Appendix B. Reference catalogue entries
 
-Disclosed mode is a deliberate disclosure choice by the issuer. The threat model below documents what it leaks and how to mitigate.
+The reference catalogue entries included with v1.4-rc1 are:
 
-**What disclosed mode reveals on chain.** The act-type identifier reveals that this anchor is of a specific regulated category. Combined with the sender address (always visible on chain), it reveals that the address issues attestations of that category. Combined with the timestamp and frequency, it reveals patterns of attestation activity for that issuer.
+- `catalogue/acts/eu/nis2/art20/management_body_approval.v1.json`
+- `catalogue/acts/eu/eudr/dds_preparation.v1.json`
 
-**What it does not reveal.** No participant identity. No manifest content. No decision result. No authority chain. No reliance party. No private-mode anchors from the same issuer (each anchor's mode is independent).
-
-**Recommended mitigations for issuers who want to use disclosed mode without revealing aggregate patterns.** Rotate the anchoring address per act-type or per time window, recording the rotation in the address registry with appropriate validity windows. Use a stable anchoring address only for one act category, or only for public-good acts where aggregate disclosure is intended. Mix private-mode and disclosed-mode anchors from the same address to limit pattern inference.
-
-**Threat model exclusions.** Disclosed mode does not protect against an adversary who combines on-chain act-type tags with off-chain knowledge of the issuer's identity. That correlation is unavoidable in any disclosure mode and is a feature, not a vulnerability: regulators specifically want to verify that an identified entity anchored an expected category of attestation.
+Deprecated v1 entries are preserved under their respective `_deprecated/` directories with migration documentation.
 
 ---
 
-## 9.8 Catalogue contribution flow
+## Appendix C. Glossary
 
-The canonical catalogue under `op:` is maintained by the OpenProof Events project at `openproof-events/spec/catalogue/acts/`. Contributions are received as Git pull requests against the public repository. The contribution flow is documented in `openproof-events/spec/CONTRIBUTING_ACTS.md` (published alongside this amendment).
+**Act type**: a regulated or governance act recognised by the substrate, identified by a canonical `op:` namespace identifier.
 
-A pull request that adds a new canonical act-type entry MUST include the catalogue JSON conforming to the schema in section 9.5, at least one positive test vector (a manifest that conforms to the entry plus a verifier transcript showing `PASS_WITH_SEMANTICS`), at least one negative test vector (a manifest that fails the method or field constraints, with the resulting failure code), and a regulatory citation that can be independently verified by a reviewer.
+**Anchor**: the on-chain commitment of an attestation, expressed as an Algorand transaction whose note field contains the ARC-2 JCS encoded merkle root and envelope hash.
 
-Third-party catalogue entries under `x.<dns>:` follow no contribution flow at this layer. The DNS domain operator publishes whatever they consider valid at the `.well-known` path. Verifier behaviour for unrecognised third-party namespaces is defined in section 9.6.
+**Attestation**: an issued instance of an act type, comprising a manifest and (after commit) an anchor.
 
-This federation pattern means the canonical catalogue is a quality bar, not a gatekeeper. Anyone who finds the bar too slow can mint their own namespace today and propagate it through normal DNS distribution.
+**Catalogue entry**: a JSON document describing an act type's required and optional fields, its evidence requirements, its eligible issuer roles, its recommended witness roles, and its signature policy.
 
----
+**Envelope**: a structure wrapping the manifest hash and merkle root with metadata required for anchoring.
 
-## Test vectors
+**Issuer**: the party who creates and commits an attestation.
 
-Four test vectors accompany this amendment. They are published under CC0-1.0 as part of the OpenProof Events conformance corpus at `openproof-events/spec/test-vectors/typed-anchor-payload/v1/`.
+**Manifest**: the issuer-side document describing a single attestation's content (act type, issuer, claim fields, evidence, recipients).
 
-### TV-1: Private-mode anchor (canonical baseline)
+**Merkle root**: the root hash of a Merkle tree binding one or more attestations to a single anchor. v2.0 implementations use single-leaf trees where the Merkle root equals the manifest hash.
 
-```json
-{
-  "test_vector_id": "typed-anchor-payload.v1.tv01.private_mode",
-  "description": "Existing v1.2 private-mode anchor under v1.3 verifier. The `s` field is absent. The note validates with no change in semantics.",
-  "note_decoded": {
-    "q": "1",
-    "t": "a",
-    "r": "R64rrFLZbTzwNF_p8hbDjj7c83gqM4Y0OqJpZkrIbE4",
-    "e": "WqHvVwI4nKbY_3MqV2WZTSe-zUcdNyESu8FBgr1nKtA",
-    "m": 1
-  },
-  "note_canonical_bytes_hex": "<deterministic JCS output, computed by reference canonicaliser>",
-  "expected_verifier_result": "PASS_QUALIFIED_TIMESTAMP",
-  "rationale": "Backward compatibility. Every v1.2 note remains valid under v1.3."
-}
-```
+**Recipient**: a designated party receiving the verification handle for an attestation, with a role drawn from the catalogue entry.
 
-### TV-2: Disclosed-mode anchor with canonical namespace
+**Settlement**: the moment at which an attestation transitions from `awaiting_commit` to `committed`, comprising manifest canonicalization, envelope composition, RFC 3161 timestamp acquisition, and Algorand anchor submission.
 
-```json
-{
-  "test_vector_id": "typed-anchor-payload.v1.tv02.disclosed_canonical",
-  "description": "Disclosed-mode anchor referencing the canonical OpenProof catalogue entry for NIS2 Art. 20 management body approval. Catalogue entry is resolvable. Manifest conforms.",
-  "note_decoded": {
-    "q": "1",
-    "t": "a",
-    "r": "R64rrFLZbTzwNF_p8hbDjj7c83gqM4Y0OqJpZkrIbE4",
-    "e": "WqHvVwI4nKbY_3MqV2WZTSe-zUcdNyESu8FBgr1nKtA",
-    "m": 1,
-    "s": "op:eu.nis2.art20.approval"
-  },
-  "note_canonical_bytes_hex": "<deterministic JCS output>",
-  "catalogue_entry_reference": "openproof-events/spec/catalogue/acts/eu/nis2/art20/approval.json",
-  "expected_verifier_result": "PASS_WITH_SEMANTICS",
-  "rationale": "The end-to-end happy path: well-formed disclosed mode, catalogue entry present, manifest conforms to the entry's required fields and method constraints."
-}
-```
+**Test vector**: a JSON document binding a catalogue entry to a concrete manifest input and the deterministic outputs (manifest hash, envelope hash, ARC-2 note bytes) that any conforming verifier should reproduce.
 
-### TV-3: Disclosed-mode anchor with third-party namespace, unresolved
-
-```json
-{
-  "test_vector_id": "typed-anchor-payload.v1.tv03.disclosed_third_party_unresolved",
-  "description": "Disclosed-mode anchor referencing a third-party catalogue entry that the verifier does not resolve (offline-strict mode, or the third-party endpoint is unreachable at verification time). The cryptographic proof path passes.",
-  "note_decoded": {
-    "q": "1",
-    "t": "a",
-    "r": "R64rrFLZbTzwNF_p8hbDjj7c83gqM4Y0OqJpZkrIbE4",
-    "e": "WqHvVwI4nKbY_3MqV2WZTSe-zUcdNyESu8FBgr1nKtA",
-    "m": 1,
-    "s": "x.example.com:internal.budget.approval"
-  },
-  "note_canonical_bytes_hex": "<deterministic JCS output>",
-  "expected_verifier_result": "PASS_SEMANTICS_UNRESOLVED",
-  "rationale": "Federation works: third-party identifiers are accepted as well-formed and the proof path passes even when the verifier has not (yet) fetched the catalogue entry. This is the load-bearing case for permissionless extension."
-}
-```
-
-### TV-4: Malformed act-type identifier (negative case)
-
-```json
-{
-  "test_vector_id": "typed-anchor-payload.v1.tv04.malformed_s",
-  "description": "Disclosed-mode anchor with an `s` field that violates the grammar in §9.3 (uppercase segment, missing colon). Verifier rejects the anchor regardless of cryptographic proof validity.",
-  "note_decoded": {
-    "q": "1",
-    "t": "a",
-    "r": "R64rrFLZbTzwNF_p8hbDjj7c83gqM4Y0OqJpZkrIbE4",
-    "e": "WqHvVwI4nKbY_3MqV2WZTSe-zUcdNyESu8FBgr1nKtA",
-    "m": 1,
-    "s": "OP:EU.NIS2.ART20.APPROVAL"
-  },
-  "note_canonical_bytes_hex": "<deterministic JCS output>",
-  "expected_verifier_result": "FAIL_MALFORMED_ACT_TYPE",
-  "rationale": "Grammar enforcement. The verifier rejects the note before reaching the cryptographic verification path. This is the only new FAIL case introduced by v1.3."
-}
-```
-
-The four test vectors are sufficient for an implementer to validate the typed anchor payload extension end-to-end. The actual `note_canonical_bytes_hex` values are computed by the reference Quoruna-JCS-v1 canonicaliser at v1.3 release and pinned in the published test vector file at the time of release.
+**Witness**: a designated recipient of an attestation. The term is used interchangeably with "recipient" in this specification.
 
 ---
 
-## Cross-reference impact on other master spec sections
+## Appendix D. Changelog
 
-The amendment is additive. Most existing sections are unaffected. The following table records every downstream cross-reference for implementers updating to v1.3.
+### v1.4-rc1 (this release)
 
-| Section | Impact | Action |
-|---|---|---|
-| §2 (proof path) | No change. Steps 1 through 10 unchanged. | None. |
-| §4 (manifest schema) | No change. Manifest does not carry the act-type tag. | None. |
-| §5 (Quoruna-JCS-v1) | No change. The new field follows the same canonicalisation rules. | None. |
-| §6 (Merkle tree) | No change. | None. |
-| §7 (decision anchor envelope) | Optional extension. The envelope MAY carry the same `s` value for off-chain correlation. | Optional. |
-| §9 (compact note) | **Amended per this document.** | Update implementation. |
-| §10 (batch anchor proof) | The receipt MAY carry the resolved catalogue entry alongside the proof. | Optional. |
-| §11 (membership proof) | No change. | None. |
-| §12 (top-level receipt) | The receipt schema gains an optional `act_type_id` field mirroring the note's `s` value when present. | Update receipt schema. |
-| §15 (signing infrastructure) | No change. The signer adapter is type-agnostic. | None. |
-| §16 (transaction policy) | The note prefix check is unchanged. The allowlist now accepts notes with the new optional field. | Update allowlist parser. |
-| §18 (Trust Root Package) | The TRP now includes the catalogue entries it knows about, with content hashes. | Update TRP composer. |
-| §19 (address registry) | No change. | None. |
-| §21 (verifier) | **Three new result codes per §9.6.** | Update verifier. |
-| §22 (hosting and operations) | No change. | None. |
-| §23 (threat model) | New section per §9.7 on disclosure trade-offs. | Update threat model document. |
+**Substrate changes**:
+- Introduced `openproof.act_catalogue_entry.v2` schema with act-native fields.
+- Deprecated v1 voting-derivative fields: `method_constraints`, `eligibility_snapshot_hash`, `action_set_hash`, `tally_output_hash`, `result_hash`, `receipt_profile_recommendations`.
+- Introduced `_deprecated/` directory convention for v1 namespace preservation.
 
----
+**New catalogue entries**:
+- `op:eu.nis2.art20.management_body_approval.v1`
+- `op:eu.eudr.dds_preparation.v1`
 
-## Open implementation items for v1.3 to v1.4
+**New sections**:
+- Section 6 SCITT alignment downgraded from "reference implementation" to "aligned, COSE_Sign1 bridge planned."
+- Section 7 witness recipient model formally defined.
+- Section 8 approval evidence model added (eIDAS firewall).
+- Section 9 federation flagged as v1.5+ feature.
 
-Four items are noted but deferred. They do not block v1.3.
+**Tooling**:
+- `scripts/compute_test_vectors.py` for deterministic test vector generation.
+- Reference test vectors for both new catalogue entries.
 
-**Catalogue entry signing.** Canonical catalogue entries are content-addressed via the Trust Root Package. Third-party catalogue entries served from `.well-known` are TLS-protected by the domain's HTTPS certificate but are not independently signed. A v1.4 iteration MAY add a JWS-style detached signature per catalogue entry so that consumers can pin a third-party publisher's key independently of the TLS chain. Deferred because it adds complexity without unlocking new use cases in the first year.
+### v1.3 and earlier
 
-**Catalogue entry supersession chains.** The catalogue entry schema includes a `supersedes` field that is currently always `null` in v1.0 entries. A v1.4 iteration MAY define the supersession chain semantics: when act-type X is superseded by act-type Y, what does a verifier do with old anchors referencing X. Deferred because no real supersession case has arisen yet.
-
-**Cross-namespace aliasing.** A canonical act-type might one day correspond to a third-party act-type that pre-dated it (e.g., `x.acme.org:supplier.coc.attestation` is later canonicalised to `op:corporate.supplier.code_of_conduct`). A v1.4 iteration MAY define how aliases are recorded. Deferred until the case arises.
-
-**COSE_Sign1 SCITT receipt bridge.** The IETF SCITT working group has converged on COSE_Sign1 (RFC 9052, CBOR Object Signing and Encryption, tag 18) as the canonical wire format for transparency-service receipts, with ES256 as the default signing algorithm. Three production implementations exist as of May 2026: Sigstore Rekor v2 (which went GA in March 2026, simplified to two entry types and a tile-backed Merkle log backend), Microsoft `scitt-ccf-ledger` (a Confidential Consortium Framework application targeting AMD SEV-SNP), and GoDaddy `ans` (a transparency-log-backed Agent Name Service, MIT-licensed, also tile-backed with sumdb-note root keys). All three consume COSE_Sign1 receipts. Quoruna v1.3 ships JSON-canonical receipts as the load-bearing format because that is what the offline-strict verifier path uses. A v1.4 iteration WILL add a parallel COSE_Sign1 wire format that carries the same canonical receipt content. The bridge is a single small artefact (same data, two encodings) and is the move that makes Quoruna receipts directly consumable by any SCITT-conformant verifier without further protocol negotiation. Deferred to v1.4 because the SCITT WG has not yet finalised the receipt format normatively: `draft-ietf-scitt-architecture` is in the RFC Editor AUTH48 queue and `draft-ietf-scitt-scrapi-09` is in IESG evaluation as of April 2026. The bridge can land as soon as the normative receipt format stabilises in the published RFC, which is expected mid-2026.
+See git history for the substrate's voting-event-shaped predecessor releases. v1.3 was the last release under the previous schema.
 
 ---
 
-## Implementer checklist for v1.2 → v1.3 upgrade
-
-For a project currently implementing master spec v1.2, the upgrade to v1.3 requires the following changes.
-
-1. Update the compact note schema validator to accept an optional `s` field bound to the grammar in §9.3.
-2. Extend the verifier result code enum with `PASS_WITH_SEMANTICS`, `PASS_SEMANTICS_UNRESOLVED`, and `FAIL_MALFORMED_ACT_TYPE` per §9.6.
-3. Implement (or defer) catalogue entry resolution per §9.5. Offline-strict verifiers MAY skip resolution and always return `PASS_SEMANTICS_UNRESOLVED` for disclosed-mode anchors.
-4. Run the four test vectors from this amendment against the implementation. All four MUST produce the expected verifier result.
-5. Update the receipt schema in §12 to include the optional `act_type_id` field.
-6. If issuing anchors in disclosed mode, decide per anchor whether disclosure is appropriate per §9.7 and document the choice.
-
-The total implementation cost of the v1.2 → v1.3 upgrade is approximately one engineer-day for the schema and verifier changes, plus catalogue resolution which is optional and can be deferred to a later release.
-
----
-
-*End of amendment.*
-
-*This amendment is published under Apache-2.0. The accompanying test vectors are published under CC0-1.0. The OpenProof Events catalogue and the canonical catalogue entries it contains are published under Apache-2.0.*
+*This specification is licensed CC0 1.0 Universal. The accompanying schema files and test vectors are licensed Apache-2.0. Implementations of this specification may be released under any license their authors choose.*

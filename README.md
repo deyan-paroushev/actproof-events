@@ -1,5 +1,7 @@
 # OpenProof Events
 
+> **Current release**: v1.4-rc1 (pre-release candidate). The substrate is in the middle of an act-native pivot. See [spec/openproof-events.spec.md](spec/openproof-events.spec.md) for the v1.4 specification and [docs/releases/v1.4-rc1.md](docs/releases/v1.4-rc1.md) for the release notes. Earlier v1.x substrate content described below is partially superseded; the v1.4 specification is authoritative where the two diverge.
+
 **A federated cryptographic substrate for verifiable governance evidence.**
 
 OpenProof Events is a specification, a reference implementation, a federated act-type catalogue, and a conformance test vector corpus that together let any organization cryptographically anchor its governance decisions to a public ledger, in a way that any verifier can independently confirm decades later, regardless of which vendor produced the original receipt.
