@@ -1,0 +1,355 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openproof.events/schemas/act_catalogue_entry.v3.json",
+  "title": "OpenProof Events Catalogue Entry v3",
+  "description": "Schema for a single catalogue entry describing a regulated or governance act type. v3 is a strict additive superset of v2. It adds four optional blocks for richer act-type semantics: regulated_context_profile (constrains receipt context shapes), prior_receipts_profile (declares bilateral lifecycle expectations), reliance_context (names who relies and who verifies), and disclosure_profile (per-field disclosure tier declarations and back-propagation scope). All sixteen required v2 fields are unchanged. Any v2-shaped entry validates against v3 with only its schema discriminator updated to 'openproof.act_catalogue_entry.v3'. The v2 schema file remains in the repository as a historical record for consumers pinned to v2.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "act_type_id",
+    "claim_type",
+    "display_name",
+    "regulatory_citation",
+    "required_claim_fields",
+    "optional_claim_fields",
+    "required_evidence_labels",
+    "eligible_issuer_roles",
+    "recommended_witness_roles",
+    "signature_policy",
+    "version",
+    "supersedes",
+    "maintainer",
+    "test_vector_reference"
+  ],
+  "properties": {
+    "schema": {
+      "const": "openproof.act_catalogue_entry.v3",
+      "description": "Schema discriminator. Always the literal string above. v3 entries are recognised by openproof-py v0.1.1 and later. openproof-py v0.1.0 and earlier accept only v2 entries."
+    },
+    "act_type_id": {
+      "type": "string",
+      "pattern": "^op:[a-z0-9_]+(\\.[a-z0-9_]+)+\\.v[0-9]+$",
+      "description": "Canonical identifier under the op: namespace. Dotted segments terminate with a version suffix. Example: op:eu.nis2.art20.management_body_approval.v1"
+    },
+    "claim_type": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "minLength": 3,
+      "maxLength": 64,
+      "description": "Snake_case identifier describing the semantic shape of the claim. Examples: management_body_approval, due_diligence_statement_preparation, software_release."
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Human-readable display name suitable for UI surfaces and documentation."
+    },
+    "regulatory_citation": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["instrument", "article", "jurisdiction", "in_force_from"],
+          "properties": {
+            "instrument": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Name of the regulatory instrument. Example: Directive (EU) 2022/2555."
+            },
+            "article": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Article, section, or paragraph reference within the instrument."
+            },
+            "jurisdiction": {
+              "type": "string",
+              "minLength": 2,
+              "description": "ISO 3166-1 alpha-2 country code, ISO 3166-2 subdivision code, or supranational tag (EU, UN)."
+            },
+            "in_force_from": {
+              "type": "string",
+              "format": "date",
+              "description": "Effective date in ISO 8601 (YYYY-MM-DD)."
+            }
+          }
+        }
+      ],
+      "description": "Regulatory anchor for the act type. null for non-regulatory governance acts (e.g., open-source software releases, internal corporate acts without a binding regulatory citation)."
+    },
+    "required_claim_fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Manifest field identifiers that MUST be present in any issued attestation against this act type. Catalogue loaders MUST reject manifests missing any required field."
+    },
+    "optional_claim_fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "uniqueItems": true,
+      "description": "Manifest field identifiers that MAY be present in an issued attestation."
+    },
+    "required_evidence_labels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Evidence label identifiers that MUST have at least one uploaded artifact each before an attestation can transition to the awaiting_commit state."
+    },
+    "eligible_issuer_roles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Role identifiers indicating which entity types are eligible to issue this act. Examples: essential_entity, important_entity, eu_operator, eu_trader, open_source_maintainer."
+    },
+    "recommended_witness_roles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "uniqueItems": true,
+      "description": "Role identifiers indicating which parties typically receive verification handles for this act type. These are functional descriptions of recipients in relation to the issuing entity. Examples: external_auditor, competent_authority_supervisor, outside_counsel, internal_audit, do_insurer, downstream_buyer, supply_chain_finance_provider."
+    },
+    "signature_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum", "supports"],
+      "properties": {
+        "minimum": {
+          "type": "string",
+          "enum": ["issuer_record", "external_signature", "either"],
+          "description": "Floor of what must be present at commit time. issuer_record means the platform-recorded commit action (email, IP, user agent, single-use token hash, manifest hash, consent text version, timestamp) suffices as evidence of the issuer's commit action. external_signature requires an externally produced signature file (e.g., QES, AES, signed PDF) to be attached as evidence. either accepts both. CRITICAL: issuer_record is an evidence record only. It is NOT an Advanced Electronic Signature or Qualified Electronic Signature under Regulation (EU) 910/2014 (eIDAS). Implementations MUST NOT claim that the platform-recorded issuer action is itself an eIDAS-grade signature."
+        },
+        "supports": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "external_qes_pdf",
+              "external_aes_certificate",
+              "signed_board_minutes",
+              "third_party_signing_service_certificate",
+              "internal_attestation_record",
+              "gpg_signed_release",
+              "sigstore_cosign_signature"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Evidence label identifiers for externally produced signature artifacts the act type recognizes alongside issuer_record. Issuers who require eIDAS AES or QES MUST attach the corresponding artifact and reference it under one of these labels."
+        }
+      },
+      "description": "Signature evidence policy for this act type. Defines both the minimum acceptable commit action and the externally produced signature artifacts the act recognizes."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Monotonic version of this catalogue entry. Increment on any semantic change. The version is also encoded in the act_type_id suffix (e.g., .v1, .v2)."
+    },
+    "supersedes": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "string",
+          "pattern": "^op:[a-z0-9_]+(\\.[a-z0-9_]+)+(\\.v[0-9]+)?$"
+        }
+      ],
+      "description": "act_type_id of the predecessor entry this version replaces. null if this is the first version of the act type. The supersedes pattern allows entries without explicit version suffixes for legacy v1 namespace preservation."
+    },
+    "maintainer": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Maintainer identifier (typically the project or working group responsible for curating this entry). Example: openproof-events."
+    },
+    "test_vector_reference": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_./-]+\\.json$",
+      "description": "Repository-relative path to the JSON file containing test vectors for this entry. Test vectors MUST use computed hashes (not synthetic placeholders) so verifier implementations can reproduce them."
+    },
+    "regulated_context_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowed_context_types"],
+      "properties": {
+        "allowed_context_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "transaction_or_shipment",
+              "incident_lifecycle",
+              "reporting_period",
+              "assurance_handoff",
+              "release_or_publication"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Permitted values of receipt envelope regulated_context.context_type for receipts issued under this act type."
+        },
+        "allowed_submission_stages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "pre_submission_evidence_pack",
+              "submitted",
+              "submission_acknowledged",
+              "superseded",
+              "early_warning",
+              "initial_notification",
+              "intermediate_report",
+              "final_report",
+              "progress_report",
+              "pre_publication",
+              "published",
+              "assurance_handoff_complete",
+              "restated",
+              "evidence_pack_prepared",
+              "assurance_engagement_complete",
+              "prepared",
+              "withdrawn"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Permitted values of receipt envelope regulated_context.submission_stage. The set MUST be coherent with allowed_context_types per the receipt envelope spec: each stage belongs to one of the allowed context types."
+        },
+        "default_context_type": {
+          "type": "string",
+          "enum": [
+            "transaction_or_shipment",
+            "incident_lifecycle",
+            "reporting_period",
+            "assurance_handoff",
+            "release_or_publication"
+          ],
+          "description": "Default context_type assumed when an issuer does not supply one. MUST be a member of allowed_context_types."
+        }
+      },
+      "description": "Restricts which regulated_context shapes are valid for receipts under this act type. Optional. Absent means any context shape permitted by the receipt envelope schema applies. Introduced in v3."
+    },
+    "prior_receipts_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required_roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "uniqueItems": true,
+          "description": "Role identifiers that MUST appear in a receipt's prior_receipts array. Empty array or absent block means no prior receipts required."
+        },
+        "optional_roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "uniqueItems": true,
+          "description": "Role identifiers that MAY appear in a receipt's prior_receipts array. Validators MAY reject prior_receipts entries whose role is not named in required_roles or optional_roles."
+        }
+      },
+      "description": "Declares the bilateral lifecycle expectations for receipts under this act type. Optional. Absent means no prior receipts expected and no restrictions on roles. Introduced in v3."
+    },
+    "reliance_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issuer_role", "counterparty_action", "later_verifiers"],
+      "properties": {
+        "issuer_role": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Functional description of the entity issuing receipts under this act type. Examples: 'open-source maintainer issuing a release attestation', 'EU operator preparing a Due Diligence Statement'."
+        },
+        "counterparty_action": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What the counterparty does on receiving the receipt. Examples: 'accepts the release for downstream packaging', 'relies on the statement for placing on the EU market', 'records the attestation for the audit trail'."
+        },
+        "later_verifiers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Categories of third parties expected to verify the receipt independently at later points in time. Examples: 'regulator', 'external auditor', 'grant evaluator', 'downstream integrator', 'public'."
+        },
+        "reliance_statement": {
+          "type": "string",
+          "minLength": 1,
+          "description": "One-sentence statement of what the receipt asserts that the counterparty and later verifiers may rely upon. Optional but recommended for any act type whose value depends on third-party reliance."
+        }
+      },
+      "description": "Names who relies on receipts under this act type, what decision they make, and who later verifies independently. Optional. Recommended for any act type whose value depends on third-party reliance. Introduced in v3."
+    },
+    "disclosure_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["public_fields", "commitment_fields", "private_fields"],
+      "properties": {
+        "public_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "description": "Field references stored cleartext in the canonical manifest. Field references MAY be simple claim field names (e.g. 'supplier_name') or dotted manifest paths (e.g. 'manifest.title', 'manifest.issuer.legal_name', 'manifest.evidence[].label', 'manifest.recipients[].org_name'). Fields not named in any of the three tier lists default to public."
+        },
+        "commitment_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "description": "Field references stored as salted SHA-256 commitments in the canonical manifest. Cleartext lives only in the issuer's holder receipt. Commitment construction is sha256(salt || ':' || qualified_field_name || ':' || canonical_value). Empty array permitted."
+        },
+        "private_fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "description": "Field references omitted from the manifest entirely. Present only in the issuer's holder receipt. Catalogue releases MAY restrict the use of this tier (e.g. openproof-events v1.5-rc1 entries MUST have private_fields = []). Empty array permitted."
+        },
+        "back_propagation_scope": {
+          "type": "object",
+          "patternProperties": {
+            "^[a-z0-9_]+$": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false,
+          "description": "Maps a prior_receipts role to the list of field references visible to that prior receipt's issuer in the automatic disclosure receipt generated at settlement. Empty mapping or absent block means no automatic back-propagation. Multiple roles MAY be declared even if a given catalogue release exercises only one."
+        }
+      },
+      "description": "Per-field disclosure tier declarations for receipts issued under this act type, plus back-propagation scope for bilateral lifecycle. Optional at the schema level. Catalogue releases MAY require it for all entries. Introduced in v3."
+    }
+  }
+}
