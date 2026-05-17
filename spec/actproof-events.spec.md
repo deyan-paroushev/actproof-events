@@ -3,7 +3,7 @@
 **Version**: v1.4-rc1
 **Status**: Pre-release candidate
 **License**: Spec text is CC0. Schemas and test vectors are Apache-2.0.
-**Maintainer**: openproof-events project
+**Maintainer**: actproof-events project
 
 ---
 
@@ -21,12 +21,12 @@ The v1.4 release is the first act-native release. Earlier v1.x releases modelled
 
 This specification defines:
 
-- The catalogue entry schema (`openproof.act_catalogue_entry.v2`)
-- The attestation manifest schema (`openproof.attestation_manifest.v1`)
-- The envelope schema (`openproof.attestation_envelope.v1`)
+- The catalogue entry schema (`actproof.act_catalogue_entry.v2`)
+- The attestation manifest schema (`actproof.attestation_manifest.v1`)
+- The envelope schema (`actproof.attestation_envelope.v1`)
 - The canonicalization pipeline (RFC 8785 JCS)
 - The on-chain anchoring format (ARC-2 JCS note, disclosed mode)
-- The verifier conformance test vector format (`openproof.test_vector.v1`)
+- The verifier conformance test vector format (`actproof.test_vector.v1`)
 - The witness recipient model
 - The approval evidence model and its boundary with eIDAS
 
@@ -55,7 +55,7 @@ A catalogue entry describes a single regulated or governance act type. The schem
 
 A v2 catalogue entry MUST include the following top-level fields:
 
-- `schema`: the literal string `"openproof.act_catalogue_entry.v2"`
+- `schema`: the literal string `"actproof.act_catalogue_entry.v2"`
 - `act_type_id`: canonical identifier under the `op:` namespace
 - `claim_type`: short snake_case identifier describing the semantic shape
 - `display_name`: human-readable display name
@@ -94,7 +94,7 @@ Examples:
 
 - `op:eu.nis2.art20.management_body_approval.v1`
 - `op:eu.eudr.dds_preparation.v1`
-- `op:openproof.software_release.v1`
+- `op:actproof.software_release.v1`
 
 The trailing `.v[0-9]+` segment is REQUIRED for new act_type_ids. Legacy v1 identifiers without an explicit version segment (e.g., `op:eu.nis2.art20.approval`) are preserved in the namespace for historical reference but MUST NOT be used for new issuance.
 
@@ -127,11 +127,11 @@ New v2 entries with no v1 predecessor set `supersedes` to null.
 
 ### 3.1 Schema
 
-An attestation manifest is the issuer-side representation of a single regulated act. The manifest carries the act type identifier, the issuer fields, the claim fields specified by the catalogue entry, the evidence references, and the designated recipients. The schema identifier is `openproof.attestation_manifest.v1`.
+An attestation manifest is the issuer-side representation of a single regulated act. The manifest carries the act type identifier, the issuer fields, the claim fields specified by the catalogue entry, the evidence references, and the designated recipients. The schema identifier is `actproof.attestation_manifest.v1`.
 
 A manifest MUST include:
 
-- `schema`: the literal string `"openproof.attestation_manifest.v1"`
+- `schema`: the literal string `"actproof.attestation_manifest.v1"`
 - `manifest_version`: integer (currently 1)
 - `act_type_id`: matches a v2 catalogue entry
 - `catalogue_entry_version`: integer matching the catalogue entry's `version`
@@ -183,11 +183,11 @@ The hash is represented in test vectors and receipts as a lowercase hex string w
 
 ### 4.1 Schema
 
-The envelope wraps the manifest hash with metadata required for on-chain anchoring. The schema identifier is `openproof.attestation_envelope.v1`.
+The envelope wraps the manifest hash with metadata required for on-chain anchoring. The schema identifier is `actproof.attestation_envelope.v1`.
 
 An envelope MUST include:
 
-- `schema`: the literal string `"openproof.attestation_envelope.v1"`
+- `schema`: the literal string `"actproof.attestation_envelope.v1"`
 - `envelope_version`: integer (currently 1)
 - `act_type_id`: matches the manifest's `act_type_id`
 - `catalogue_entry_version`: matches the manifest's `catalogue_entry_version`
@@ -445,7 +445,7 @@ Deprecated v1 entries are preserved under their respective `_deprecated/` direct
 ### v1.4-rc1 (this release)
 
 **Substrate changes**:
-- Introduced `openproof.act_catalogue_entry.v2` schema with act-native fields.
+- Introduced `actproof.act_catalogue_entry.v2` schema with act-native fields.
 - Deprecated v1 voting-derivative fields: `method_constraints`, `eligibility_snapshot_hash`, `action_set_hash`, `tally_output_hash`, `result_hash`, `receipt_profile_recommendations`.
 - Introduced `_deprecated/` directory convention for v1 namespace preservation.
 

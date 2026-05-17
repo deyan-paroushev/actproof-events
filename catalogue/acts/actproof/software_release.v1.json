@@ -1,6 +1,6 @@
 {
-  "schema": "openproof.act_catalogue_entry.v3",
-  "act_type_id": "op:openproof.software_release.v1",
+  "schema": "actproof.act_catalogue_entry.v3",
+  "act_type_id": "op:actproof.software_release.v1",
   "claim_type": "software_release",
   "display_name": "Open-source software release attestation",
   "regulatory_citation": null,
@@ -37,8 +37,8 @@
   },
   "version": 1,
   "supersedes": null,
-  "maintainer": "openproof-events",
-  "test_vector_reference": "catalogue/acts/openproof/software_release.v1.test_vectors.json",
+  "maintainer": "actproof-events",
+  "test_vector_reference": "catalogue/acts/actproof/software_release.v1.test_vectors.json",
   "regulated_context_profile": {
     "allowed_context_types": ["release_or_publication"],
     "allowed_submission_stages": ["prepared", "published", "superseded", "withdrawn"],

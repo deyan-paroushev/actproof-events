@@ -1,22 +1,22 @@
 {
-  "schema": "openproof.test_vector.v1",
-  "test_vector_id": "openproof_software_release_v1_001",
-  "catalogue_act_type_id": "op:openproof.software_release.v1",
+  "schema": "actproof.test_vector.v1",
+  "test_vector_id": "actproof_software_release_v1_001",
+  "catalogue_act_type_id": "op:actproof.software_release.v1",
   "catalogue_entry_version": 1,
   "raw_manifest": {
-    "schema": "openproof.attestation_manifest.v1",
+    "schema": "actproof.attestation_manifest.v1",
     "manifest_version": 1,
-    "act_type_id": "op:openproof.software_release.v1",
+    "act_type_id": "op:actproof.software_release.v1",
     "catalogue_entry_version": 1,
-    "tenant_id": "test-tenant-openproof-001",
+    "tenant_id": "test-tenant-actproof-001",
     "issuer_org_name": "Advisa EOOD",
-    "authority_label": "Open-source maintainer of openproof-py",
-    "title": "openproof-py v0.1.1 release attestation",
-    "subtitle": "openproof-events catalogue schema v3 support",
+    "authority_label": "Open-source maintainer of actproof-py",
+    "title": "actproof-py v0.1.1 release attestation",
+    "subtitle": "actproof-events catalogue schema v3 support",
     "system_created_at": "2026-05-17T00:00:00Z",
     "claim_fields": {
       "release_org": "Advisa EOOD",
-      "release_repository": "https://github.com/deyan-paroushev/openproof-py",
+      "release_repository": "https://github.com/deyan-paroushev/actproof-py",
       "release_version": "v0.1.1",
       "release_commit_sha": "97c9cc3a4e9c1bc1c4be8a5d0c8e9a2e3f6b7a8c",
       "release_published_at": "2026-05-17T00:00:00Z"
@@ -24,13 +24,13 @@
     "evidence": [
       {
         "label": "release_manifest",
-        "filename": "openproof-py-v0.1.1-release-manifest.txt",
+        "filename": "actproof-py-v0.1.1-release-manifest.txt",
         "sha256_hex": "a1c4d8e7b9f2a5c8e6d3b7f9a4c2e5d8b1f4a7c3e6d9b2f5a8c1e4d7b0f3a6c9",
         "byte_size": 128
       },
       {
         "label": "release_artifact_checksums",
-        "filename": "openproof-py-v0.1.1-sha256sums.txt",
+        "filename": "actproof-py-v0.1.1-sha256sums.txt",
         "sha256_hex": "b2d5e8a3c6f9b1d4e7a0c3f6b9d2e5a8c1f4b7d0e3a6c9f2b5d8e1a4c7f0b3d6",
         "byte_size": 192
       }
@@ -40,7 +40,7 @@
         "role": "downstream_integrator",
         "org_name": "Quoruna substrate consumer",
         "email": "integration@quoruna.example",
-        "purpose": "Library version pin verification at openproof @ git+...@v0.1.1"
+        "purpose": "Library version pin verification at actproof @ git+...@v0.1.1"
       },
       {
         "role": "public_archive",
@@ -61,9 +61,9 @@
   "manifest_hash_hex": "2ca22b68a8e57984a1f5d48f3ac21427f3eb69199483b1459ab5f807666ca1be",
   "merkle_root_hex": "2ca22b68a8e57984a1f5d48f3ac21427f3eb69199483b1459ab5f807666ca1be",
   "envelope": {
-    "schema": "openproof.attestation_envelope.v1",
+    "schema": "actproof.attestation_envelope.v1",
     "envelope_version": 1,
-    "act_type_id": "op:openproof.software_release.v1",
+    "act_type_id": "op:actproof.software_release.v1",
     "catalogue_entry_version": 1,
     "manifest_hash": "2ca22b68a8e57984a1f5d48f3ac21427f3eb69199483b1459ab5f807666ca1be",
     "merkle_root": "2ca22b68a8e57984a1f5d48f3ac21427f3eb69199483b1459ab5f807666ca1be"
