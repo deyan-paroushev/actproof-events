@@ -1,6 +1,6 @@
 # Catalogue loader contract
 
-This document is the binding contract between the OpenProof Events substrate and any implementation that loads catalogue entries from the substrate's filesystem layout. Implementations that satisfy this contract are conforming catalogue loaders for v1.4 of the specification.
+This document is the binding contract between the ActProof Events substrate and any implementation that loads catalogue entries from the substrate's filesystem layout. Implementations that satisfy this contract are conforming catalogue loaders for v1.4 of the specification.
 
 The contract is intentionally implementation-agnostic. The reference implementation in Quoruna is written in Python and lives at `catalogue_loader.py` in the Quoruna repository. Future implementations in other languages (Go, Rust, TypeScript) MUST satisfy the same contract to be considered conforming.
 
@@ -283,7 +283,7 @@ Future implementations in other languages may diverge in idioms, frameworks, and
 
 ## 9. Versioning
 
-This contract is bound to v1.4 of the OpenProof Events specification. Substrate changes that affect the loader contract (new schema versions, new validation requirements, new error types) will be accompanied by a new version of this contract. Implementations that satisfy the v1.4 contract are NOT automatically conforming to future contract versions; each substrate release MUST be reviewed against the corresponding contract.
+This contract is bound to v1.4 of the ActProof Events specification. Substrate changes that affect the loader contract (new schema versions, new validation requirements, new error types) will be accompanied by a new version of this contract. Implementations that satisfy the v1.4 contract are NOT automatically conforming to future contract versions; each substrate release MUST be reviewed against the corresponding contract.
 
 ---
 

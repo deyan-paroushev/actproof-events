@@ -1,4 +1,4 @@
-# OpenProof Events Specification
+# ActProof Events Specification
 
 **Version**: v1.4-rc1
 **Status**: Pre-release candidate
@@ -9,7 +9,7 @@
 
 ## Abstract
 
-OpenProof Events specifies an open substrate for issuing verifiable attestations of regulated or governance acts. The substrate defines a catalogue of act types, a manifest format for attestation content, an envelope structure for anchoring, a canonical hashing pipeline, and an on-chain note format for public ledger commitment. Any conforming implementation that follows this specification produces test vector-reproducible attestations whose proof trails can be verified independently by any third party against the public ledger, without trusting either the issuer or any intermediary platform.
+ActProof Events specifies an open substrate for issuing verifiable attestations of regulated or governance acts. The substrate defines a catalogue of act types, a manifest format for attestation content, an envelope structure for anchoring, a canonical hashing pipeline, and an on-chain note format for public ledger commitment. Any conforming implementation that follows this specification produces test vector-reproducible attestations whose proof trails can be verified independently by any third party against the public ledger, without trusting either the issuer or any intermediary platform.
 
 The v1.4 release is the first act-native release. Earlier v1.x releases modelled regulated acts as voting events. The v2 catalogue entry schema documented here removes those voting derivatives. This is a substrate change, not a behaviour change: any attestations issued under the deprecated v1 entries can still be resolved for historical reference.
 
@@ -39,7 +39,7 @@ This specification does NOT define:
 
 ### 1.2 Relationship to SCITT
 
-OpenProof Events is architecturally aligned with the IETF SCITT architecture (`draft-ietf-scitt-architecture`, RFC 9943 to-be, currently at AUTH48 as of the publication of this specification). The mapping of OpenProof Events concepts to SCITT concepts is documented in Section 6. A COSE_Sign1 wire-format bridge is planned and will land in a v1.5 specification iteration once RFC 9943 is published. Until that bridge ships, OpenProof Events implementations emit JSON-canonical receipts. They are NOT yet SCITT-compatible at the wire level.
+ActProof Events is architecturally aligned with the IETF SCITT architecture (`draft-ietf-scitt-architecture`, RFC 9943 to-be, currently at AUTH48 as of the publication of this specification). The mapping of ActProof Events concepts to SCITT concepts is documented in Section 6. A COSE_Sign1 wire-format bridge is planned and will land in a v1.5 specification iteration once RFC 9943 is published. Until that bridge ships, ActProof Events implementations emit JSON-canonical receipts. They are NOT yet SCITT-compatible at the wire level.
 
 ### 1.3 Conformance language
 
@@ -267,9 +267,9 @@ Reference implementations use QuoVadis EU QTSP as the primary timestamping autho
 
 ## 6. SCITT alignment
 
-OpenProof Events is architecturally aligned with the IETF SCITT architecture (`draft-ietf-scitt-architecture`, RFC 9943 to-be, currently at AUTH48). The mapping of OpenProof Events concepts to SCITT concepts is:
+ActProof Events is architecturally aligned with the IETF SCITT architecture (`draft-ietf-scitt-architecture`, RFC 9943 to-be, currently at AUTH48). The mapping of ActProof Events concepts to SCITT concepts is:
 
-| OpenProof Events | SCITT |
+| ActProof Events | SCITT |
 | --- | --- |
 | Issuer | Issuer |
 | Manifest | Signed Statement |
@@ -279,15 +279,15 @@ OpenProof Events is architecturally aligned with the IETF SCITT architecture (`d
 | Witness recipient | Relying Party |
 | Commit operation | Registration |
 
-A COSE_Sign1 wire-format bridge is planned and will land in a v1.5 specification iteration once RFC 9943 is published. Until that bridge ships, OpenProof Events implementations emit JSON-canonical receipts. They are NOT yet SCITT-compatible at the wire level.
+A COSE_Sign1 wire-format bridge is planned and will land in a v1.5 specification iteration once RFC 9943 is published. Until that bridge ships, ActProof Events implementations emit JSON-canonical receipts. They are NOT yet SCITT-compatible at the wire level.
 
-Implementations and external publications MUST NOT describe OpenProof Events as a "SCITT reference implementation" or "SCITT-compatible" prior to the publication of the COSE_Sign1 bridge in v1.5+. The accurate descriptor is "SCITT-aligned, COSE_Sign1 bridge planned."
+Implementations and external publications MUST NOT describe ActProof Events as a "SCITT reference implementation" or "SCITT-compatible" prior to the publication of the COSE_Sign1 bridge in v1.5+. The accurate descriptor is "SCITT-aligned, COSE_Sign1 bridge planned."
 
 ---
 
 ## 7. Witness recipient model
 
-Designated recipients in OpenProof Events are addressed by email. Each recipient has a role drawn from the catalogue entry's `recommended_witness_roles`, describing the recipient's function in relation to the issuing entity (auditor, regulator, counsel, insurer, counterparty).
+Designated recipients in ActProof Events are addressed by email. Each recipient has a role drawn from the catalogue entry's `recommended_witness_roles`, describing the recipient's function in relation to the issuing entity (auditor, regulator, counsel, insurer, counterparty).
 
 Whether the email address belongs to an individual or to an organisational intake address is an implementation choice for the issuer. Both are supported. Organisational intake addresses (e.g., `audit-evidence@firm.example`) SHOULD be preferred for durability across staff changes at the receiving organisation.
 

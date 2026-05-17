@@ -1,6 +1,6 @@
 # Deprecated v1 catalogue entries
 
-This directory contains catalogue entries from v1 of the OpenProof Events substrate, when the substrate modelled regulated acts as voting events. These entries are retained for namespace preservation only. They are not loaded by the current catalogue loader for new issuance.
+This directory contains catalogue entries from v1 of the ActProof Events substrate, when the substrate modelled regulated acts as voting events. These entries are retained for namespace preservation only. They are not loaded by the current catalogue loader for new issuance.
 
 ## Why these were deprecated
 

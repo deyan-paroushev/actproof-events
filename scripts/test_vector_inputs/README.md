@@ -10,16 +10,16 @@ Evidence SHA-256 hashes in the input manifests are computed from deterministic U
 
 | Evidence label | Fixture content (exact bytes, including trailing newline) | SHA-256 |
 | --- | --- | --- |
-| `signed_resolution_or_minutes` (NIS2) | `OpenProof Events test fixture: NIS2 Article 20 board resolution v1\n` | `e70e000faf7b5f745d460da46e9a12f4d051eb7e3315af8130e2c2a864d0bcbc` |
-| `risk_management_measures_document` (NIS2) | `OpenProof Events test fixture: NIS2 Article 21 risk management measures document v1\n` | `9be63853a94ac3bcdc0993b4bee4d4bc87b800b343ea3c5a570cc1b9117defaa` |
-| `geojson_plot_geometries` (EUDR) | `OpenProof Events test fixture: EUDR GeoJSON plot geometries v1\n` | `42d181cc68e5b949ba042fbc0d28a976f65ca64687aa16fc79ce5a06ada0bc4e` |
-| `due_diligence_screening_report` (EUDR) | `OpenProof Events test fixture: EUDR due diligence screening report v1\n` | `11d539105027416569ffddd27c42b74dcf6de18472818e347bd51c1e3cfda131` |
+| `signed_resolution_or_minutes` (NIS2) | `ActProof Events test fixture: NIS2 Article 20 board resolution v1\n` | `e70e000faf7b5f745d460da46e9a12f4d051eb7e3315af8130e2c2a864d0bcbc` |
+| `risk_management_measures_document` (NIS2) | `ActProof Events test fixture: NIS2 Article 21 risk management measures document v1\n` | `9be63853a94ac3bcdc0993b4bee4d4bc87b800b343ea3c5a570cc1b9117defaa` |
+| `geojson_plot_geometries` (EUDR) | `ActProof Events test fixture: EUDR GeoJSON plot geometries v1\n` | `42d181cc68e5b949ba042fbc0d28a976f65ca64687aa16fc79ce5a06ada0bc4e` |
+| `due_diligence_screening_report` (EUDR) | `ActProof Events test fixture: EUDR due diligence screening report v1\n` | `11d539105027416569ffddd27c42b74dcf6de18472818e347bd51c1e3cfda131` |
 
 Reproducibility check (Python):
 
 ```python
 import hashlib
-hashlib.sha256(b"OpenProof Events test fixture: NIS2 Article 20 board resolution v1\n").hexdigest()
+hashlib.sha256(b"ActProof Events test fixture: NIS2 Article 20 board resolution v1\n").hexdigest()
 # expected: e70e000faf7b5f745d460da46e9a12f4d051eb7e3315af8130e2c2a864d0bcbc
 ```
 

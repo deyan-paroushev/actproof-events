@@ -1,14 +1,14 @@
-# Contributing to the OpenProof Events Act Catalogue
+# Contributing to the ActProof Events Act Catalogue
 
-This document describes the contribution flow for proposing new entries to the OpenProof Events federated act-type catalogue. It is distinct from general code contributions to the reference implementation, the specification text, or the test infrastructure, each of which follows the standard GitHub pull-request flow described in `CONTRIBUTING.md`.
+This document describes the contribution flow for proposing new entries to the ActProof Events federated act-type catalogue. It is distinct from general code contributions to the reference implementation, the specification text, or the test infrastructure, each of which follows the standard GitHub pull-request flow described in `CONTRIBUTING.md`.
 
 The catalogue is the substrate's mechanism for typing governance events by the regulatory or organizational act they record. Each catalogue entry codifies a recognized act (a NIS2 Article 20 director approval, an AI Act Article 26 deployer risk assessment, a corporate board resolution under articles of incorporation, an OpenSSF Alpha-Omega security advisory acknowledgment) as a structured schema that verifiers can apply to a receipt. The catalogue grows by accretion, not by central planning. Contributions are welcome from regulators, industry associations, standards bodies, downstream implementers, and individual experts.
 
 ## The two namespaces
 
-OpenProof Events uses two parallel catalogue namespaces.
+ActProof Events uses two parallel catalogue namespaces.
 
-The canonical namespace `op:` is maintained by the OpenProof Events project. Entries in this namespace represent acts with sufficient regulatory weight, structural clarity, and likely broad adoption to justify central curation. The canonical namespace is a quality bar. Submissions go through the review process described in this document.
+The canonical namespace `op:` is maintained by the ActProof Events project. Entries in this namespace represent acts with sufficient regulatory weight, structural clarity, and likely broad adoption to justify central curation. The canonical namespace is a quality bar. Submissions go through the review process described in this document.
 
 The third-party namespace `x.<reverse-dns>:` is permissionless. Any organization with control of a DNS domain may publish entries under that domain by serving JSON files at `.well-known/actproof-events/acts/`. No coordination with this project is required. No pull request is needed. Verifiers resolve third-party identifiers at receipt verification time by fetching the JSON from the authoritative DNS path.
 
@@ -42,7 +42,7 @@ The discussion step prevents duplicated effort and surfaces scoping concerns bef
 
 ### Step 2: Prepare the catalogue entry
 
-The catalogue entry is a single JSON file conforming to the `actproof.act_catalogue_entry.v1` schema defined in section 9.5 of the OpenProof Events specification. The file path follows the convention `catalogue/acts/<jurisdiction>/<instrument>/<article>/<short-name>.json`. For acts under EU directives or regulations, the convention is `catalogue/acts/eu/<directive-or-regulation>/<article>/<short-name>.json`. For acts under national law, `catalogue/acts/<iso-3166-1-alpha-2>/<instrument>/<short-name>.json`. For corporate or generic acts not tied to a specific jurisdiction, `catalogue/acts/corporate/<short-name>.json`.
+The catalogue entry is a single JSON file conforming to the `actproof.act_catalogue_entry.v1` schema defined in section 9.5 of the ActProof Events specification. The file path follows the convention `catalogue/acts/<jurisdiction>/<instrument>/<article>/<short-name>.json`. For acts under EU directives or regulations, the convention is `catalogue/acts/eu/<directive-or-regulation>/<article>/<short-name>.json`. For acts under national law, `catalogue/acts/<iso-3166-1-alpha-2>/<instrument>/<short-name>.json`. For corporate or generic acts not tied to a specific jurisdiction, `catalogue/acts/corporate/<short-name>.json`.
 
 The catalogue entry must contain all eleven required top-level fields specified in section 9.5 of the master specification: `schema`, `act_type_id`, `display_name`, `regulatory_citation`, `required_manifest_fields`, `method_constraints`, `receipt_profile_recommendations`, `version`, `supersedes`, `maintainer`, and `test_vector_reference`. The first canonical entry, `catalogue/acts/eu/nis2/art20/approval.json`, serves as the reference template for new submissions.
 
@@ -174,7 +174,7 @@ Where solo-maintainer bandwidth becomes a sustained bottleneck, the maintainer t
 
 ## Security disclosures
 
-Security issues affecting catalogue entries (incorrect citation, manifest fields that fail to detect material non-conformance, method constraints that admit improperly-validated decisions) should be reported by email to `deyan@advisa.tech` with the subject prefix `[OpenProof Security]`. The maintainer team commits to acknowledging receipt within five business days and coordinating disclosure timelines with the reporter.
+Security issues affecting catalogue entries (incorrect citation, manifest fields that fail to detect material non-conformance, method constraints that admit improperly-validated decisions) should be reported by email to `deyan@advisa.tech` with the subject prefix `[ActProof Security]`. The maintainer team commits to acknowledging receipt within five business days and coordinating disclosure timelines with the reporter.
 
 Security issues affecting the substrate specification, the reference implementation, or the verification logic follow the security disclosure process documented in the main repository security policy.
 

@@ -4,7 +4,7 @@
 
 Salt-erasure is a small standalone module that provides keyed pseudonymization of identifiers in audit trails, with a key-erasure operation that converts pseudonymous data into anonymized data per the European Data Protection Board's anonymization framework. The module is published under Apache License 2.0 and is intended to be drop-in usable in any system that needs to record verifiable governance evidence containing identifier references while preserving the option to make those references unlinkable at a later date.
 
-This module is one of several substrates published under the OpenProof Events project. It is independently consumable; nothing else in the OpenProof Events repository is required for it to function. The module's primary integration target is governance receipt issuance, where receipts anchored to public ledgers must remain verifiable indefinitely but the personal data referenced in the receipts must comply with GDPR Article 5(1)(e) storage limitation.
+This module is one of several substrates published under the ActProof Events project. It is independently consumable; nothing else in the ActProof Events repository is required for it to function. The module's primary integration target is governance receipt issuance, where receipts anchored to public ledgers must remain verifiable indefinitely but the personal data referenced in the receipts must comply with GDPR Article 5(1)(e) storage limitation.
 
 ## The tension this resolves
 
@@ -36,7 +36,7 @@ The security properties are those of HMAC-SHA-256 under standard assumptions. Sp
 
 The v1.0 module is published under Apache License 2.0. The Python reference implementation is operationally tested. The CC0-licensed test vector corpus demonstrates the before-erasure linkability and after-erasure unlinkability properties through reproducible test cases. The module is suitable for integration with governance receipt issuance systems that require GDPR-compliant audit trails.
 
-Deferred to future versions: a formal security analysis with externally-audited threat model, hardware security module (HSM) integration patterns for salt storage and erasure, cross-language reference implementations beyond Python, and integration with the OpenProof Events compact note schema for pseudonymous on-chain references.
+Deferred to future versions: a formal security analysis with externally-audited threat model, hardware security module (HSM) integration patterns for salt storage and erasure, cross-language reference implementations beyond Python, and integration with the ActProof Events compact note schema for pseudonymous on-chain references.
 
 ## Quick start
 
@@ -145,13 +145,13 @@ The substantive framework these documents establish is that data is "anonymized"
 
 This module is designed to be used as one component of an anonymization architecture that meets this framework. The cryptographic erasure of the salt is necessary but not sufficient. Operators must combine it with the data-management practices described in the previous section to claim anonymization under the EDPB framework.
 
-## Relationship to OpenProof Events receipts
+## Relationship to ActProof Events receipts
 
-In the OpenProof Events substrate, governance receipts may carry identifier references in the eligibility set, the action set, the tally output, the result, and the attachments. When these references include personal data, the salt-erasure module provides the recommended pseudonymization layer.
+In the ActProof Events substrate, governance receipts may carry identifier references in the eligibility set, the action set, the tally output, the result, and the attachments. When these references include personal data, the salt-erasure module provides the recommended pseudonymization layer.
 
 The typical integration pattern is to pseudonymize all identifier fields before computing the manifest hash. The manifest then contains pseudonyms rather than plaintext identifiers. The salt identifier (`salt_id`) is recorded in a non-anchored side-channel (the operator's internal records, the receipt's metadata in the operator-side database) so that authorized parties can determine which salt cohort applies to verification operations. The salt itself is held by the operator under appropriate access controls. When the retention period expires, the operator erases the salt, the linkage between pseudonyms and identifiers becomes unrecoverable, and the on-chain anchor remains as a verifiable but anonymized cryptographic artifact.
 
-A future revision of the OpenProof Events compact note schema may add an optional `salt_id` field to disclosed-mode notes, allowing receipts to declare which salt cohort their pseudonyms belong to. This is currently a documented schema gap for v1.4 amendment.
+A future revision of the ActProof Events compact note schema may add an optional `salt_id` field to disclosed-mode notes, allowing receipts to declare which salt cohort their pseudonyms belong to. This is currently a documented schema gap for v1.4 amendment.
 
 ## License
 
@@ -168,14 +168,14 @@ The module is small by design. Pull requests addressing the following areas are 
 - Threat model elaborations grounded in concrete deployment scenarios
 - Translations of this README into other languages
 
-Pull requests proposing to expand the cryptographic primitive itself (alternative HMAC functions, alternative pseudonymization constructions) should open a GitHub Discussion first to align on whether the addition belongs in this module or in a separate companion module under the OpenProof Events organization.
+Pull requests proposing to expand the cryptographic primitive itself (alternative HMAC functions, alternative pseudonymization constructions) should open a GitHub Discussion first to align on whether the addition belongs in this module or in a separate companion module under the ActProof Events organization.
 
-For security disclosures specific to this module, see the security disclosure section of the main OpenProof Events repository's CONTRIBUTING_ACTS.md document.
+For security disclosures specific to this module, see the security disclosure section of the main ActProof Events repository's CONTRIBUTING_ACTS.md document.
 
 ## Maintainers
 
-This module is currently maintained by Advisa EOOD (UIC 206448172, Sofia, Bulgaria), the company behind the Quoruna decision-recording product and the maintainer of the OpenProof Events substrate. Long-term governance of the salt-erasure module is expected to transition to a multi-organization maintainer team as the OpenProof Events substrate matures.
+This module is currently maintained by Advisa EOOD (UIC 206448172, Sofia, Bulgaria), the company behind the Quoruna decision-recording product and the maintainer of the ActProof Events substrate. Long-term governance of the salt-erasure module is expected to transition to a multi-organization maintainer team as the ActProof Events substrate matures.
 
 ## Contact
 
-For technical questions, open a GitHub issue against the OpenProof Events repository with the `salt-erasure` label. For collaboration inquiries or research partnership proposals, contact `deyan@advisa.tech`.
+For technical questions, open a GitHub issue against the ActProof Events repository with the `salt-erasure` label. For collaboration inquiries or research partnership proposals, contact `deyan@advisa.tech`.
