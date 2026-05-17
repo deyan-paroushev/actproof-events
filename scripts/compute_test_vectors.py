@@ -2,7 +2,7 @@
 """
 compute_test_vectors.py
 
-Generate OpenProof Events test vector files from raw manifest inputs.
+Generate ActProof Events test vector files from raw manifest inputs.
 
 A test vector binds a catalogue entry to a concrete example manifest and the
 deterministic outputs any conforming verifier should produce: the canonical
@@ -258,7 +258,7 @@ def compute_test_vector(
 def main():
     parser = argparse.ArgumentParser(
         description=(
-            "Compute OpenProof Events test vectors from a catalogue entry and "
+            "Compute ActProof Events test vectors from a catalogue entry and "
             "a manifest input. Deterministic: same inputs always produce the "
             "same hashes."
         )

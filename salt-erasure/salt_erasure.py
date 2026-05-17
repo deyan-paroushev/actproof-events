@@ -8,7 +8,7 @@ in audit trails, with a key-erasure operation that converts pseudonymous data
 into anonymized data per the European Data Protection Board's anonymization
 framework.
 
-Part of the OpenProof Events project. See README.md for full documentation,
+Part of the ActProof Events project. See README.md for full documentation,
 security model, integration guidance, and limitations.
 
 Quick example:
