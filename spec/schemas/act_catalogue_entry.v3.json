@@ -147,11 +147,13 @@
               "third_party_signing_service_certificate",
               "internal_attestation_record",
               "gpg_signed_release",
-              "sigstore_cosign_signature"
+              "sigstore_cosign_signature",
+              "in_toto_statement_v1",
+              "slsa_provenance_v1_attestation"
             ]
           },
           "uniqueItems": true,
-          "description": "Evidence label identifiers for externally produced signature artifacts the act type recognizes alongside issuer_record. Issuers who require eIDAS AES or QES MUST attach the corresponding artifact and reference it under one of these labels."
+          "description": "Evidence label identifiers for externally produced signature artifacts the act type recognizes alongside issuer_record. Issuers who require eIDAS AES or QES MUST attach the corresponding artifact and reference it under one of these labels. in_toto_statement_v1 and slsa_provenance_v1_attestation are recognised for software_release act types and map onto the in-toto and SLSA Provenance v1 vocabularies respectively; they are not eIDAS signatures."
         }
       },
       "description": "Signature evidence policy for this act type. Defines both the minimum acceptable commit action and the externally produced signature artifacts the act recognizes."

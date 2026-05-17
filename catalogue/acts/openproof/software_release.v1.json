@@ -1,0 +1,83 @@
+{
+  "schema": "openproof.act_catalogue_entry.v3",
+  "act_type_id": "op:openproof.software_release.v1",
+  "claim_type": "software_release",
+  "display_name": "Open-source software release attestation",
+  "regulatory_citation": null,
+  "required_claim_fields": [
+    "release_org",
+    "release_repository",
+    "release_version",
+    "release_commit_sha",
+    "release_published_at"
+  ],
+  "optional_claim_fields": [],
+  "required_evidence_labels": [
+    "release_manifest",
+    "release_artifact_checksums"
+  ],
+  "eligible_issuer_roles": [
+    "open_source_maintainer",
+    "software_publisher"
+  ],
+  "recommended_witness_roles": [
+    "maintainer",
+    "downstream_consumer",
+    "public_archive"
+  ],
+  "signature_policy": {
+    "minimum": "issuer_record",
+    "supports": [
+      "gpg_signed_release",
+      "sigstore_cosign_signature",
+      "in_toto_statement_v1",
+      "slsa_provenance_v1_attestation",
+      "internal_attestation_record"
+    ]
+  },
+  "version": 1,
+  "supersedes": null,
+  "maintainer": "openproof-events",
+  "test_vector_reference": "catalogue/acts/openproof/software_release.v1.test_vectors.json",
+  "regulated_context_profile": {
+    "allowed_context_types": ["release_or_publication"],
+    "allowed_submission_stages": ["prepared", "published", "superseded", "withdrawn"],
+    "default_context_type": "release_or_publication"
+  },
+  "prior_receipts_profile": {
+    "required_roles": [],
+    "optional_roles": ["upstream_dependency_release"]
+  },
+  "reliance_context": {
+    "issuer_role": "open-source maintainer issuing a release attestation",
+    "counterparty_action": "downstream consumer accepts the release for packaging, redistribution, or integration",
+    "later_verifiers": [
+      "grant_evaluator",
+      "downstream_integrator",
+      "public_archive",
+      "package_registry"
+    ],
+    "reliance_statement": "The named release was published at the stated commit on the stated date by the stated organisation."
+  },
+  "disclosure_profile": {
+    "public_fields": [
+      "release_org",
+      "release_repository",
+      "release_version",
+      "release_commit_sha",
+      "release_published_at",
+      "manifest.title",
+      "manifest.issuer.legal_name"
+    ],
+    "commitment_fields": [],
+    "private_fields": [],
+    "back_propagation_scope": {
+      "upstream_dependency_release": [
+        "manifest.claim.release_org",
+        "manifest.claim.release_repository",
+        "manifest.claim.release_version",
+        "manifest.claim.release_commit_sha"
+      ]
+    }
+  }
+}
