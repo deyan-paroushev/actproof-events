@@ -1,0 +1,114 @@
+{
+  "schema": "actproof.test_vector.v1",
+  "test_vector_id": "eudr_dds_v1_001",
+  "catalogue_act_type_id": "op:eu.eudr.dds_preparation.v1",
+  "catalogue_entry_version": 1,
+  "raw_manifest": {
+    "schema": "actproof.attestation_manifest.v1",
+    "manifest_version": 1,
+    "act_type_id": "op:eu.eudr.dds_preparation.v1",
+    "catalogue_entry_version": 1,
+    "tenant_id": "test-tenant-anubispar-001",
+    "issuer_org_name": "Anubispar Trading Ltd.",
+    "authority_label": "Compliance officer of Anubispar Trading Ltd.",
+    "title": "EUDR DDS preparation for cocoa lot CAC-2026-Q2-018",
+    "subtitle": "Due diligence statement prepared for shipment to EU operator",
+    "system_created_at": "2026-05-14T10:30:00Z",
+    "claim_fields": {
+      "operator_org_name": "Anubispar Trading Ltd.",
+      "operator_eori": "BG2026123456789",
+      "product_commodity_codes": [
+        "1801.00.00",
+        "1803.10.00"
+      ],
+      "country_of_production": "CI",
+      "preparation_timestamp": "2026-05-14T10:30:00Z",
+      "supplier_name": "Coopérative Agricole de Cacao",
+      "lot_reference": "CAC-2026-Q2-018",
+      "harvest_period": "2026-Q1",
+      "geometry_collection_reference": "geo-2026-q2-018-v1"
+    },
+    "evidence": [
+      {
+        "label": "geojson_plot_geometries",
+        "filename": "plots-cac-2026-q2-018.geojson",
+        "sha256_hex": "42d181cc68e5b949ba042fbc0d28a976f65ca64687aa16fc79ce5a06ada0bc4e",
+        "byte_size": 63
+      },
+      {
+        "label": "due_diligence_screening_report",
+        "filename": "screening-report-cac-2026-q2-018.pdf",
+        "sha256_hex": "11d539105027416569ffddd27c42b74dcf6de18472818e347bd51c1e3cfda131",
+        "byte_size": 69
+      }
+    ],
+    "recipients": [
+      {
+        "role": "downstream_buyer",
+        "org_name": "EU Cocoa Importers AG",
+        "email": "compliance@eu-cocoa-importers.example",
+        "purpose": "DDS reference distribution for downstream Article 4(8) retention"
+      },
+      {
+        "role": "competent_authority_supervisor",
+        "org_name": "Bulgarian Ministry of Environment and Water",
+        "email": "eudr-supervision@moew.example",
+        "purpose": "Authority inspection access"
+      },
+      {
+        "role": "supply_chain_finance_provider",
+        "org_name": "Trade Finance Bank AD",
+        "email": "trade-finance@tfbank.example",
+        "purpose": "Disbursement gate for trade finance facility"
+      }
+    ]
+  },
+  "manifest_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOmV1LmV1ZHIuZGRzX3ByZXBhcmF0aW9uLnYxIiwiYXV0aG9yaXR5X2xhYmVsIjoiQ29tcGxpYW5jZSBvZmZpY2VyIG9mIEFudWJpc3BhciBUcmFkaW5nIEx0ZC4iLCJjYXRhbG9ndWVfZW50cnlfdmVyc2lvbiI6MSwiY2xhaW1fZmllbGRzIjp7ImNvdW50cnlfb2ZfcHJvZHVjdGlvbiI6IkNJIiwiZ2VvbWV0cnlfY29sbGVjdGlvbl9yZWZlcmVuY2UiOiJnZW8tMjAyNi1xMi0wMTgtdjEiLCJoYXJ2ZXN0X3BlcmlvZCI6IjIwMjYtUTEiLCJsb3RfcmVmZXJlbmNlIjoiQ0FDLTIwMjYtUTItMDE4Iiwib3BlcmF0b3JfZW9yaSI6IkJHMjAyNjEyMzQ1Njc4OSIsIm9wZXJhdG9yX29yZ19uYW1lIjoiQW51YmlzcGFyIFRyYWRpbmcgTHRkLiIsInByZXBhcmF0aW9uX3RpbWVzdGFtcCI6IjIwMjYtMDUtMTRUMTA6MzA6MDBaIiwicHJvZHVjdF9jb21tb2RpdHlfY29kZXMiOlsiMTgwMS4wMC4wMCIsIjE4MDMuMTAuMDAiXSwic3VwcGxpZXJfbmFtZSI6IkNvb3DDqXJhdGl2ZSBBZ3JpY29sZSBkZSBDYWNhbyJ9LCJldmlkZW5jZSI6W3siYnl0ZV9zaXplIjo2MywiZmlsZW5hbWUiOiJwbG90cy1jYWMtMjAyNi1xMi0wMTguZ2VvanNvbiIsImxhYmVsIjoiZ2VvanNvbl9wbG90X2dlb21ldHJpZXMiLCJzaGEyNTZfaGV4IjoiNDJkMTgxY2M2OGU1Yjk0OWJhMDQyZmJjMGQyOGE5NzZmNjVjYTY0Njg3YWExNmZjNzljZTVhMDZhZGEwYmM0ZSJ9LHsiYnl0ZV9zaXplIjo2OSwiZmlsZW5hbWUiOiJzY3JlZW5pbmctcmVwb3J0LWNhYy0yMDI2LXEyLTAxOC5wZGYiLCJsYWJlbCI6ImR1ZV9kaWxpZ2VuY2Vfc2NyZWVuaW5nX3JlcG9ydCIsInNoYTI1Nl9oZXgiOiIxMWQ1MzkxMDUwMjc0MTY1NjlmZmRkZDI3YzQyYjc0ZGNmNmRlMTg0NzI4MThlMzQ3YmQ1MWMxZTNjZmRhMTMxIn1dLCJpc3N1ZXJfb3JnX25hbWUiOiJBbnViaXNwYXIgVHJhZGluZyBMdGQuIiwibWFuaWZlc3RfdmVyc2lvbiI6MSwicmVjaXBpZW50cyI6W3siZW1haWwiOiJjb21wbGlhbmNlQGV1LWNvY29hLWltcG9ydGVycy5leGFtcGxlIiwib3JnX25hbWUiOiJFVSBDb2NvYSBJbXBvcnRlcnMgQUciLCJwdXJwb3NlIjoiRERTIHJlZmVyZW5jZSBkaXN0cmlidXRpb24gZm9yIGRvd25zdHJlYW0gQXJ0aWNsZSA0KDgpIHJldGVudGlvbiIsInJvbGUiOiJkb3duc3RyZWFtX2J1eWVyIn0seyJlbWFpbCI6ImV1ZHItc3VwZXJ2aXNpb25AbW9ldy5leGFtcGxlIiwib3JnX25hbWUiOiJCdWxnYXJpYW4gTWluaXN0cnkgb2YgRW52aXJvbm1lbnQgYW5kIFdhdGVyIiwicHVycG9zZSI6IkF1dGhvcml0eSBpbnNwZWN0aW9uIGFjY2VzcyIsInJvbGUiOiJjb21wZXRlbnRfYXV0aG9yaXR5X3N1cGVydmlzb3IifSx7ImVtYWlsIjoidHJhZGUtZmluYW5jZUB0ZmJhbmsuZXhhbXBsZSIsIm9yZ19uYW1lIjoiVHJhZGUgRmluYW5jZSBCYW5rIEFEIiwicHVycG9zZSI6IkRpc2J1cnNlbWVudCBnYXRlIGZvciB0cmFkZSBmaW5hbmNlIGZhY2lsaXR5Iiwicm9sZSI6InN1cHBseV9jaGFpbl9maW5hbmNlX3Byb3ZpZGVyIn1dLCJzY2hlbWEiOiJvcGVucHJvb2YuYXR0ZXN0YXRpb25fbWFuaWZlc3QudjEiLCJzdWJ0aXRsZSI6IkR1ZSBkaWxpZ2VuY2Ugc3RhdGVtZW50IHByZXBhcmVkIGZvciBzaGlwbWVudCB0byBFVSBvcGVyYXRvciIsInN5c3RlbV9jcmVhdGVkX2F0IjoiMjAyNi0wNS0xNFQxMDozMDowMFoiLCJ0ZW5hbnRfaWQiOiJ0ZXN0LXRlbmFudC1hbnViaXNwYXItMDAxIiwidGl0bGUiOiJFVURSIEREUyBwcmVwYXJhdGlvbiBmb3IgY29jb2EgbG90IENBQy0yMDI2LVEyLTAxOCJ9",
+  "manifest_canonical_byte_length": 1785,
+  "manifest_hash_hex": "1f08883f3bbea95a6d59d66cec263a7fe102d37b7bbc024b4c0f91750774591c",
+  "merkle_root_hex": "1f08883f3bbea95a6d59d66cec263a7fe102d37b7bbc024b4c0f91750774591c",
+  "envelope": {
+    "schema": "actproof.attestation_envelope.v1",
+    "envelope_version": 1,
+    "act_type_id": "op:eu.eudr.dds_preparation.v1",
+    "catalogue_entry_version": 1,
+    "manifest_hash": "1f08883f3bbea95a6d59d66cec263a7fe102d37b7bbc024b4c0f91750774591c",
+    "merkle_root": "1f08883f3bbea95a6d59d66cec263a7fe102d37b7bbc024b4c0f91750774591c"
+  },
+  "envelope_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOmV1LmV1ZHIuZGRzX3ByZXBhcmF0aW9uLnYxIiwiY2F0YWxvZ3VlX2VudHJ5X3ZlcnNpb24iOjEsImVudmVsb3BlX3ZlcnNpb24iOjEsIm1hbmlmZXN0X2hhc2giOiIxZjA4ODgzZjNiYmVhOTVhNmQ1OWQ2NmNlYzI2M2E3ZmUxMDJkMzdiN2JiYzAyNGI0YzBmOTE3NTA3NzQ1OTFjIiwibWVya2xlX3Jvb3QiOiIxZjA4ODgzZjNiYmVhOTVhNmQ1OWQ2NmNlYzI2M2E3ZmUxMDJkMzdiN2JiYzAyNGI0YzBmOTE3NTA3NzQ1OTFjIiwic2NoZW1hIjoib3BlbnByb29mLmF0dGVzdGF0aW9uX2VudmVsb3BlLnYxIn0=",
+  "envelope_canonical_byte_length": 305,
+  "envelope_hash_hex": "0d2954ca7a2e7b3ec07b5a2e1e3271e7afca9a26b3b438a6874f4f30bc8d25c9",
+  "arc2_note": {
+    "mode": "disclosed",
+    "prefix": "quoruna/v1:",
+    "inner_canonical_b64": "eyJlIjoiRFNsVXlub3VlejdBZTFvdUhqSng1Nl9LbWlhenREaW1oMDlQTUx5TkpjayIsIm0iOjEsInEiOiIxIiwiciI6Ikh3aUlQenUtcVZwdFdkWnM3Q1k2Zi1FQzAzdDd2QUpMVEEtUmRRZDBXUnciLCJzIjoib3A6ZXUuZXVkci5kZHNfcHJlcGFyYXRpb24udjEiLCJ0IjoiYSJ9",
+    "full_note_b64": "cXVvcnVuYS92MTp7ImUiOiJEU2xVeW5vdWV6N0FlMW91SGpKeDU2X0ttaWF6dERpbWgwOVBNTHlOSmNrIiwibSI6MSwicSI6IjEiLCJyIjoiSHdpSVB6dS1xVnB0V2RaczdDWTZmLUVDMDN0N3ZBSkxUQS1SZFFkMFdSdyIsInMiOiJvcDpldS5ldWRyLmRkc19wcmVwYXJhdGlvbi52MSIsInQiOiJhIn0=",
+    "full_note_byte_length": 170,
+    "field_meanings": {
+      "r": "base64url-no-padding of merkle_root bytes",
+      "m": "number of leaves in the merkle tree",
+      "t": "type discriminator ('a' = attestation)",
+      "q": "Quoruna protocol version",
+      "e": "base64url-no-padding of envelope_hash bytes",
+      "s": "act_type_id (disclosed mode only)"
+    }
+  },
+  "reference_anchor": {
+    "network": "algorand-testnet",
+    "status": "placeholder",
+    "txid": null,
+    "round": null,
+    "anchored_at": null,
+    "anchoring_address": null,
+    "verify_url_template": "https://testnet.allo.info/tx/{txid}",
+    "instructions": "Decode arc2_note.full_note_b64 to raw bytes. Anchor those bytes as the transaction note from any funded Algorand testnet account. After confirmation, populate txid, round, anchored_at, and anchoring_address."
+  },
+  "expected_verifier_output": "PASS",
+  "verifier_checklist": [
+    "Recompute manifest_hash_hex by canonicalizing raw_manifest with RFC 8785 JCS and applying SHA-256",
+    "Confirm merkle_root_hex equals manifest_hash_hex (single-leaf tree convention for v2.0)",
+    "Recompute envelope_hash_hex by canonicalizing envelope with RFC 8785 JCS and applying SHA-256",
+    "Recompose arc2_note.full_note_b64 by concatenating the prefix bytes with the canonical note inner bytes",
+    "Once reference_anchor.txid is populated, fetch the on-chain note and confirm byte-identical match"
+  ]
+}

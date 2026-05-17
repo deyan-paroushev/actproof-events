@@ -1,0 +1,106 @@
+{
+  "schema": "actproof.test_vector.v1",
+  "test_vector_id": "nis2_art20_v1_001",
+  "catalogue_act_type_id": "op:eu.nis2.art20.management_body_approval.v1",
+  "catalogue_entry_version": 1,
+  "raw_manifest": {
+    "schema": "actproof.attestation_manifest.v1",
+    "manifest_version": 1,
+    "act_type_id": "op:eu.nis2.art20.management_body_approval.v1",
+    "catalogue_entry_version": 1,
+    "tenant_id": "test-tenant-acme-001",
+    "issuer_org_name": "Acme Essential Entity Ltd.",
+    "authority_label": "Management body of Acme Essential Entity Ltd.",
+    "title": "Q2 2026 NIS2 risk-management measures approval",
+    "subtitle": "Board approval of cybersecurity measures",
+    "system_created_at": "2026-05-14T10:00:00Z",
+    "claim_fields": {
+      "approving_body_name": "Acme Board of Directors",
+      "decision_date": "2026-05-14",
+      "approved_measures_summary": "Approval of the 2026 cybersecurity risk-management framework including incident response procedures, access controls, encryption standards, vendor risk assessments, and business continuity plans.",
+      "authority_basis_reference": "Board resolution 2026/05/14-01",
+      "responsible_officers": [
+        "Jane Doe (CISO)",
+        "John Smith (CEO)"
+      ],
+      "implementation_oversight_reference": "Q3 2026 internal audit schedule",
+      "meeting_minutes_reference": "Board minutes 2026-05-14"
+    },
+    "evidence": [
+      {
+        "label": "signed_resolution_or_minutes",
+        "filename": "board-resolution-2026-05-14.pdf",
+        "sha256_hex": "e70e000faf7b5f745d460da46e9a12f4d051eb7e3315af8130e2c2a864d0bcbc",
+        "byte_size": 64
+      },
+      {
+        "label": "risk_management_measures_document",
+        "filename": "nis2-risk-measures-2026.pdf",
+        "sha256_hex": "9be63853a94ac3bcdc0993b4bee4d4bc87b800b343ea3c5a570cc1b9117defaa",
+        "byte_size": 85
+      }
+    ],
+    "recipients": [
+      {
+        "role": "external_auditor",
+        "org_name": "Acme Auditors LLC",
+        "email": "evidence@acme-auditors.example",
+        "purpose": "Annual NIS2 compliance audit"
+      },
+      {
+        "role": "do_insurer",
+        "org_name": "Underwriters AG",
+        "email": "do-underwriting@underwriters.example",
+        "purpose": "D&O policy renewal underwriting"
+      }
+    ]
+  },
+  "manifest_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOmV1Lm5pczIuYXJ0MjAubWFuYWdlbWVudF9ib2R5X2FwcHJvdmFsLnYxIiwiYXV0aG9yaXR5X2xhYmVsIjoiTWFuYWdlbWVudCBib2R5IG9mIEFjbWUgRXNzZW50aWFsIEVudGl0eSBMdGQuIiwiY2F0YWxvZ3VlX2VudHJ5X3ZlcnNpb24iOjEsImNsYWltX2ZpZWxkcyI6eyJhcHByb3ZlZF9tZWFzdXJlc19zdW1tYXJ5IjoiQXBwcm92YWwgb2YgdGhlIDIwMjYgY3liZXJzZWN1cml0eSByaXNrLW1hbmFnZW1lbnQgZnJhbWV3b3JrIGluY2x1ZGluZyBpbmNpZGVudCByZXNwb25zZSBwcm9jZWR1cmVzLCBhY2Nlc3MgY29udHJvbHMsIGVuY3J5cHRpb24gc3RhbmRhcmRzLCB2ZW5kb3IgcmlzayBhc3Nlc3NtZW50cywgYW5kIGJ1c2luZXNzIGNvbnRpbnVpdHkgcGxhbnMuIiwiYXBwcm92aW5nX2JvZHlfbmFtZSI6IkFjbWUgQm9hcmQgb2YgRGlyZWN0b3JzIiwiYXV0aG9yaXR5X2Jhc2lzX3JlZmVyZW5jZSI6IkJvYXJkIHJlc29sdXRpb24gMjAyNi8wNS8xNC0wMSIsImRlY2lzaW9uX2RhdGUiOiIyMDI2LTA1LTE0IiwiaW1wbGVtZW50YXRpb25fb3ZlcnNpZ2h0X3JlZmVyZW5jZSI6IlEzIDIwMjYgaW50ZXJuYWwgYXVkaXQgc2NoZWR1bGUiLCJtZWV0aW5nX21pbnV0ZXNfcmVmZXJlbmNlIjoiQm9hcmQgbWludXRlcyAyMDI2LTA1LTE0IiwicmVzcG9uc2libGVfb2ZmaWNlcnMiOlsiSmFuZSBEb2UgKENJU08pIiwiSm9obiBTbWl0aCAoQ0VPKSJdfSwiZXZpZGVuY2UiOlt7ImJ5dGVfc2l6ZSI6NjQsImZpbGVuYW1lIjoiYm9hcmQtcmVzb2x1dGlvbi0yMDI2LTA1LTE0LnBkZiIsImxhYmVsIjoic2lnbmVkX3Jlc29sdXRpb25fb3JfbWludXRlcyIsInNoYTI1Nl9oZXgiOiJlNzBlMDAwZmFmN2I1Zjc0NWQ0NjBkYTQ2ZTlhMTJmNGQwNTFlYjdlMzMxNWFmODEzMGUyYzJhODY0ZDBiY2JjIn0seyJieXRlX3NpemUiOjg1LCJmaWxlbmFtZSI6Im5pczItcmlzay1tZWFzdXJlcy0yMDI2LnBkZiIsImxhYmVsIjoicmlza19tYW5hZ2VtZW50X21lYXN1cmVzX2RvY3VtZW50Iiwic2hhMjU2X2hleCI6IjliZTYzODUzYTk0YWMzYmNkYzA5OTNiNGJlZTRkNGJjODdiODAwYjM0M2VhM2M1YTU3MGNjMWI5MTE3ZGVmYWEifV0sImlzc3Vlcl9vcmdfbmFtZSI6IkFjbWUgRXNzZW50aWFsIEVudGl0eSBMdGQuIiwibWFuaWZlc3RfdmVyc2lvbiI6MSwicmVjaXBpZW50cyI6W3siZW1haWwiOiJldmlkZW5jZUBhY21lLWF1ZGl0b3JzLmV4YW1wbGUiLCJvcmdfbmFtZSI6IkFjbWUgQXVkaXRvcnMgTExDIiwicHVycG9zZSI6IkFubnVhbCBOSVMyIGNvbXBsaWFuY2UgYXVkaXQiLCJyb2xlIjoiZXh0ZXJuYWxfYXVkaXRvciJ9LHsiZW1haWwiOiJkby11bmRlcndyaXRpbmdAdW5kZXJ3cml0ZXJzLmV4YW1wbGUiLCJvcmdfbmFtZSI6IlVuZGVyd3JpdGVycyBBRyIsInB1cnBvc2UiOiJEJk8gcG9saWN5IHJlbmV3YWwgdW5kZXJ3cml0aW5nIiwicm9sZSI6ImRvX2luc3VyZXIifV0sInNjaGVtYSI6Im9wZW5wcm9vZi5hdHRlc3RhdGlvbl9tYW5pZmVzdC52MSIsInN1YnRpdGxlIjoiQm9hcmQgYXBwcm92YWwgb2YgY3liZXJzZWN1cml0eSBtZWFzdXJlcyIsInN5c3RlbV9jcmVhdGVkX2F0IjoiMjAyNi0wNS0xNFQxMDowMDowMFoiLCJ0ZW5hbnRfaWQiOiJ0ZXN0LXRlbmFudC1hY21lLTAwMSIsInRpdGxlIjoiUTIgMjAyNiBOSVMyIHJpc2stbWFuYWdlbWVudCBtZWFzdXJlcyBhcHByb3ZhbCJ9",
+  "manifest_canonical_byte_length": 1701,
+  "manifest_hash_hex": "2f236bf29455a62621308d82b82c99677eb14ca862cb55c00a2593407805fcfe",
+  "merkle_root_hex": "2f236bf29455a62621308d82b82c99677eb14ca862cb55c00a2593407805fcfe",
+  "envelope": {
+    "schema": "actproof.attestation_envelope.v1",
+    "envelope_version": 1,
+    "act_type_id": "op:eu.nis2.art20.management_body_approval.v1",
+    "catalogue_entry_version": 1,
+    "manifest_hash": "2f236bf29455a62621308d82b82c99677eb14ca862cb55c00a2593407805fcfe",
+    "merkle_root": "2f236bf29455a62621308d82b82c99677eb14ca862cb55c00a2593407805fcfe"
+  },
+  "envelope_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOmV1Lm5pczIuYXJ0MjAubWFuYWdlbWVudF9ib2R5X2FwcHJvdmFsLnYxIiwiY2F0YWxvZ3VlX2VudHJ5X3ZlcnNpb24iOjEsImVudmVsb3BlX3ZlcnNpb24iOjEsIm1hbmlmZXN0X2hhc2giOiIyZjIzNmJmMjk0NTVhNjI2MjEzMDhkODJiODJjOTk2NzdlYjE0Y2E4NjJjYjU1YzAwYTI1OTM0MDc4MDVmY2ZlIiwibWVya2xlX3Jvb3QiOiIyZjIzNmJmMjk0NTVhNjI2MjEzMDhkODJiODJjOTk2NzdlYjE0Y2E4NjJjYjU1YzAwYTI1OTM0MDc4MDVmY2ZlIiwic2NoZW1hIjoib3BlbnByb29mLmF0dGVzdGF0aW9uX2VudmVsb3BlLnYxIn0=",
+  "envelope_canonical_byte_length": 320,
+  "envelope_hash_hex": "63c0d1ba04b0d046ed72dd9e54f0ce44eb5f6e1b92194a7d188fa1776555d88f",
+  "arc2_note": {
+    "mode": "disclosed",
+    "prefix": "quoruna/v1:",
+    "inner_canonical_b64": "eyJlIjoiWThEUnVnU3cwRWJ0Y3QyZVZQRE9ST3RmYmh1U0dVcDlHSS1oZDJWVjJJOCIsIm0iOjEsInEiOiIxIiwiciI6Ikx5TnI4cFJWcGlZaE1JMkN1Q3laWjM2eFRLaGl5MVhBQ2lXVFFIZ0ZfUDQiLCJzIjoib3A6ZXUubmlzMi5hcnQyMC5tYW5hZ2VtZW50X2JvZHlfYXBwcm92YWwudjEiLCJ0IjoiYSJ9",
+    "full_note_b64": "cXVvcnVuYS92MTp7ImUiOiJZOERSdWdTdzBFYnRjdDJlVlBET1JPdGZiaHVTR1VwOUdJLWhkMlZWMkk4IiwibSI6MSwicSI6IjEiLCJyIjoiTHlOcjhwUlZwaVloTUkyQ3VDeVpaMzZ4VEtoaXkxWEFDaVdUUUhnRl9QNCIsInMiOiJvcDpldS5uaXMyLmFydDIwLm1hbmFnZW1lbnRfYm9keV9hcHByb3ZhbC52MSIsInQiOiJhIn0=",
+    "full_note_byte_length": 185,
+    "field_meanings": {
+      "r": "base64url-no-padding of merkle_root bytes",
+      "m": "number of leaves in the merkle tree",
+      "t": "type discriminator ('a' = attestation)",
+      "q": "Quoruna protocol version",
+      "e": "base64url-no-padding of envelope_hash bytes",
+      "s": "act_type_id (disclosed mode only)"
+    }
+  },
+  "reference_anchor": {
+    "network": "algorand-testnet",
+    "status": "placeholder",
+    "txid": null,
+    "round": null,
+    "anchored_at": null,
+    "anchoring_address": null,
+    "verify_url_template": "https://testnet.allo.info/tx/{txid}",
+    "instructions": "Decode arc2_note.full_note_b64 to raw bytes. Anchor those bytes as the transaction note from any funded Algorand testnet account. After confirmation, populate txid, round, anchored_at, and anchoring_address."
+  },
+  "expected_verifier_output": "PASS",
+  "verifier_checklist": [
+    "Recompute manifest_hash_hex by canonicalizing raw_manifest with RFC 8785 JCS and applying SHA-256",
+    "Confirm merkle_root_hex equals manifest_hash_hex (single-leaf tree convention for v2.0)",
+    "Recompute envelope_hash_hex by canonicalizing envelope with RFC 8785 JCS and applying SHA-256",
+    "Recompose arc2_note.full_note_b64 by concatenating the prefix bytes with the canonical note inner bytes",
+    "Once reference_anchor.txid is populated, fetch the on-chain note and confirm byte-identical match"
+  ]
+}

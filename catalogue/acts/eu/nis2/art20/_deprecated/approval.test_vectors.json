@@ -1,0 +1,219 @@
+{
+  "schema": "actproof.act_catalogue_test_vectors.v1",
+  "act_type_id": "op:eu.nis2.art20.approval",
+  "catalogue_entry_reference": "catalogue/acts/eu/nis2/art20/approval.json",
+  "corpus_version": "1.0",
+  "corpus_published": "2026-05-13",
+  "license": "CC0-1.0",
+  "hash_format_notice": "Manifest hash placeholders in this corpus are synthetic, derived deterministically from the test-vector id and field name via SHA-256 of the seed string 'actproof.testvector.nis2.art20.<tv_id>.<field>'. They have the correct shape (32-byte SHA-256, hex or base64url-encoded) but are not computed from canonical manifest inputs. Corpus v1.1 will replace these with reproducible hashes computed from documented canonical inputs in a companion test-vectors/inputs/ directory. The catalogue-conformance verification path exercised by these vectors is independent of the cryptographic verification path and does not require resolved inputs.",
+  "verifier_result_code_notice": "Test vectors 2 and 3 use result codes FAIL_MANIFEST_METHOD_NOT_ALLOWED and FAIL_MANIFEST_QUORUM_BELOW_THRESHOLD that are proposed for inclusion in v1.4 of the master spec amendment, not present in v1.3. Master spec amendment v1.3 §9.6 defines PASS_WITH_SEMANTICS as requiring the manifest to conform to the catalogue entry's required fields and method constraints, but does not define explicit failure codes for the negative cases. Implementations against v1.3 may report these failures as PASS_WITH_SEMANTICS with a structured conformance result field, or as an unstructured fail. Implementations against v1.4 are expected to use the explicit codes.",
+  "test_vectors": [
+    {
+      "id": "tv01_positive_simple_majority_conformant",
+      "description": "A NIS2 Article 20 approval by the management body of a fictitious Bulgarian energy-sector essential entity, using simple majority voting with the catalogue minimum quorum, with all required manifest fields present. Expected to produce PASS_WITH_SEMANTICS.",
+      "scenario_narrative": "On 15 April 2026 at 10:30 UTC, the management body of Acme Energy Bulgaria approved the company's cybersecurity risk-management measures under NIS2 Article 20. The board has 11 directors. The vote used simple_majority_v1 with quorum at 5001 basis points (more than 50% present) and threshold at 5001 basis points (more than 50% of votes cast in favour). All three required attachments (the risk-management measures document, the supervisory authority notification draft, and the implementation timeline) are present.",
+      "manifest": {
+        "manifest_version": "quoruna.manifest.v1",
+        "decision_id": "550e8400-e29b-41d4-a716-446655440001",
+        "decision_type": "regulatory_approval",
+        "tenant_id": "acme-energy-bg",
+        "system_created_at": "2026-04-15T10:30:00Z",
+        "method_parameters": {
+          "method_id": "simple_majority_v1",
+          "threshold_basis_points": 5001,
+          "quorum_basis_points": 5001,
+          "duration_seconds": 1800
+        },
+        "tally_algorithm_profile": "quoruna.simple_majority_v1",
+        "tally_algorithm_hash": "sha256:3e10d422f3d6f8c2aea0be0f7b09c3cc0fd0d4b57ccf348b18d91b4448e74ded",
+        "eligibility_snapshot_hash": "sha256:9890a05db4c1d35779c627152e6c5b4eec477d8d3e5f2b20096e57b82fdd57b4",
+        "action_set_hash": "sha256:abf0a1a8cd84bee6d1f32eda1817b032bd67479f00abbc21e8a1c5c90ceea8b0",
+        "tally_input_hash": "sha256:86d0da3ff96a9582b68fcc4669920c0c2653c21f55785612cfb01514b96f01e6",
+        "tally_output_hash": "sha256:4338b4e9875880eeba46c72374907859cb8717d1e7fb9126f1f147f2b536a2f0",
+        "result_hash": "sha256:17e283dd0600b11f0845418f20b7b73e3c41ff77f55dd5865801583352429fb0",
+        "attachment_hashes": [
+          {"label": "risk_management_measures", "hash": "sha256:76f1fedbc11ca1c33edacac364d2fc526885dd0b18e101fd4f18d4bf9007c6f5"},
+          {"label": "supervisory_authority_notification", "hash": "sha256:2c8ffac273b89eca8db7db8db4c279c9412d43e3c5872f2068150cc760776a70"},
+          {"label": "implementation_timeline", "hash": "sha256:35d21fd566d90a62e4b658e049409adb7620c148648f823f9a2ace3d99bf0920"}
+        ],
+        "schema_version": "quoruna.manifest.v1",
+        "canonicalisation_profile": "quoruna-jcs-v1",
+        "software_version": "quoruna-anchoring-1.0.0",
+        "verifier_profile": "quoruna-verifier-v1"
+      },
+      "compact_note": {
+        "q": "1",
+        "t": "a",
+        "r": "Vz7tviLKIGm2SeG35MWC4sHWA8VJam-mqnaFrpAphzk",
+        "e": "jXgGPD_sXEne-tgKod5FMTfanubuWPVnUH9PFm9jFxA",
+        "m": 1,
+        "s": "op:eu.nis2.art20.approval"
+      },
+      "expected_catalogue_conformance": {
+        "conformant": true,
+        "violations": [],
+        "checks_performed": [
+          "act_type_grammar_well_formed",
+          "catalogue_entry_resolved",
+          "required_manifest_fields_present",
+          "method_id_in_allowed_list",
+          "quorum_basis_points_at_or_above_minimum"
+        ]
+      },
+      "expected_combined_verifier_result": "PASS_WITH_SEMANTICS",
+      "rationale": "All thirteen required_manifest_fields are present in the manifest. The method_id simple_majority_v1 is in the allowed_method_ids list. The quorum_basis_points value of 5001 meets the catalogue minimum of 5001 (the boundary case). The decision_type is regulatory_approval, the tenant_id and system_created_at are present, and three attachment_hashes entries are present including the load-bearing risk_management_measures attachment that NIS2 Article 20 substantively requires. The compact note carries the act-type identifier in disclosed mode with version, type, merkle root, envelope hash, manifest count, and s field all conforming to §9.2 of the amendment. Under v1.3 §9.6 semantics, the verifier returns PASS_WITH_SEMANTICS."
+    },
+    {
+      "id": "tv02_negative_method_id_not_in_allowed_list",
+      "description": "A claimed NIS2 Article 20 approval using a method (plurality_v1) that is not in the catalogue entry's allowed_method_ids list. The cryptographic proof path is intact and the s field is well-formed, but the manifest fails catalogue conformance. Expected to produce FAIL_MANIFEST_METHOD_NOT_ALLOWED (proposed v1.4 code).",
+      "scenario_narrative": "The same management body attempts to record an approval using plurality_v1 (first-past-the-post without majority requirement) rather than one of the four approval-family methods the catalogue entry permits. Plurality without majority is not a valid management-body decision method under most EU company law and does not satisfy the NIS2 'management body approves' standard.",
+      "manifest": {
+        "manifest_version": "quoruna.manifest.v1",
+        "decision_id": "550e8400-e29b-41d4-a716-446655440002",
+        "decision_type": "regulatory_approval",
+        "tenant_id": "acme-energy-bg",
+        "system_created_at": "2026-04-22T14:15:00Z",
+        "method_parameters": {
+          "method_id": "plurality_v1",
+          "threshold_basis_points": 4000,
+          "quorum_basis_points": 5001,
+          "duration_seconds": 1800
+        },
+        "tally_algorithm_profile": "quoruna.plurality_v1",
+        "tally_algorithm_hash": "sha256:3581e420a88e93fcbffdae77dd8f903566e329bcd30d1d804241f45eeeb36f1c",
+        "eligibility_snapshot_hash": "sha256:70c2fd8afa591a0aa89f1817751ed4b6617963df46ca7fdcdea7ac239c12fdf5",
+        "action_set_hash": "sha256:5fad62affb80f71c3edd4538c193a3f60850102880c765c4886a1cb54d4fe9cf",
+        "tally_input_hash": "sha256:9e87fb245170d3ace2f880781dd9cf37c30d1d18df8fa92fe14f58253adb8c84",
+        "tally_output_hash": "sha256:0de603df3bbf186f8e315558be6ce540a77f035fc900226de2a4b2e87e1036c2",
+        "result_hash": "sha256:7f21d46512968eb61d83b9b27123192da1d3a9564ce5fca49b0f8855ca853355",
+        "attachment_hashes": [
+          {"label": "risk_management_measures", "hash": "sha256:9a5abbdbc93569b8ec4291654a77a01c01e7dc1f8b5becf0a9d549f27a9e96e8"},
+          {"label": "supervisory_authority_notification", "hash": "sha256:e6b736814393a5bf9a20925254aa1638c62b62b4ce84ef2eea396ae07d0589e0"},
+          {"label": "implementation_timeline", "hash": "sha256:f99af51bdc1586fbfa0b5512a02df51cb95528cd659ab96d0a340868b9cdec4c"}
+        ],
+        "schema_version": "quoruna.manifest.v1",
+        "canonicalisation_profile": "quoruna-jcs-v1",
+        "software_version": "quoruna-anchoring-1.0.0",
+        "verifier_profile": "quoruna-verifier-v1"
+      },
+      "compact_note": {
+        "q": "1",
+        "t": "a",
+        "r": "jm4p0mzyasDMjGXCFGk9vzFaqn_wfnK5qgUHIOOZH3c",
+        "e": "1qU_DADuL_YvujIkPx9n2Ly_EtupDKOnFdTh5OPPxC8",
+        "m": 1,
+        "s": "op:eu.nis2.art20.approval"
+      },
+      "expected_catalogue_conformance": {
+        "conformant": false,
+        "violations": [
+          {
+            "type": "method_id_not_in_allowed_list",
+            "field": "method_parameters.method_id",
+            "expected_one_of": ["simple_majority_v1", "supermajority_two_thirds_v1", "approval_voting_v1", "consent_based_v1"],
+            "actual": "plurality_v1",
+            "constraint_source": "catalogue_entry.method_constraints.allowed_method_ids"
+          }
+        ],
+        "checks_performed": [
+          "act_type_grammar_well_formed",
+          "catalogue_entry_resolved",
+          "required_manifest_fields_present",
+          "method_id_in_allowed_list",
+          "quorum_basis_points_at_or_above_minimum"
+        ]
+      },
+      "expected_combined_verifier_result": "FAIL_MANIFEST_METHOD_NOT_ALLOWED",
+      "rationale": "The s field is well-formed and the catalogue entry resolves successfully. The required manifest fields are all present and the quorum value satisfies the minimum. The single point of failure is that plurality_v1 is not in the allowed_method_ids list for op:eu.nis2.art20.approval. Under v1.3 §9.6 the verifier cannot return PASS_WITH_SEMANTICS because the conformance check fails, and v1.3 does not define an explicit failure code for this case. The expected_combined_verifier_result FAIL_MANIFEST_METHOD_NOT_ALLOWED is proposed for v1.4. A v1.3 implementation may return PASS_WITH_SEMANTICS with a structured conformance result indicating the violation, or may surface a generic conformance failure. The test vector documents the intended behaviour for both versions."
+    },
+    {
+      "id": "tv03_negative_quorum_below_catalogue_minimum",
+      "description": "A claimed NIS2 Article 20 approval using an allowed method (simple_majority_v1) but with a quorum threshold of 4000 basis points, below the catalogue entry's minimum_quorum_basis_points of 5001. Expected to produce FAIL_MANIFEST_QUORUM_BELOW_THRESHOLD (proposed v1.4 code).",
+      "scenario_narrative": "The same management body attempts to record an approval where the decision-rules quorum is 40% of the management body. NIS2 Article 20 requires that the management body (collectively) approves the cybersecurity risk-management measures. A 40% quorum rule means the decision could be valid with only four of eleven directors present, which does not satisfy the substantive requirement that the management body itself has approved. The catalogue entry encodes this floor as minimum_quorum_basis_points = 5001.",
+      "manifest": {
+        "manifest_version": "quoruna.manifest.v1",
+        "decision_id": "550e8400-e29b-41d4-a716-446655440003",
+        "decision_type": "regulatory_approval",
+        "tenant_id": "acme-energy-bg",
+        "system_created_at": "2026-04-29T09:45:00Z",
+        "method_parameters": {
+          "method_id": "simple_majority_v1",
+          "threshold_basis_points": 5001,
+          "quorum_basis_points": 4000,
+          "duration_seconds": 1800
+        },
+        "tally_algorithm_profile": "quoruna.simple_majority_v1",
+        "tally_algorithm_hash": "sha256:b06aa34f435833a9a6a6882b5b9dc62e62dd386cb205edc96dc5e8754553a83c",
+        "eligibility_snapshot_hash": "sha256:b0733754f74dc2413a85f859eb430ece472356d925bc153888a3ed73f1dd3c56",
+        "action_set_hash": "sha256:7b1063c27f5c352e39c0d99b716ca38d7e57eb44ce8c298c19d974df728e4a3b",
+        "tally_input_hash": "sha256:c1d6f449a816152d401d4db6aac142270cbef2ac08d6cb42309de97cf636b75a",
+        "tally_output_hash": "sha256:4c7d8b66a5c3a76271ff689c3342a5d65ae67b24c992986f9af3f393cd77e8d2",
+        "result_hash": "sha256:3ba516a91640e71fa864d58383daded60727606285bdeb36fe90c28e69bafdaa",
+        "attachment_hashes": [
+          {"label": "risk_management_measures", "hash": "sha256:da2529db7723074f13a9b1e58e8174297b307a6b1bb23c228fc2d2dcb50eac05"},
+          {"label": "supervisory_authority_notification", "hash": "sha256:1344d25ca265c44affc4a845af30a4e2126f30db78141c21db16b9aeac673be6"},
+          {"label": "implementation_timeline", "hash": "sha256:e6b6edd537ace1a079f28e628fb728d245f228b5a40a2ea45040eef4f1cc8435"}
+        ],
+        "schema_version": "quoruna.manifest.v1",
+        "canonicalisation_profile": "quoruna-jcs-v1",
+        "software_version": "quoruna-anchoring-1.0.0",
+        "verifier_profile": "quoruna-verifier-v1"
+      },
+      "compact_note": {
+        "q": "1",
+        "t": "a",
+        "r": "cGP3k9hDCFoKibw_w-B88WbdVs1ZDaQbCEtJ-IUWfhw",
+        "e": "CcNNUT2QrK3s6s7MVKbecAi1KkuULLd_miefLgxctZo",
+        "m": 1,
+        "s": "op:eu.nis2.art20.approval"
+      },
+      "expected_catalogue_conformance": {
+        "conformant": false,
+        "violations": [
+          {
+            "type": "quorum_below_catalogue_minimum",
+            "field": "method_parameters.quorum_basis_points",
+            "expected_minimum": 5001,
+            "actual": 4000,
+            "constraint_source": "catalogue_entry.method_constraints.minimum_quorum_basis_points"
+          }
+        ],
+        "checks_performed": [
+          "act_type_grammar_well_formed",
+          "catalogue_entry_resolved",
+          "required_manifest_fields_present",
+          "method_id_in_allowed_list",
+          "quorum_basis_points_at_or_above_minimum"
+        ]
+      },
+      "expected_combined_verifier_result": "FAIL_MANIFEST_QUORUM_BELOW_THRESHOLD",
+      "rationale": "All required fields are present, the s field is well-formed, the catalogue entry resolves, and the method id is in the allowed list. The single point of failure is that the manifest's method_parameters.quorum_basis_points of 4000 falls below the catalogue entry's minimum_quorum_basis_points of 5001. This negative case demonstrates that the catalogue entry encodes the substantive regulatory requirement (management body, more than half present) as a numeric constraint, and that a verifier reading the catalogue entry can mechanically detect non-conformance even when the cryptographic proof path is otherwise valid. The expected_combined_verifier_result is proposed for v1.4 of the master spec amendment."
+    }
+  ],
+  "gaps_surfaced_for_v1_4_amendment": [
+    {
+      "gap_id": "g01_missing_result_codes_for_catalogue_conformance_failures",
+      "description": "Master spec amendment v1.3 §9.6 defines PASS_WITH_SEMANTICS as requiring conformance to the catalogue entry, but does not define explicit failure codes for the three obvious catalogue-conformance failure modes. v1.4 should add FAIL_MANIFEST_METHOD_NOT_ALLOWED (method_id not in allowed_method_ids), FAIL_MANIFEST_QUORUM_BELOW_THRESHOLD (quorum_basis_points below minimum_quorum_basis_points), and FAIL_MANIFEST_MISSING_REQUIRED_FIELDS (one or more required_manifest_fields absent from the manifest). All three failures share the structural property that the cryptographic proof path is intact and the s field is well-formed but the manifest does not match the catalogue entry's substantive constraints.",
+      "severity": "moderate",
+      "blocking_v1_3": false,
+      "blocking_v1_4": true
+    },
+    {
+      "gap_id": "g02_structured_conformance_result_field",
+      "description": "Beyond the result code, the verifier output for disclosed-mode anchors should carry a structured conformance result object that lists which checks were performed and which violations were detected. The test vectors in this corpus model this with expected_catalogue_conformance, but v1.3 of the amendment does not specify the verifier output schema. v1.4 should formalise the conformance result schema, including the violation object structure used in tv02 and tv03 of this corpus.",
+      "severity": "moderate",
+      "blocking_v1_3": false,
+      "blocking_v1_4": true
+    },
+    {
+      "gap_id": "g03_attachment_label_constraints",
+      "description": "The catalogue entry can require that attachment_hashes is present but cannot require that a specific labeled attachment (for example, the risk_management_measures document for NIS2 Article 20) is present within the array. This was already noted as a gap in the catalogue entry schema design. The test vectors here document the convention informally by including the load-bearing attachment in all three vectors and labelling it explicitly, but a conformant verifier cannot enforce the requirement against this v1.0 catalogue entry. v1.4 of the catalogue entry schema should add required_attachment_labels as an optional array.",
+      "severity": "moderate",
+      "blocking_v1_3": false,
+      "blocking_v1_4": false,
+      "deferral_note": "Surfaces an unrelated v1.4 catalogue entry schema gap, not a v1.4 amendment gap. Addressed in the catalogue entry schema iteration, not in the master spec amendment."
+    }
+  ],
+  "maintainer": "actproof-events",
+  "contact": "https://github.com/deyan-paroushev/actproof-events/issues"
+}

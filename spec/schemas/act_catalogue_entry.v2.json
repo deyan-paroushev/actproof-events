@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actproof.events/schemas/act_catalogue_entry.v2.json",
+  "title": "OpenProof Events Catalogue Entry v2",
+  "description": "Schema for a single catalogue entry describing a regulated or governance act type. v2 removes voting-derivative fields (method_constraints, eligibility_snapshot_hash, action_set_hash, tally_output_hash, result_hash, receipt_profile_recommendations) and adopts an act-native model with explicit signature policy and witness role recommendations. issuer_record under signature_policy is an evidence record, not an Advanced Electronic Signature under eIDAS.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "act_type_id",
+    "claim_type",
+    "display_name",
+    "regulatory_citation",
+    "required_claim_fields",
+    "optional_claim_fields",
+    "required_evidence_labels",
+    "eligible_issuer_roles",
+    "recommended_witness_roles",
+    "signature_policy",
+    "version",
+    "supersedes",
+    "maintainer",
+    "test_vector_reference"
+  ],
+  "properties": {
+    "schema": {
+      "const": "actproof.act_catalogue_entry.v2",
+      "description": "Schema discriminator. Always the literal string above."
+    },
+    "act_type_id": {
+      "type": "string",
+      "pattern": "^op:[a-z0-9_]+(\\.[a-z0-9_]+)+\\.v[0-9]+$",
+      "description": "Canonical identifier under the op: namespace. Dotted segments terminate with a version suffix. Example: op:eu.nis2.art20.management_body_approval.v1"
+    },
+    "claim_type": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "minLength": 3,
+      "maxLength": 64,
+      "description": "Snake_case identifier describing the semantic shape of the claim. Examples: management_body_approval, due_diligence_statement_preparation, software_release."
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Human-readable display name suitable for UI surfaces and documentation."
+    },
+    "regulatory_citation": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["instrument", "article", "jurisdiction", "in_force_from"],
+          "properties": {
+            "instrument": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Name of the regulatory instrument. Example: Directive (EU) 2022/2555."
+            },
+            "article": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Article, section, or paragraph reference within the instrument."
+            },
+            "jurisdiction": {
+              "type": "string",
+              "minLength": 2,
+              "description": "ISO 3166-1 alpha-2 country code, ISO 3166-2 subdivision code, or supranational tag (EU, UN)."
+            },
+            "in_force_from": {
+              "type": "string",
+              "format": "date",
+              "description": "Effective date in ISO 8601 (YYYY-MM-DD)."
+            }
+          }
+        }
+      ],
+      "description": "Regulatory anchor for the act type. null for non-regulatory governance acts (e.g., open-source software releases, internal corporate acts without a binding regulatory citation)."
+    },
+    "required_claim_fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Manifest field identifiers that MUST be present in any issued attestation against this act type. Catalogue loaders MUST reject manifests missing any required field."
+    },
+    "optional_claim_fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "uniqueItems": true,
+      "description": "Manifest field identifiers that MAY be present in an issued attestation."
+    },
+    "required_evidence_labels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Evidence label identifiers that MUST have at least one uploaded artifact each before an attestation can transition to the awaiting_commit state."
+    },
+    "eligible_issuer_roles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Role identifiers indicating which entity types are eligible to issue this act. Examples: essential_entity, important_entity, eu_operator, eu_trader, open_source_maintainer."
+    },
+    "recommended_witness_roles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "uniqueItems": true,
+      "description": "Role identifiers indicating which parties typically receive verification handles for this act type. These are functional descriptions of recipients in relation to the issuing entity. Examples: external_auditor, competent_authority_supervisor, outside_counsel, internal_audit, do_insurer, downstream_buyer, supply_chain_finance_provider."
+    },
+    "signature_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum", "supports"],
+      "properties": {
+        "minimum": {
+          "type": "string",
+          "enum": ["issuer_record", "external_signature", "either"],
+          "description": "Floor of what must be present at commit time. issuer_record means the platform-recorded commit action (email, IP, user agent, single-use token hash, manifest hash, consent text version, timestamp) suffices as evidence of the issuer's commit action. external_signature requires an externally produced signature file (e.g., QES, AES, signed PDF) to be attached as evidence. either accepts both. CRITICAL: issuer_record is an evidence record only. It is NOT an Advanced Electronic Signature or Qualified Electronic Signature under Regulation (EU) 910/2014 (eIDAS). Implementations MUST NOT claim that the platform-recorded issuer action is itself an eIDAS-grade signature."
+        },
+        "supports": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "external_qes_pdf",
+              "external_aes_certificate",
+              "signed_board_minutes",
+              "third_party_signing_service_certificate",
+              "internal_attestation_record",
+              "gpg_signed_release",
+              "sigstore_cosign_signature"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "Evidence label identifiers for externally produced signature artifacts the act type recognizes alongside issuer_record. Issuers who require eIDAS AES or QES MUST attach the corresponding artifact and reference it under one of these labels."
+        }
+      },
+      "description": "Signature evidence policy for this act type. Defines both the minimum acceptable commit action and the externally produced signature artifacts the act recognizes."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Monotonic version of this catalogue entry. Increment on any semantic change. The version is also encoded in the act_type_id suffix (e.g., .v1, .v2)."
+    },
+    "supersedes": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "string",
+          "pattern": "^op:[a-z0-9_]+(\\.[a-z0-9_]+)+(\\.v[0-9]+)?$"
+        }
+      ],
+      "description": "act_type_id of the predecessor entry this version replaces. null if this is the first version of the act type. The supersedes pattern allows entries without explicit version suffixes for legacy v1 namespace preservation."
+    },
+    "maintainer": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Maintainer identifier (typically the project or working group responsible for curating this entry). Example: actproof-events."
+    },
+    "test_vector_reference": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_./-]+\\.json$",
+      "description": "Repository-relative path to the JSON file containing test vectors for this entry. Test vectors MUST use computed hashes (not synthetic placeholders) so verifier implementations can reproduce them."
+    }
+  }
+}

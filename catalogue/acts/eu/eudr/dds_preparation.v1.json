@@ -1,0 +1,98 @@
+{
+  "schema": "actproof.act_catalogue_entry.v3",
+  "act_type_id": "op:eu.eudr.dds_preparation.v1",
+  "claim_type": "due_diligence_statement_preparation",
+  "display_name": "EUDR Due Diligence Statement preparation",
+  "regulatory_citation": {
+    "instrument": "Regulation (EU) 2023/1115",
+    "article": "8",
+    "jurisdiction": "EU",
+    "in_force_from": "2023-06-29"
+  },
+  "required_claim_fields": [
+    "operator_org_name",
+    "operator_eori",
+    "product_commodity_codes",
+    "country_of_production",
+    "preparation_timestamp"
+  ],
+  "optional_claim_fields": [
+    "supplier_name",
+    "lot_reference",
+    "harvest_period",
+    "geometry_collection_reference"
+  ],
+  "required_evidence_labels": [
+    "geojson_plot_geometries",
+    "due_diligence_screening_report"
+  ],
+  "eligible_issuer_roles": [
+    "eu_operator",
+    "eu_trader"
+  ],
+  "recommended_witness_roles": [
+    "downstream_buyer",
+    "competent_authority_supervisor",
+    "external_auditor",
+    "supply_chain_finance_provider"
+  ],
+  "signature_policy": {
+    "minimum": "issuer_record",
+    "supports": [
+      "external_qes_pdf",
+      "internal_attestation_record"
+    ]
+  },
+  "version": 1,
+  "supersedes": null,
+  "maintainer": "actproof-events",
+  "test_vector_reference": "catalogue/acts/eu/eudr/dds_preparation.v1.test_vectors.json",
+  "regulated_context_profile": {
+    "allowed_context_types": ["transaction_or_shipment"],
+    "allowed_submission_stages": ["pre_submission_evidence_pack", "prepared", "submitted", "submission_acknowledged", "superseded", "withdrawn"],
+    "default_context_type": "transaction_or_shipment"
+  },
+  "prior_receipts_profile": {
+    "required_roles": [],
+    "optional_roles": ["supplier_dispatch_evidence", "prior_dds_revision", "upstream_risk_assessment"]
+  },
+  "reliance_context": {
+    "issuer_role": "EU operator or non-SME trader preparing the Due Diligence Statement under Regulation (EU) 2023/1115 prior to lodgement at TRACES NT",
+    "counterparty_action": "the operator lodges the DDS at TRACES NT using their own EU Login account; the system assigns a DDR number for downstream distribution; downstream traders reference the DDR in their own DDS preparations under Article 4(8)",
+    "later_verifiers": [
+      "competent_authority_supervisor",
+      "customs_authority",
+      "downstream_buyer",
+      "external_auditor",
+      "supply_chain_finance_provider",
+      "public_archive"
+    ],
+    "reliance_statement": "The named operator prepared a Due Diligence Statement at the stated time for the named commodity shipment from the named country of production, committing to specific supplier identity, lot reference, and geometry references, with intent to lodge at TRACES NT. Verifiers may rely on the operator identity (org name and EORI), the commodity codes, the country of production, the preparation timestamp, and the harvest period; the specific supplier name, lot reference, and geometry collection reference are committed and disclosed to verifiers on request."
+  },
+  "disclosure_profile": {
+    "public_fields": [
+      "operator_org_name",
+      "operator_eori",
+      "product_commodity_codes",
+      "country_of_production",
+      "preparation_timestamp",
+      "harvest_period",
+      "manifest.title",
+      "manifest.issuer.legal_name"
+    ],
+    "commitment_fields": [
+      "supplier_name",
+      "lot_reference",
+      "geometry_collection_reference"
+    ],
+    "private_fields": [],
+    "back_propagation_scope": {
+      "supplier_dispatch_evidence": [
+        "manifest.claim.operator_org_name",
+        "manifest.claim.product_commodity_codes",
+        "manifest.claim.country_of_production",
+        "manifest.claim.preparation_timestamp"
+      ]
+    }
+  }
+}

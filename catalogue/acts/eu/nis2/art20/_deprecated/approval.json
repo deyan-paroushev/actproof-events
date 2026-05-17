@@ -1,0 +1,44 @@
+{
+  "schema": "actproof.act_catalogue_entry.v1",
+  "act_type_id": "op:eu.nis2.art20.approval",
+  "display_name": "NIS2 Article 20 management body approval of cybersecurity risk-management measures",
+  "regulatory_citation": {
+    "instrument": "Directive (EU) 2022/2555",
+    "article": "20",
+    "jurisdiction": "EU",
+    "in_force_from": "2024-10-18"
+  },
+  "required_manifest_fields": [
+    "manifest_version",
+    "decision_id",
+    "decision_type",
+    "tenant_id",
+    "system_created_at",
+    "method_parameters.method_id",
+    "method_parameters.quorum_basis_points",
+    "method_parameters.threshold_basis_points",
+    "eligibility_snapshot_hash",
+    "action_set_hash",
+    "tally_output_hash",
+    "result_hash",
+    "attachment_hashes"
+  ],
+  "method_constraints": {
+    "allowed_method_ids": [
+      "simple_majority_v1",
+      "supermajority_two_thirds_v1",
+      "approval_voting_v1",
+      "consent_based_v1"
+    ],
+    "minimum_quorum_basis_points": 5001
+  },
+  "receipt_profile_recommendations": [
+    "regulator",
+    "auditor",
+    "director"
+  ],
+  "version": "1.0",
+  "supersedes": null,
+  "maintainer": "actproof-events",
+  "test_vector_reference": "catalogue/acts/eu/nis2/art20/approval.test_vectors.json"
+}

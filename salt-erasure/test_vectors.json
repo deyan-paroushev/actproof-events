@@ -1,0 +1,197 @@
+{
+  "schema": "actproof.salt_erasure.test_vectors.v1",
+  "module": "salt-erasure",
+  "module_version": "1.0.0",
+  "corpus_version": "1.0",
+  "corpus_published": "2026-05-13",
+  "license": "CC0-1.0",
+  "primitive": {
+    "algorithm": "HMAC-SHA-256",
+    "salt_length_bytes": 32,
+    "pseudonym_length_bytes": 32,
+    "identifier_encoding": "UTF-8",
+    "specifications": [
+      "RFC 2104 (HMAC: Keyed-Hashing for Message Authentication)",
+      "FIPS 180-4 (Secure Hash Standard)"
+    ]
+  },
+  "reproduction_notice": "Each pseudonym in this corpus is the byte sequence HMAC-SHA-256(salt, identifier.encode('utf-8')).digest() where salt is the 32-byte value declared under test_salts. Pseudonyms are presented in lowercase hex without the '0x' prefix for direct byte-for-byte comparison. The salts themselves are reproducible: each salt_hex is SHA-256(salt_derivation_seed.encode('utf-8')).digest() where the seed string is documented in the corresponding test_salts entry. Any implementation in any language passing all positive test vectors byte-for-byte is conformant to the salt-erasure v1.0 primitive specification.",
+  "test_salts": [
+    {
+      "salt_id": "test-salt-A",
+      "salt_hex": "dc0d70fe71fb3aa79e251a223a0204dfc2baea10a91fe42b772f7a6a134ba0ea",
+      "salt_derivation_seed": "actproof.salt_erasure.testvector.salt.A.v1",
+      "salt_derivation_method": "SHA-256 of the salt_derivation_seed encoded as UTF-8; the 32-byte digest is the salt",
+      "purpose": "Primary salt for linkability, determinism, and identifier-shape tests"
+    },
+    {
+      "salt_id": "test-salt-B",
+      "salt_hex": "be9d855965a6ba92f398e592af7500f2730a795c960501776464d03841aee107",
+      "salt_derivation_seed": "actproof.salt_erasure.testvector.salt.B.v1",
+      "salt_derivation_method": "SHA-256 of the salt_derivation_seed encoded as UTF-8; the 32-byte digest is the salt",
+      "purpose": "Second salt for cross-salt independence tests"
+    }
+  ],
+  "primitive_correctness_vectors": [
+    {
+      "id": "tv01_ascii_identifier",
+      "description": "ASCII identifier under salt-A produces deterministic pseudonym",
+      "salt_id": "test-salt-A",
+      "identifier": "director_id_001",
+      "identifier_utf8_bytes_hex": "6469726563746f725f69645f303031",
+      "expected_pseudonym_hex": "e04b71631d186e1bf8c38265e342707d0c1f05ba948609474ecb4bcb8705ce1e",
+      "rationale": "Standard ASCII identifier 'director_id_001' demonstrates the primitive's baseline behavior. Implementations failing this vector have a fundamental HMAC-SHA-256 conformance issue."
+    },
+    {
+      "id": "tv02_distinct_ascii_identifier",
+      "description": "Different ASCII identifier under the same salt produces different pseudonym",
+      "salt_id": "test-salt-A",
+      "identifier": "director_id_002",
+      "identifier_utf8_bytes_hex": "6469726563746f725f69645f303032",
+      "expected_pseudonym_hex": "14ebf0ef00aee17d50ecc9d75a8cb9e7e77d628180b15e814d6ace02a60247d0",
+      "distinct_from_vector": "tv01_ascii_identifier",
+      "rationale": "Confirms that distinct identifiers produce distinct pseudonyms under the same salt. Implementations are not required to byte-compare against tv01 explicitly; the byte-for-byte match against the expected_pseudonym_hex value is the conformance test."
+    },
+    {
+      "id": "tv03_email_like_identifier",
+      "description": "Email-like identifier with special characters",
+      "salt_id": "test-salt-A",
+      "identifier": "alice@example.org",
+      "identifier_utf8_bytes_hex": "616c696365406578616d706c652e6f7267",
+      "expected_pseudonym_hex": "e2a995154816b9d24c744e3255ab31076977026a554cc8f941d303391957e61c",
+      "rationale": "Demonstrates handling of identifiers containing '@' and '.', which are common in real-world identifier domains such as email addresses and dotted identifiers."
+    },
+    {
+      "id": "tv04_empty_identifier",
+      "description": "Empty string identifier is permitted; produces the HMAC of empty bytes",
+      "salt_id": "test-salt-A",
+      "identifier": "",
+      "identifier_utf8_bytes_hex": "",
+      "expected_pseudonym_hex": "5a45a7911764df1162f7e3b4736722db11439114a8194b2a1343a3117d18d815",
+      "rationale": "HMAC-SHA-256 is defined for arbitrary-length input including empty input. The pseudonym for an empty identifier is well-defined and deterministic. Operators should consider whether their application semantics permit empty identifiers; the primitive itself does not reject them."
+    },
+    {
+      "id": "tv05_cyrillic_identifier",
+      "description": "Cyrillic identifier (multi-byte UTF-8) demonstrates UTF-8 encoding contract",
+      "salt_id": "test-salt-A",
+      "identifier": "Иван",
+      "identifier_utf8_bytes_hex": "d098d0b2d0b0d0bd",
+      "expected_pseudonym_hex": "d94d6fa51a2bd6b899b834fe3a2fe1f1b5a4a17792d5c5a6a5547714dfc4b3e4",
+      "rationale": "The identifier 'Иван' (Russian name) is 4 characters in Unicode but 8 bytes when UTF-8 encoded (each Cyrillic letter is 2 bytes in UTF-8). Implementations that use a different encoding (Latin-1, UTF-16, etc.) will produce a different pseudonym. The conformance contract is UTF-8 encoding."
+    },
+    {
+      "id": "tv06_emoji_identifier",
+      "description": "Emoji identifier (4-byte UTF-8) demonstrates handling of supplementary-plane characters",
+      "salt_id": "test-salt-A",
+      "identifier": "🔐",
+      "identifier_utf8_bytes_hex": "f09f9490",
+      "expected_pseudonym_hex": "6207dd13095d30e16dd80d606ae0c2513ae8deab440557ad5d1fa9d622e85daa",
+      "rationale": "The padlock-with-key emoji U+1F510 is in the Unicode supplementary plane and requires 4 bytes in UTF-8 encoding. This vector confirms correct handling of supplementary-plane characters across language implementations."
+    },
+    {
+      "id": "tv07_long_identifier",
+      "description": "Long identifier (100 ASCII characters) demonstrates HMAC's arbitrary-length input handling",
+      "salt_id": "test-salt-A",
+      "identifier": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "identifier_utf8_bytes_hex": "78787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878",
+      "expected_pseudonym_hex": "43ab90788855c69a7fc7cfa8f373586b929f1d71d2e2cbb209eedd4f50ced960",
+      "rationale": "HMAC-SHA-256 internal block size is 64 bytes; 100-byte input exercises the message-padding and block-processing paths. Confirms that long-input pseudonyms match across implementations."
+    },
+    {
+      "id": "tv08_salt_independence",
+      "description": "Same identifier under a different salt produces a different pseudonym",
+      "salt_id": "test-salt-B",
+      "identifier": "director_id_001",
+      "identifier_utf8_bytes_hex": "6469726563746f725f69645f303031",
+      "expected_pseudonym_hex": "4170c7a2b2a86b62da1b6d6401b05e3146076ab463bbf67b06ffeb22acf333e2",
+      "distinct_from_vector": "tv01_ascii_identifier",
+      "rationale": "The salt-independence property is foundational to selective erasure. Leaking salt-A (or failing to erase it on schedule) must not compromise pseudonyms produced under salt-B. This vector verifies that the same identifier produces computationally independent pseudonyms under different salts."
+    }
+  ],
+  "verify_link_vectors": [
+    {
+      "id": "tv09_verify_link_matching",
+      "description": "verify_link returns True for matching identifier + pseudonym under the correct salt",
+      "salt_id": "test-salt-A",
+      "identifier": "director_id_001",
+      "candidate_pseudonym_hex": "e04b71631d186e1bf8c38265e342707d0c1f05ba948609474ecb4bcb8705ce1e",
+      "expected_result": true,
+      "rationale": "Sanity check: under the correct salt, the identifier that produced a pseudonym must verify against it."
+    },
+    {
+      "id": "tv10_verify_link_wrong_identifier",
+      "description": "verify_link returns False for a different identifier under the same salt",
+      "salt_id": "test-salt-A",
+      "identifier": "director_id_002",
+      "candidate_pseudonym_hex": "e04b71631d186e1bf8c38265e342707d0c1f05ba948609474ecb4bcb8705ce1e",
+      "expected_result": false,
+      "rationale": "Negative case: an identifier that did not produce this pseudonym must not falsely verify. The constant-time comparison used by verify_link must return False without leaking timing information about the partial match."
+    },
+    {
+      "id": "tv11_verify_link_wrong_salt",
+      "description": "verify_link returns False when the candidate pseudonym was produced under a different salt",
+      "salt_id": "test-salt-B",
+      "identifier": "director_id_001",
+      "candidate_pseudonym_hex": "e04b71631d186e1bf8c38265e342707d0c1f05ba948609474ecb4bcb8705ce1e",
+      "expected_result": false,
+      "rationale": "Negative case: the candidate pseudonym was produced under salt-A, but verification is attempted under salt-B. The pseudonym computed under salt-B does not match the candidate, so verify_link returns False."
+    }
+  ],
+  "erasure_semantics_vectors": [
+    {
+      "id": "tv12_post_erasure_pseudonymize_fails",
+      "description": "After erase(), pseudonymize() must raise the implementation's salt-erased error",
+      "salt_id": "test-salt-A",
+      "test_procedure": [
+        "1. Construct SaltErasure with test-salt-A.",
+        "2. Optionally call pseudonymize() with any identifier (should succeed).",
+        "3. Call erase().",
+        "4. Call pseudonymize() with any identifier.",
+        "5. Assert that the call raises the implementation's equivalent of SaltErasedError."
+      ],
+      "expected_behaviour": "Step 4 raises SaltErasedError (Python: actproof_events.salt_erasure.SaltErasedError; other languages should raise an analogous typed exception with a message identifying the erased salt_id).",
+      "rationale": "Post-erasure operations on the same instance must fail. This is the procedural property that converts the cryptographic guarantee (HMAC oracle is gone) into the operational guarantee (the system cannot accidentally re-pseudonymize an identifier after erasure, which would produce a pseudonym that is no longer in the trust boundary)."
+    },
+    {
+      "id": "tv13_post_erasure_verify_link_fails",
+      "description": "After erase(), verify_link() must also raise the implementation's salt-erased error",
+      "salt_id": "test-salt-A",
+      "test_procedure": [
+        "1. Construct SaltErasure with test-salt-A.",
+        "2. Call pseudonymize() with identifier 'director_id_001' and retain the pseudonym.",
+        "3. Call erase().",
+        "4. Call verify_link('director_id_001', retained_pseudonym).",
+        "5. Assert that the call raises the implementation's equivalent of SaltErasedError."
+      ],
+      "expected_behaviour": "Step 4 raises SaltErasedError, even though the identifier and pseudonym were a valid pair before erasure. The operation cannot succeed because the salt required to recompute the HMAC has been destroyed.",
+      "rationale": "After erasure, the system cannot determine whether a candidate identifier matches a retained pseudonym, because the HMAC computation is no longer possible. The pseudonym persists as a 32-byte cryptographic artifact, but its linkability to any identifier is lost."
+    },
+    {
+      "id": "tv14_erase_is_idempotent",
+      "description": "erase() called on an already-erased instance is a no-op and does not raise",
+      "salt_id": "test-salt-A",
+      "test_procedure": [
+        "1. Construct SaltErasure with test-salt-A.",
+        "2. Call erase().",
+        "3. Call erase() a second time.",
+        "4. Assert that the second call returns normally (does not raise)."
+      ],
+      "expected_behaviour": "Step 3 returns normally. is_erased remains True before and after the second call.",
+      "rationale": "Idempotent erasure simplifies operational integration. Retention-period workflows that retry erasure under uncertainty about previous state must not error on the second attempt."
+    }
+  ],
+  "conformance_criteria": [
+    "An implementation passes the primitive_correctness_vectors when, for each vector, the implementation's pseudonymize(salt, identifier) function produces a byte sequence whose lowercase hex encoding equals expected_pseudonym_hex.",
+    "An implementation passes the verify_link_vectors when, for each vector, the implementation's verify_link(salt, identifier, candidate_pseudonym) function returns a boolean equal to expected_result.",
+    "An implementation passes the erasure_semantics_vectors when, for each vector, the documented test_procedure produces the expected_behaviour. Implementations may use language-specific exception types but must consistently raise a typed error on post-erasure salt operations.",
+    "An implementation is conformant to salt-erasure v1.0 when it passes all vectors in all three categories. Partial conformance is reportable; the conformance categories are independent."
+  ],
+  "out_of_scope": [
+    "Memory-level erasure irreversibility. Whether an implementation's erase() actually overwrites the salt bytes in memory, and whether the operating system's memory management has paged the salt to swap or saved it in a memory dump, is a deployment-time property of the underlying storage architecture. These vectors do not test it.",
+    "HSM integration. Salt storage in hardware security modules and key-deletion via HSM APIs are outside the scope of the v1.0 primitive specification.",
+    "Persistent-storage erasure. If implementations write salts to disk, key-management systems, or distributed key stores, the erasure semantics on those systems are out of scope.",
+    "Anti-coercion measures. The vectors do not test whether the operator could be coerced to retain or recreate the salt; this is a deployment-time property."
+  ],
+  "maintainer": "actproof-events",
+  "contact": "https://github.com/deyan-paroushev/actproof-events/issues"
+}
