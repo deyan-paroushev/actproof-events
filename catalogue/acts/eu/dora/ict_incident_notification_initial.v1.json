@@ -1,0 +1,142 @@
+{
+  "schema": "actproof.act_catalogue_entry.v3",
+  "act_type_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "claim_type": "ict_incident_notification_initial",
+  "display_name": "DORA major ICT-related incident initial notification (Article 19(4))",
+  "regulatory_citation": {
+    "instrument": "Regulation (EU) 2022/2554",
+    "article": "19(4)",
+    "jurisdiction": "EU",
+    "in_force_from": "2025-01-17"
+  },
+  "required_claim_fields": [
+    "entity_legal_identifier",
+    "entity_legal_name",
+    "submission_type",
+    "incident_reference_code",
+    "detection_datetime_utc",
+    "classification_datetime_utc",
+    "classification_criteria_triggered",
+    "affected_member_states",
+    "incident_discovery_method",
+    "business_continuity_plan_activated",
+    "affected_functions_and_services",
+    "initial_impact_description",
+    "primary_contact_name",
+    "primary_contact_email",
+    "competent_authority"
+  ],
+  "optional_claim_fields": [
+    "secondary_contact_name",
+    "secondary_contact_email",
+    "first_disruption_datetime_utc",
+    "preliminary_estimated_clients_affected",
+    "preliminary_estimated_financial_amount_eur",
+    "third_party_provider_involved",
+    "outsourcing_arrangement_reference",
+    "linked_threat_notification_reference",
+    "linked_nis2_notification_reference",
+    "linked_gdpr_breach_notification_reference"
+  ],
+  "required_evidence_labels": [
+    "classification_committee_record",
+    "detection_system_log_excerpt"
+  ],
+  "eligible_issuer_roles": [
+    "financial_entity",
+    "third_party_reporting_provider",
+    "credit_institution",
+    "trading_venue_operator",
+    "central_counterparty"
+  ],
+  "recommended_witness_roles": [
+    "competent_authority",
+    "internal_compliance_officer",
+    "internal_chief_information_security_officer",
+    "internal_legal_counsel",
+    "external_auditor",
+    "third_party_reporting_provider"
+  ],
+  "signature_policy": {
+    "minimum": "issuer_record",
+    "supports": [
+      "qualified_electronic_signature_eidas",
+      "internal_attestation_record",
+      "secure_electronic_channel_acknowledgement"
+    ]
+  },
+  "version": 1,
+  "supersedes": null,
+  "maintainer": "actproof-events",
+  "test_vector_reference": "catalogue/acts/eu/dora/ict_incident_notification_initial.v1.test_vectors.json",
+  "regulated_context_profile": {
+    "allowed_context_types": ["regulatory_filing"],
+    "allowed_submission_stages": ["initial", "reclassification_to_non_major", "withdrawn"],
+    "default_context_type": "regulatory_filing"
+  },
+  "prior_receipts_profile": {
+    "required_roles": [],
+    "optional_roles": [
+      "related_voluntary_cyber_threat_notification",
+      "linked_intermediate_or_final_report"
+    ]
+  },
+  "reliance_context": {
+    "issuer_role": "financial entity within the scope of Regulation (EU) 2022/2554 (or a third-party service provider acting on its behalf under Article 19(5)) submitting an initial notification of a major ICT-related incident to its competent authority within the time limits set out in Article 5 of Delegated Regulation (EU) 2025/301 (no later than 4 hours after classification as major and at most 24 hours after detection)",
+    "counterparty_action": "the competent authority records receipt of the initial notification, opens the supervisory file for the incident, and starts the regulatory timeline for intermediate (within 72 hours) and final (within one month) reports; the financial entity records that the obligation under Article 19(4) of DORA has been discharged at the stated datetime; downstream verifiers (auditors, supervisors in subsequent inspections, the entity itself in audit defence) record the cryptographic proof that the named filing reached the named authority at the named time",
+    "later_verifiers": [
+      "competent_authority",
+      "european_supervisory_authority",
+      "external_auditor",
+      "internal_audit",
+      "supervisory_inspector"
+    ],
+    "non_claims": [
+      "does_not_constitute_an_admission_of_liability_by_the_financial_entity",
+      "does_not_imply_a_breach_of_contract_with_clients_or_counterparties",
+      "does_not_replace_the_separate_notification_obligation_under_directive_eu_2022_2555_nis2",
+      "does_not_replace_a_personal_data_breach_notification_under_regulation_eu_2016_679_gdpr_article_33",
+      "does_not_constitute_the_final_legal_classification_of_the_incident",
+      "does_not_predetermine_supervisory_findings_or_sanctions",
+      "does_not_exhaust_the_intermediate_and_final_reporting_obligations_under_dora_article_19_4"
+    ],
+    "reliance_statement": "The named financial entity attests that an ICT-related incident was detected at the stated detection_datetime_utc, classified as major against the criteria of Article 8 of Delegated Regulation (EU) 2024/1772 at the stated classification_datetime_utc, and that the initial notification specified in Article 19(4) of Regulation (EU) 2022/2554 was submitted to the named competent authority through a secure electronic channel within the time limits of Article 5 of Delegated Regulation (EU) 2025/301. Verifiers may rely on the entity's identity (entity_legal_identifier), the timestamps, the classification criteria cited, and the cryptographic integrity of the named evidence files. The receipt does NOT constitute admission of liability, does NOT determine the final legal classification of the incident, does NOT replace separate notification obligations under NIS2 (Directive (EU) 2022/2555) or GDPR (Regulation (EU) 2016/679) Article 33, and does NOT exhaust the entity's continuing obligations to file the intermediate report (within 72 hours of detection) and the final report (within one month) under DORA Article 19(4). The machine-readable non_claims array on this entry is the authoritative enumeration of what the receipt does not prove. Supervisory findings, sanctions, and reclassification decisions are reserved to the competent authority's own published processes."
+  },
+  "disclosure_profile": {
+    "public_fields": [
+      "entity_legal_identifier",
+      "entity_legal_name",
+      "submission_type",
+      "detection_datetime_utc",
+      "classification_datetime_utc",
+      "competent_authority",
+      "manifest.title",
+      "manifest.issuer.legal_name"
+    ],
+    "commitment_fields": [
+      "incident_reference_code",
+      "classification_criteria_triggered",
+      "affected_member_states",
+      "incident_discovery_method",
+      "affected_functions_and_services",
+      "initial_impact_description",
+      "preliminary_estimated_clients_affected",
+      "preliminary_estimated_financial_amount_eur",
+      "third_party_provider_involved"
+    ],
+    "private_fields": [
+      "primary_contact_name",
+      "primary_contact_email",
+      "secondary_contact_name",
+      "secondary_contact_email",
+      "outsourcing_arrangement_reference",
+      "linked_threat_notification_reference"
+    ],
+    "back_propagation_scope": {
+      "linked_intermediate_or_final_report": [
+        "manifest.claim.entity_legal_identifier",
+        "manifest.claim.incident_reference_code"
+      ]
+    }
+  }
+}

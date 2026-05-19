@@ -1,0 +1,107 @@
+Classification committee record
+================================
+Classification datetime (UTC): 2026-05-19T16:48:00Z
+Detection datetime (UTC):      2026-05-19T14:32:07Z
+Incident reference code:       INC-2026-05-19-001
+Filing entity LEI:             5493001KJTIIGC8Y1R12 (Example Financial Entity)
+Convening authority:           Internal ICT Incident Classification Committee per
+                               internal DORA Operational Resilience Policy v3.2,
+                               approved by the Management Body on 2025-12-15.
+
+This file is the classification_committee_record evidence for the
+op:eu.dora.ict_incident_notification_initial.v1 receipt issued on
+2026-05-19 for incident INC-2026-05-19-001. The receipt's manifest binds
+the SHA-256 of these raw bytes; any modification to this file invalidates
+the receipt.
+
+NOTE: This is a CC0 1.0 conformance test vector with fictional entity
+identifiers and example data. The LEI 5493001KJTIIGC8Y1R12 is illustrative.
+
+
+Committee composition (per Article 8 internal procedure)
+--------------------------------------------------------
+Chair:                 Chief Information Security Officer
+Voting members:        Head of Compliance, Head of Operational Risk,
+                       Head of IT Operations, Head of Legal
+Quorum required:       4 of 5; satisfied at 16:32 UTC.
+Secretariat:           Operational Resilience Office.
+
+
+Incident summary as reviewed
+----------------------------
+Detection:             Automated SIEM alert at 14:32:07 UTC triggered by
+                       an authentication-failure rate exceeding the
+                       configured threshold across the customer identity
+                       provider.
+Confirmed scope at
+classification time:   Retail online banking authentication, SEPA Instant
+                       Payments outbound, mobile banking application
+                       (login flow only).
+Customer impact:       Estimated 180,000 retail customers unable to
+                       authenticate; transaction processing for already-
+                       authenticated sessions unaffected.
+Geographic spread:     FR, DE, IT, ES.
+Containment status:    Containment in progress; root cause traced to a
+                       certificate rotation error on the identity provider's
+                       JWT signing key.
+
+
+Classification decision against Article 8 of Delegated Regulation (EU)
+2024/1772 criteria
+----------------------------------------------------------------------
+Criterion (a) clients,
+financial counterparts,
+and transactions
+affected:              YES. Approximately 180,000 retail customers
+                       (above the 10% threshold of the entity's retail
+                       client base of 1.5M).
+
+Criterion (b) data
+losses:                NO. No data exfiltration, no integrity loss, no
+                       data unavailability beyond the authentication
+                       layer at the time of classification.
+
+Criterion (c) critical
+services affected:     YES. Online banking and instant payments are
+                       critical or important functions per the entity's
+                       Critical Functions Register approved 2025-11-04.
+
+Criterion (d) reputational
+impact:                LOW at classification time. Customer-facing
+                       social media monitoring shows organic complaint
+                       volume of approximately 320 mentions per minute,
+                       below the entity's High threshold of 1,000.
+
+Criterion (e) duration
+and service downtime:  Service downtime at classification time exceeds
+                       the entity's 30-minute high-impact threshold for
+                       authentication services.
+
+Criterion (f) geographical
+spread:                MAJOR cross-border element. Four EU Member States
+                       affected, all primary markets for retail
+                       operations.
+
+Criterion (g) economic
+impact:                Preliminary estimate of foregone transaction
+                       revenue for the authentication outage window:
+                       EUR 240,000. Refinements to follow in the
+                       intermediate report.
+
+Decision:              The incident MEETS criteria (a), (c), (e), and (f)
+                       and is therefore classified as MAJOR per Article 8
+                       of Delegated Regulation (EU) 2024/1772.
+
+                       The committee resolved unanimously at 16:48 UTC
+                       to file the initial notification under DORA
+                       Article 19(4) with the competent authority
+                       (Autorite des Marches Financiers, France) through
+                       the AMF Secure Reporting Channel within the
+                       time limits of Article 5 of Delegated Regulation
+                       (EU) 2025/301: not later than 4 hours after this
+                       classification (deadline 2026-05-19T20:48:00Z)
+                       and not later than 24 hours after detection
+                       (deadline 2026-05-20T14:32:07Z).
+
+
+End of classification_committee_record evidence.

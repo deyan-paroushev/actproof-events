@@ -1,0 +1,103 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "actproof-events"
+version = "1.4.0rc1"
+description = "Federated cryptographic substrate for verifiable regulatory acts: specification, profile catalogue, and CC0 conformance test vectors."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Deyan Paroushev", email = "deyan@advisa.tech" },
+]
+keywords = [
+  "scitt",
+  "ietf-scitt",
+  "cose-receipts",
+  "transparency",
+  "verifiable-credentials",
+  "rfc-8785",
+  "canonicalization",
+  "rfc-3161",
+  "timestamping",
+  "algorand",
+  "evidence",
+  "compliance",
+  "dora",
+  "eudr",
+  "nis2",
+  "csrd",
+  "audit-trail",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Legal Industry",
+  "Intended Audience :: Financial and Insurance Industry",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security :: Cryptography",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Office/Business",
+  "Typing :: Typed",
+]
+
+# actproof-events 1.4.0rc1 ships the catalogue and schema bytes as installed
+# resources. There are no required runtime dependencies. Consumers that load
+# the catalogue typically use the standard library (json, pathlib) and may
+# optionally pull in jsonschema for full schema validation, which we leave to
+# the consumer's discretion rather than bundling here.
+dependencies = []
+
+[project.optional-dependencies]
+# Consumers that want full JSON Schema validation of catalogue entries can
+# install this extra: pip install "actproof-events[schema-validation]"
+schema-validation = [
+  "jsonschema>=4.21",
+]
+
+[project.urls]
+Homepage = "https://github.com/deyan-paroushev/actproof-events"
+Repository = "https://github.com/deyan-paroushev/actproof-events"
+Issues = "https://github.com/deyan-paroushev/actproof-events/issues"
+Specification = "https://github.com/deyan-paroushev/actproof-events/blob/main/spec/actproof-events.spec.md"
+
+# ─── Build configuration ────────────────────────────────────────────────────
+#
+# The repository keeps the catalogue, spec, and Python package source in
+# separate top-level directories so that humans reading the repo and tools
+# generating test vectors can find them at natural paths. The wheel rolls
+# these into a single import-time hierarchy under actproof_events/data/, so
+# that consumers can call actproof_events.get_catalogue_path() and receive
+# a Path that resolves correctly whether the package is installed from a
+# wheel, installed editable, or imported from a source checkout.
+
+[tool.hatch.build.targets.wheel]
+packages = ["actproof_events"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"catalogue/acts" = "actproof_events/data/catalogue/acts"
+"spec/schemas" = "actproof_events/data/schemas"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/actproof_events",
+  "/catalogue",
+  "/spec",
+  "/docs",
+  "/scripts",
+  "/salt-erasure",
+  "/CATALOGUE_LOADER_CONTRACT.md",
+  "/CONTRIBUTING_ACTS.md",
+  "/LICENSE",
+  "/README.md",
+  "/pyproject.toml",
+]

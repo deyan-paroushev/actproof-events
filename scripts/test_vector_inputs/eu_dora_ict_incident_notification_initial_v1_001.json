@@ -1,0 +1,70 @@
+{
+  "schema": "actproof.attestation_manifest.v1",
+  "manifest_version": 1,
+  "act_type_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "catalogue_entry_version": 1,
+  "tenant_id": "test-tenant-eu-dora-001",
+  "issuer_org_name": "Example Financial Entity S.A.",
+  "authority_label": "financial_entity",
+  "title": "DORA Article 19(4) initial notification, incident INC-2026-05-19-001",
+  "subtitle": "Major ICT-related incident initial notification submitted to AMF within the time limits of Delegated Regulation (EU) 2025/301 Article 5",
+  "system_created_at": "2026-05-19T16:48:00Z",
+  "claim_fields": {
+    "entity_legal_identifier": "5493001KJTIIGC8Y1R12",
+    "entity_legal_name": "Example Financial Entity S.A.",
+    "submission_type": "initial",
+    "incident_reference_code": "INC-2026-05-19-001",
+    "detection_datetime_utc": "2026-05-19T14:32:07Z",
+    "classification_datetime_utc": "2026-05-19T16:48:00Z",
+    "classification_criteria_triggered": [
+      "art_8_a_clients_counterparts_and_transactions",
+      "art_8_c_critical_services_affected",
+      "art_8_e_service_downtime_duration",
+      "art_8_f_geographical_spread"
+    ],
+    "affected_member_states": ["FR", "DE", "IT", "ES"],
+    "incident_discovery_method": "automated_detection_siem_rule",
+    "business_continuity_plan_activated": true,
+    "affected_functions_and_services": [
+      "retail_online_banking",
+      "sepa_instant_payments_outbound",
+      "mobile_banking_application_login"
+    ],
+    "initial_impact_description": "Approximately 180,000 retail customers unable to authenticate following a JWT signing-key propagation failure after a scheduled rotation. Already-authenticated sessions unaffected. Containment in progress via roll-back to the previous signing key. No data exfiltration, integrity loss, or data unavailability observed at classification time. Estimated foregone transaction revenue during the authentication outage window: EUR 240,000.",
+    "primary_contact_name": "Jean-Christophe Duval",
+    "primary_contact_email": "jc.duval@example-financial-entity.test",
+    "competent_authority": "Autorite des Marches Financiers (AMF), France",
+    "first_disruption_datetime_utc": "2026-05-19T14:30:01Z",
+    "preliminary_estimated_clients_affected": 180000,
+    "preliminary_estimated_financial_amount_eur": 240000,
+    "third_party_provider_involved": false
+  },
+  "evidence": [
+    {
+      "label": "classification_committee_record",
+      "filename": "classification_committee_record.txt",
+      "sha256_hex": "86eba492642a2f104b93a0043f92164b9eeca53b5d4be3dc72c54b7d87b61f22",
+      "byte_size": 5129
+    },
+    {
+      "label": "detection_system_log_excerpt",
+      "filename": "detection_system_log_excerpt.txt",
+      "sha256_hex": "cecb316cdcac886e1d224d887951b811f2f72b8c3e9abbc67aa52fc6889cacd3",
+      "byte_size": 3861
+    }
+  ],
+  "recipients": [
+    {
+      "role": "competent_authority",
+      "org_name": "Autorite des Marches Financiers (AMF)",
+      "email": "incident-reporting@amf-france.test",
+      "purpose": "Receipt of the DORA Article 19(4) initial notification through the AMF Secure Reporting Channel within the time limits of Delegated Regulation (EU) 2025/301 Article 5."
+    },
+    {
+      "role": "internal_compliance_officer",
+      "org_name": "Example Financial Entity S.A.",
+      "email": "compliance.officer@example-financial-entity.test",
+      "purpose": "Internal evidentiary record that the notification obligation under DORA Article 19(4) has been discharged at the stated time."
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "schema": "actproof.test_vector.v1",
+  "test_vector_id": "eu_dora_ict_incident_notification_initial_v1_001",
+  "catalogue_act_type_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "catalogue_entry_version": 1,
+  "profile": {
+    "act_type_id": "op:eu.dora.ict_incident_notification_initial.v1",
+    "catalogue_entry_version": 1,
+    "catalogue_entry_hash": "sha256:0b827fac026040d3b7f8cd86765be776d3128b628ad6fa10ce632ad8f82906c5",
+    "catalogue_entry_hash_basis": "SHA-256 of the catalogue entry JSON file bytes as written to disk in the actproof-events repository at the named version."
+  },
+  "raw_manifest": {
+    "schema": "actproof.attestation_manifest.v1",
+    "manifest_version": 1,
+    "act_type_id": "op:eu.dora.ict_incident_notification_initial.v1",
+    "catalogue_entry_version": 1,
+    "tenant_id": "test-tenant-eu-dora-001",
+    "issuer_org_name": "Example Financial Entity S.A.",
+    "authority_label": "financial_entity",
+    "title": "DORA Article 19(4) initial notification, incident INC-2026-05-19-001",
+    "subtitle": "Major ICT-related incident initial notification submitted to AMF within the time limits of Delegated Regulation (EU) 2025/301 Article 5",
+    "system_created_at": "2026-05-19T16:48:00Z",
+    "claim_fields": {
+      "entity_legal_identifier": "5493001KJTIIGC8Y1R12",
+      "entity_legal_name": "Example Financial Entity S.A.",
+      "submission_type": "initial",
+      "incident_reference_code": "INC-2026-05-19-001",
+      "detection_datetime_utc": "2026-05-19T14:32:07Z",
+      "classification_datetime_utc": "2026-05-19T16:48:00Z",
+      "classification_criteria_triggered": [
+        "art_8_a_clients_counterparts_and_transactions",
+        "art_8_c_critical_services_affected",
+        "art_8_e_service_downtime_duration",
+        "art_8_f_geographical_spread"
+      ],
+      "affected_member_states": [
+        "FR",
+        "DE",
+        "IT",
+        "ES"
+      ],
+      "incident_discovery_method": "automated_detection_siem_rule",
+      "business_continuity_plan_activated": true,
+      "affected_functions_and_services": [
+        "retail_online_banking",
+        "sepa_instant_payments_outbound",
+        "mobile_banking_application_login"
+      ],
+      "initial_impact_description": "Approximately 180,000 retail customers unable to authenticate following a JWT signing-key propagation failure after a scheduled rotation. Already-authenticated sessions unaffected. Containment in progress via roll-back to the previous signing key. No data exfiltration, integrity loss, or data unavailability observed at classification time. Estimated foregone transaction revenue during the authentication outage window: EUR 240,000.",
+      "primary_contact_name": "Jean-Christophe Duval",
+      "primary_contact_email": "jc.duval@example-financial-entity.test",
+      "competent_authority": "Autorite des Marches Financiers (AMF), France",
+      "first_disruption_datetime_utc": "2026-05-19T14:30:01Z",
+      "preliminary_estimated_clients_affected": 180000,
+      "preliminary_estimated_financial_amount_eur": 240000,
+      "third_party_provider_involved": false
+    },
+    "evidence": [
+      {
+        "label": "classification_committee_record",
+        "filename": "classification_committee_record.txt",
+        "sha256_hex": "86eba492642a2f104b93a0043f92164b9eeca53b5d4be3dc72c54b7d87b61f22",
+        "byte_size": 5129
+      },
+      {
+        "label": "detection_system_log_excerpt",
+        "filename": "detection_system_log_excerpt.txt",
+        "sha256_hex": "cecb316cdcac886e1d224d887951b811f2f72b8c3e9abbc67aa52fc6889cacd3",
+        "byte_size": 3861
+      }
+    ],
+    "recipients": [
+      {
+        "role": "competent_authority",
+        "org_name": "Autorite des Marches Financiers (AMF)",
+        "email": "incident-reporting@amf-france.test",
+        "purpose": "Receipt of the DORA Article 19(4) initial notification through the AMF Secure Reporting Channel within the time limits of Delegated Regulation (EU) 2025/301 Article 5."
+      },
+      {
+        "role": "internal_compliance_officer",
+        "org_name": "Example Financial Entity S.A.",
+        "email": "compliance.officer@example-financial-entity.test",
+        "purpose": "Internal evidentiary record that the notification obligation under DORA Article 19(4) has been discharged at the stated time."
+      }
+    ]
+  },
+  "manifest_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOmV1LmRvcmEuaWN0X2luY2lkZW50X25vdGlmaWNhdGlvbl9pbml0aWFsLnYxIiwiYXV0aG9yaXR5X2xhYmVsIjoiZmluYW5jaWFsX2VudGl0eSIsImNhdGFsb2d1ZV9lbnRyeV92ZXJzaW9uIjoxLCJjbGFpbV9maWVsZHMiOnsiYWZmZWN0ZWRfZnVuY3Rpb25zX2FuZF9zZXJ2aWNlcyI6WyJyZXRhaWxfb25saW5lX2JhbmtpbmciLCJzZXBhX2luc3RhbnRfcGF5bWVudHNfb3V0Ym91bmQiLCJtb2JpbGVfYmFua2luZ19hcHBsaWNhdGlvbl9sb2dpbiJdLCJhZmZlY3RlZF9tZW1iZXJfc3RhdGVzIjpbIkZSIiwiREUiLCJJVCIsIkVTIl0sImJ1c2luZXNzX2NvbnRpbnVpdHlfcGxhbl9hY3RpdmF0ZWQiOnRydWUsImNsYXNzaWZpY2F0aW9uX2NyaXRlcmlhX3RyaWdnZXJlZCI6WyJhcnRfOF9hX2NsaWVudHNfY291bnRlcnBhcnRzX2FuZF90cmFuc2FjdGlvbnMiLCJhcnRfOF9jX2NyaXRpY2FsX3NlcnZpY2VzX2FmZmVjdGVkIiwiYXJ0XzhfZV9zZXJ2aWNlX2Rvd250aW1lX2R1cmF0aW9uIiwiYXJ0XzhfZl9nZW9ncmFwaGljYWxfc3ByZWFkIl0sImNsYXNzaWZpY2F0aW9uX2RhdGV0aW1lX3V0YyI6IjIwMjYtMDUtMTlUMTY6NDg6MDBaIiwiY29tcGV0ZW50X2F1dGhvcml0eSI6IkF1dG9yaXRlIGRlcyBNYXJjaGVzIEZpbmFuY2llcnMgKEFNRiksIEZyYW5jZSIsImRldGVjdGlvbl9kYXRldGltZV91dGMiOiIyMDI2LTA1LTE5VDE0OjMyOjA3WiIsImVudGl0eV9sZWdhbF9pZGVudGlmaWVyIjoiNTQ5MzAwMUtKVElJR0M4WTFSMTIiLCJlbnRpdHlfbGVnYWxfbmFtZSI6IkV4YW1wbGUgRmluYW5jaWFsIEVudGl0eSBTLkEuIiwiZmlyc3RfZGlzcnVwdGlvbl9kYXRldGltZV91dGMiOiIyMDI2LTA1LTE5VDE0OjMwOjAxWiIsImluY2lkZW50X2Rpc2NvdmVyeV9tZXRob2QiOiJhdXRvbWF0ZWRfZGV0ZWN0aW9uX3NpZW1fcnVsZSIsImluY2lkZW50X3JlZmVyZW5jZV9jb2RlIjoiSU5DLTIwMjYtMDUtMTktMDAxIiwiaW5pdGlhbF9pbXBhY3RfZGVzY3JpcHRpb24iOiJBcHByb3hpbWF0ZWx5IDE4MCwwMDAgcmV0YWlsIGN1c3RvbWVycyB1bmFibGUgdG8gYXV0aGVudGljYXRlIGZvbGxvd2luZyBhIEpXVCBzaWduaW5nLWtleSBwcm9wYWdhdGlvbiBmYWlsdXJlIGFmdGVyIGEgc2NoZWR1bGVkIHJvdGF0aW9uLiBBbHJlYWR5LWF1dGhlbnRpY2F0ZWQgc2Vzc2lvbnMgdW5hZmZlY3RlZC4gQ29udGFpbm1lbnQgaW4gcHJvZ3Jlc3MgdmlhIHJvbGwtYmFjayB0byB0aGUgcHJldmlvdXMgc2lnbmluZyBrZXkuIE5vIGRhdGEgZXhmaWx0cmF0aW9uLCBpbnRlZ3JpdHkgbG9zcywgb3IgZGF0YSB1bmF2YWlsYWJpbGl0eSBvYnNlcnZlZCBhdCBjbGFzc2lmaWNhdGlvbiB0aW1lLiBFc3RpbWF0ZWQgZm9yZWdvbmUgdHJhbnNhY3Rpb24gcmV2ZW51ZSBkdXJpbmcgdGhlIGF1dGhlbnRpY2F0aW9uIG91dGFnZSB3aW5kb3c6IEVVUiAyNDAsMDAwLiIsInByZWxpbWluYXJ5X2VzdGltYXRlZF9jbGllbnRzX2FmZmVjdGVkIjoxODAwMDAsInByZWxpbWluYXJ5X2VzdGltYXRlZF9maW5hbmNpYWxfYW1vdW50X2V1ciI6MjQwMDAwLCJwcmltYXJ5X2NvbnRhY3RfZW1haWwiOiJqYy5kdXZhbEBleGFtcGxlLWZpbmFuY2lhbC1lbnRpdHkudGVzdCIsInByaW1hcnlfY29udGFjdF9uYW1lIjoiSmVhbi1DaHJpc3RvcGhlIER1dmFsIiwic3VibWlzc2lvbl90eXBlIjoiaW5pdGlhbCIsInRoaXJkX3BhcnR5X3Byb3ZpZGVyX2ludm9sdmVkIjpmYWxzZX0sImV2aWRlbmNlIjpbeyJieXRlX3NpemUiOjUxMjksImZpbGVuYW1lIjoiY2xhc3NpZmljYXRpb25fY29tbWl0dGVlX3JlY29yZC50eHQiLCJsYWJlbCI6ImNsYXNzaWZpY2F0aW9uX2NvbW1pdHRlZV9yZWNvcmQiLCJzaGEyNTZfaGV4IjoiODZlYmE0OTI2NDJhMmYxMDRiOTNhMDA0M2Y5MjE2NGI5ZWVjYTUzYjVkNGJlM2RjNzJjNTRiN2Q4N2I2MWYyMiJ9LHsiYnl0ZV9zaXplIjozODYxLCJmaWxlbmFtZSI6ImRldGVjdGlvbl9zeXN0ZW1fbG9nX2V4Y2VycHQudHh0IiwibGFiZWwiOiJkZXRlY3Rpb25fc3lzdGVtX2xvZ19leGNlcnB0Iiwic2hhMjU2X2hleCI6ImNlY2IzMTZjZGNhYzg4NmUxZDIyNGQ4ODc5NTFiODExZjJmNzJiOGMzZTlhYmJjNjdhYTUyZmM2ODg5Y2FjZDMifV0sImlzc3Vlcl9vcmdfbmFtZSI6IkV4YW1wbGUgRmluYW5jaWFsIEVudGl0eSBTLkEuIiwibWFuaWZlc3RfdmVyc2lvbiI6MSwicmVjaXBpZW50cyI6W3siZW1haWwiOiJpbmNpZGVudC1yZXBvcnRpbmdAYW1mLWZyYW5jZS50ZXN0Iiwib3JnX25hbWUiOiJBdXRvcml0ZSBkZXMgTWFyY2hlcyBGaW5hbmNpZXJzIChBTUYpIiwicHVycG9zZSI6IlJlY2VpcHQgb2YgdGhlIERPUkEgQXJ0aWNsZSAxOSg0KSBpbml0aWFsIG5vdGlmaWNhdGlvbiB0aHJvdWdoIHRoZSBBTUYgU2VjdXJlIFJlcG9ydGluZyBDaGFubmVsIHdpdGhpbiB0aGUgdGltZSBsaW1pdHMgb2YgRGVsZWdhdGVkIFJlZ3VsYXRpb24gKEVVKSAyMDI1LzMwMSBBcnRpY2xlIDUuIiwicm9sZSI6ImNvbXBldGVudF9hdXRob3JpdHkifSx7ImVtYWlsIjoiY29tcGxpYW5jZS5vZmZpY2VyQGV4YW1wbGUtZmluYW5jaWFsLWVudGl0eS50ZXN0Iiwib3JnX25hbWUiOiJFeGFtcGxlIEZpbmFuY2lhbCBFbnRpdHkgUy5BLiIsInB1cnBvc2UiOiJJbnRlcm5hbCBldmlkZW50aWFyeSByZWNvcmQgdGhhdCB0aGUgbm90aWZpY2F0aW9uIG9ibGlnYXRpb24gdW5kZXIgRE9SQSBBcnRpY2xlIDE5KDQpIGhhcyBiZWVuIGRpc2NoYXJnZWQgYXQgdGhlIHN0YXRlZCB0aW1lLiIsInJvbGUiOiJpbnRlcm5hbF9jb21wbGlhbmNlX29mZmljZXIifV0sInNjaGVtYSI6ImFjdHByb29mLmF0dGVzdGF0aW9uX21hbmlmZXN0LnYxIiwic3VidGl0bGUiOiJNYWpvciBJQ1QtcmVsYXRlZCBpbmNpZGVudCBpbml0aWFsIG5vdGlmaWNhdGlvbiBzdWJtaXR0ZWQgdG8gQU1GIHdpdGhpbiB0aGUgdGltZSBsaW1pdHMgb2YgRGVsZWdhdGVkIFJlZ3VsYXRpb24gKEVVKSAyMDI1LzMwMSBBcnRpY2xlIDUiLCJzeXN0ZW1fY3JlYXRlZF9hdCI6IjIwMjYtMDUtMTlUMTY6NDg6MDBaIiwidGVuYW50X2lkIjoidGVzdC10ZW5hbnQtZXUtZG9yYS0wMDEiLCJ0aXRsZSI6IkRPUkEgQXJ0aWNsZSAxOSg0KSBpbml0aWFsIG5vdGlmaWNhdGlvbiwgaW5jaWRlbnQgSU5DLTIwMjYtMDUtMTktMDAxIn0=",
+  "manifest_canonical_byte_length": 3143,
+  "manifest_hash_hex": "7f7e45fd4fa83e158379bda46c7ed464cbb00619cc9cbd75f9c404ce04851409",
+  "merkle_root_hex": "7f7e45fd4fa83e158379bda46c7ed464cbb00619cc9cbd75f9c404ce04851409",
+  "envelope": {
+    "schema": "actproof.attestation_envelope.v1",
+    "envelope_version": 1,
+    "act_type_id": "op:eu.dora.ict_incident_notification_initial.v1",
+    "catalogue_entry_version": 1,
+    "manifest_hash": "7f7e45fd4fa83e158379bda46c7ed464cbb00619cc9cbd75f9c404ce04851409",
+    "merkle_root": "7f7e45fd4fa83e158379bda46c7ed464cbb00619cc9cbd75f9c404ce04851409"
+  },
+  "envelope_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOmV1LmRvcmEuaWN0X2luY2lkZW50X25vdGlmaWNhdGlvbl9pbml0aWFsLnYxIiwiY2F0YWxvZ3VlX2VudHJ5X3ZlcnNpb24iOjEsImVudmVsb3BlX3ZlcnNpb24iOjEsIm1hbmlmZXN0X2hhc2giOiI3ZjdlNDVmZDRmYTgzZTE1ODM3OWJkYTQ2YzdlZDQ2NGNiYjAwNjE5Y2M5Y2JkNzVmOWM0MDRjZTA0ODUxNDA5IiwibWVya2xlX3Jvb3QiOiI3ZjdlNDVmZDRmYTgzZTE1ODM3OWJkYTQ2YzdlZDQ2NGNiYjAwNjE5Y2M5Y2JkNzVmOWM0MDRjZTA0ODUxNDA5Iiwic2NoZW1hIjoiYWN0cHJvb2YuYXR0ZXN0YXRpb25fZW52ZWxvcGUudjEifQ==",
+  "envelope_canonical_byte_length": 322,
+  "envelope_hash_hex": "ac4752a7f88c1fe6d28f4c5e03f2fed80b403c4b2dc53e44dd099d2d89b01af5",
+  "arc2_note": {
+    "mode": "disclosed",
+    "prefix": "actproof/v1:",
+    "inner_canonical_b64": "eyJlIjoickVkU3BfaU1ILWJTajB4ZUFfTC0yQXRBUEVzdHhUNUUzUW1kTFltd0d2VSIsIm0iOjEsInEiOiIxIiwiciI6ImYzNUZfVS1vUGhXRGViMmtiSDdVWk11d0Jobk1uTDExLWNRRXpnU0ZGQWsiLCJzIjoib3A6ZXUuZG9yYS5pY3RfaW5jaWRlbnRfbm90aWZpY2F0aW9uX2luaXRpYWwudjEiLCJ0IjoiYSJ9",
+    "full_note_b64": "YWN0cHJvb2YvdjE6eyJlIjoickVkU3BfaU1ILWJTajB4ZUFfTC0yQXRBUEVzdHhUNUUzUW1kTFltd0d2VSIsIm0iOjEsInEiOiIxIiwiciI6ImYzNUZfVS1vUGhXRGViMmtiSDdVWk11d0Jobk1uTDExLWNRRXpnU0ZGQWsiLCJzIjoib3A6ZXUuZG9yYS5pY3RfaW5jaWRlbnRfbm90aWZpY2F0aW9uX2luaXRpYWwudjEiLCJ0IjoiYSJ9",
+    "full_note_byte_length": 189,
+    "field_meanings": {
+      "r": "base64url-no-padding of merkle_root bytes",
+      "m": "number of leaves in the merkle tree",
+      "t": "type discriminator ('a' = attestation)",
+      "q": "actproof note format version",
+      "e": "base64url-no-padding of envelope_hash bytes",
+      "s": "act_type_id (disclosed mode only)"
+    }
+  },
+  "reference_anchor": {
+    "network": "algorand-testnet",
+    "status": "placeholder",
+    "txid": null,
+    "round": null,
+    "anchored_at": null,
+    "anchoring_address": null,
+    "verify_url_template": "https://testnet.allo.info/tx/{txid}",
+    "instructions": "Decode arc2_note.full_note_b64 to raw bytes. Anchor those bytes as the transaction note from any funded Algorand testnet account. After confirmation, populate txid, round, anchored_at, and anchoring_address."
+  },
+  "expected_verifier_output": "PASS",
+  "verifier_checklist": [
+    "Compute the catalogue_entry_hash by SHA-256 of the catalogue entry JSON file bytes; confirm equal to profile.catalogue_entry_hash",
+    "Recompute manifest_hash_hex by canonicalizing raw_manifest with RFC 8785 JCS and applying SHA-256",
+    "Confirm merkle_root_hex equals manifest_hash_hex (single-leaf tree convention for v1)",
+    "Recompute envelope_hash_hex by canonicalizing envelope with RFC 8785 JCS and applying SHA-256",
+    "Recompose arc2_note.full_note_b64 by concatenating prefix bytes (actproof/v1:) with the canonical note inner bytes",
+    "Recompute each evidence file SHA-256 and confirm equality with manifest.evidence[].sha256_hex"
+  ]
+}

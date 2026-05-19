@@ -1,0 +1,69 @@
+{
+  "schema": "actproof.attestation_manifest.v1",
+  "manifest_version": 1,
+  "act_type_id": "op:actproof.standards_engagement_record.v1",
+  "catalogue_entry_version": 1,
+  "tenant_id": "test-tenant-actproof-001",
+  "issuer_org_name": "Advisa EOOD",
+  "authority_label": "Open-source maintainer of actproof-py and actproof-events",
+  "title": "IETF SCITT working group engagement record",
+  "subtitle": "Reference implementation contributor engagement for grant evaluation and public archival",
+  "system_created_at": "2026-05-19T00:00:00Z",
+  "claim_fields": {
+    "maintainer_legal_name": "Deyan Paroushev",
+    "maintainer_orcid": "0009-0003-8231-8265",
+    "standards_body_name": "Internet Engineering Task Force",
+    "working_group_identifier": "scitt",
+    "engagement_focus_summary": "Implementation experience contribution to the IETF Supply Chain Integrity, Transparency, and Trust working group, with focus on RFC 8785 JSON canonicalization, single-leaf Merkle proofs, external temporal anchoring, profile-conformant evidence records, and verifier independence.",
+    "related_specifications": [
+      "draft-ietf-scitt-architecture-22 (IETF SCITT working group, intended Standards Track, currently in RFC editor publication queue AUTH48 state cluster C557)",
+      "draft-ietf-cose-merkle-tree-proofs-18 (IETF COSE/SCITT, AUTH48 state cluster C557)",
+      "RFC 8785 (JSON Canonicalization Scheme, IETF, Standards Track)",
+      "RFC 3161 (Time-Stamp Protocol, IETF, Standards Track)",
+      "draft-fassbender-scitt-time-anchor-01 (IETF, Informational, related implementation context, expires 2026-10-29)",
+      "draft-hillier-scitt-arp-00 (IETF, related implementation context, expires 2026-11-02)"
+    ],
+    "implementation_artifacts": [
+      "actproof-py v0.3.2 (Apache-2.0, https://github.com/deyan-paroushev/actproof-py, https://pypi.org/project/actproof/)",
+      "actproof-events v1.4-rc1 (Apache-2.0 specification plus CC0 1.0 conformance test vectors, https://github.com/deyan-paroushev/actproof-events)"
+    ],
+    "engagement_date": "2026-05-19",
+    "funding_basis_reference": "Sovereign Tech Standards 2026 cohort application",
+    "next_milestone_date": "2026-06-01",
+    "prior_engagement_reference": null
+  },
+  "evidence": [
+    {
+      "label": "implementation_repository_state",
+      "filename": "implementation_repository_state.txt",
+      "sha256_hex": "51de268b0c26f44b1214023521b8ce59aacbd5ea47f425123d27651c00ac441f",
+      "byte_size": 1736
+    },
+    {
+      "label": "working_group_charter_reference",
+      "filename": "working_group_charter_reference.txt",
+      "sha256_hex": "4f390624cab7ef93ef591347ca51efd5bf1994f1ac8dbfbc3db6e960e2421456",
+      "byte_size": 1764
+    }
+  ],
+  "recipients": [
+    {
+      "role": "grant_evaluator",
+      "org_name": "Sovereign Tech Standards reviewer",
+      "email": "evidence@sts-review.example",
+      "purpose": "Independent verification of the standards engagement attestation that supports the maintainer's STS cohort application."
+    },
+    {
+      "role": "standards_working_group",
+      "org_name": "IETF SCITT working group",
+      "email": "scitt-evidence@ietf.example",
+      "purpose": "Working group situational awareness of an implementer engaging with the WG specifications."
+    },
+    {
+      "role": "public_archive",
+      "org_name": "Public archive",
+      "email": "evidence@public-archive.example",
+      "purpose": "Open archival of the engagement record for long-term independent verification."
+    }
+  ]
+}

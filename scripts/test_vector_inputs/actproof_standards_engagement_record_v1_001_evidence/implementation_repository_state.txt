@@ -1,0 +1,34 @@
+Implementation repository state evidence
+Standards engagement record: op:actproof.standards_engagement_record.v1
+Issuer: Advisa EOOD (EIK 206448172)
+ORCID: 0009-0003-8231-8265
+Date of state attestation: 2026-05-19
+
+Artifact 1: actproof-py
+  Repository:  https://github.com/deyan-paroushev/actproof-py
+  Released:    v0.3.2
+  Distribution: https://pypi.org/project/actproof/
+  License:     Apache-2.0
+  Scope:       Reference implementation library. Provides RFC 8785 JSON
+               canonicalization, single-leaf Merkle proof construction,
+               attestation manifest validation, COSE-aware envelope and
+               receipt utilities, and a catalogue-aware verifier.
+
+Artifact 2: actproof-events
+  Repository:  https://github.com/deyan-paroushev/actproof-events
+  Tag:         v1.4-rc1
+  License:     Apache-2.0 (specification + Python package)
+               CC0 1.0 Universal (test vectors)
+  Scope:       Specification, profile catalogue, and CC0 conformance test
+               vectors for verifiable regulatory acts. The catalogue defines
+               machine-readable profiles for open-source and EU regulatory
+               act types; the test vectors provide reproducible verifier
+               inputs and outputs for each profile.
+
+These artefacts demonstrate implementation experience with the SCITT-adjacent
+substrate primitives that any IETF SCITT-conformant Transparency Service must
+provide or interoperate with: deterministic canonicalization, hash-tree
+proofs, external temporal anchoring, and profile-conformant evidence
+records. The Quoruna application (https://quoruna.com) is the first
+production consumer of both artefacts and provides end-to-end verification
+flow visible in any issued receipt.

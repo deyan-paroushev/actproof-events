@@ -1,0 +1,131 @@
+{
+  "schema": "actproof.test_vector.v1",
+  "test_vector_id": "actproof_standards_engagement_record_v1_001",
+  "catalogue_act_type_id": "op:actproof.standards_engagement_record.v1",
+  "catalogue_entry_version": 1,
+  "profile": {
+    "act_type_id": "op:actproof.standards_engagement_record.v1",
+    "catalogue_entry_version": 1,
+    "catalogue_entry_hash": "sha256:41fcb384eb34851002de34df80fbe5844ae8f6a83f4ace8cb4952eb047d01cf5",
+    "catalogue_entry_hash_basis": "SHA-256 of the catalogue entry JSON file bytes as written to disk in the actproof-events repository at the named version. Verifiers can reproduce by pip install actproof-events at the matching version, locating the entry file via actproof_events.get_catalogue_path(), and hashing its raw bytes."
+  },
+  "raw_manifest": {
+    "schema": "actproof.attestation_manifest.v1",
+    "manifest_version": 1,
+    "act_type_id": "op:actproof.standards_engagement_record.v1",
+    "catalogue_entry_version": 1,
+    "tenant_id": "test-tenant-actproof-001",
+    "issuer_org_name": "Advisa EOOD",
+    "authority_label": "Open-source maintainer of actproof-py and actproof-events",
+    "title": "IETF SCITT working group engagement record",
+    "subtitle": "Reference implementation contributor engagement for grant evaluation and public archival",
+    "system_created_at": "2026-05-19T00:00:00Z",
+    "claim_fields": {
+      "maintainer_legal_name": "Deyan Paroushev",
+      "maintainer_orcid": "0009-0003-8231-8265",
+      "standards_body_name": "Internet Engineering Task Force",
+      "working_group_identifier": "scitt",
+      "engagement_focus_summary": "Implementation experience contribution to the IETF Supply Chain Integrity, Transparency, and Trust working group, with focus on RFC 8785 JSON canonicalization, single-leaf Merkle proofs, external temporal anchoring, profile-conformant evidence records, and verifier independence.",
+      "related_specifications": [
+        "draft-ietf-scitt-architecture-22 (IETF SCITT working group, intended Standards Track, currently in RFC editor publication queue AUTH48 state cluster C557)",
+        "draft-ietf-cose-merkle-tree-proofs-18 (IETF COSE/SCITT, AUTH48 state cluster C557)",
+        "RFC 8785 (JSON Canonicalization Scheme, IETF, Standards Track)",
+        "RFC 3161 (Time-Stamp Protocol, IETF, Standards Track)",
+        "draft-fassbender-scitt-time-anchor-01 (IETF, Informational, related implementation context, expires 2026-10-29)",
+        "draft-hillier-scitt-arp-00 (IETF, related implementation context, expires 2026-11-02)"
+      ],
+      "implementation_artifacts": [
+        "actproof-py v0.3.2 (Apache-2.0, https://github.com/deyan-paroushev/actproof-py, https://pypi.org/project/actproof/)",
+        "actproof-events v1.4-rc1 (Apache-2.0 specification plus CC0 1.0 conformance test vectors, https://github.com/deyan-paroushev/actproof-events)"
+      ],
+      "engagement_date": "2026-05-19",
+      "funding_basis_reference": "Sovereign Tech Standards 2026 cohort application",
+      "next_milestone_date": "2026-06-01",
+      "prior_engagement_reference": null
+    },
+    "evidence": [
+      {
+        "label": "implementation_repository_state",
+        "filename": "implementation_repository_state.txt",
+        "sha256_hex": "51de268b0c26f44b1214023521b8ce59aacbd5ea47f425123d27651c00ac441f",
+        "byte_size": 1736
+      },
+      {
+        "label": "working_group_charter_reference",
+        "filename": "working_group_charter_reference.txt",
+        "sha256_hex": "4f390624cab7ef93ef591347ca51efd5bf1994f1ac8dbfbc3db6e960e2421456",
+        "byte_size": 1764
+      }
+    ],
+    "recipients": [
+      {
+        "role": "grant_evaluator",
+        "org_name": "Sovereign Tech Standards reviewer",
+        "email": "evidence@sts-review.example",
+        "purpose": "Independent verification of the standards engagement attestation that supports the maintainer's STS cohort application."
+      },
+      {
+        "role": "standards_working_group",
+        "org_name": "IETF SCITT working group",
+        "email": "scitt-evidence@ietf.example",
+        "purpose": "Working group situational awareness of an implementer engaging with the WG specifications."
+      },
+      {
+        "role": "public_archive",
+        "org_name": "Public archive",
+        "email": "evidence@public-archive.example",
+        "purpose": "Open archival of the engagement record for long-term independent verification."
+      }
+    ]
+  },
+  "manifest_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOmFjdHByb29mLnN0YW5kYXJkc19lbmdhZ2VtZW50X3JlY29yZC52MSIsImF1dGhvcml0eV9sYWJlbCI6Ik9wZW4tc291cmNlIG1haW50YWluZXIgb2YgYWN0cHJvb2YtcHkgYW5kIGFjdHByb29mLWV2ZW50cyIsImNhdGFsb2d1ZV9lbnRyeV92ZXJzaW9uIjoxLCJjbGFpbV9maWVsZHMiOnsiZW5nYWdlbWVudF9kYXRlIjoiMjAyNi0wNS0xOSIsImVuZ2FnZW1lbnRfZm9jdXNfc3VtbWFyeSI6IkltcGxlbWVudGF0aW9uIGV4cGVyaWVuY2UgY29udHJpYnV0aW9uIHRvIHRoZSBJRVRGIFN1cHBseSBDaGFpbiBJbnRlZ3JpdHksIFRyYW5zcGFyZW5jeSwgYW5kIFRydXN0IHdvcmtpbmcgZ3JvdXAsIHdpdGggZm9jdXMgb24gUkZDIDg3ODUgSlNPTiBjYW5vbmljYWxpemF0aW9uLCBzaW5nbGUtbGVhZiBNZXJrbGUgcHJvb2ZzLCBleHRlcm5hbCB0ZW1wb3JhbCBhbmNob3JpbmcsIHByb2ZpbGUtY29uZm9ybWFudCBldmlkZW5jZSByZWNvcmRzLCBhbmQgdmVyaWZpZXIgaW5kZXBlbmRlbmNlLiIsImZ1bmRpbmdfYmFzaXNfcmVmZXJlbmNlIjoiU292ZXJlaWduIFRlY2ggU3RhbmRhcmRzIDIwMjYgY29ob3J0IGFwcGxpY2F0aW9uIiwiaW1wbGVtZW50YXRpb25fYXJ0aWZhY3RzIjpbImFjdHByb29mLXB5IHYwLjMuMiAoQXBhY2hlLTIuMCwgaHR0cHM6Ly9naXRodWIuY29tL2RleWFuLXBhcm91c2hldi9hY3Rwcm9vZi1weSwgaHR0cHM6Ly9weXBpLm9yZy9wcm9qZWN0L2FjdHByb29mLykiLCJhY3Rwcm9vZi1ldmVudHMgdjEuNC1yYzEgKEFwYWNoZS0yLjAgc3BlY2lmaWNhdGlvbiBwbHVzIENDMCAxLjAgY29uZm9ybWFuY2UgdGVzdCB2ZWN0b3JzLCBodHRwczovL2dpdGh1Yi5jb20vZGV5YW4tcGFyb3VzaGV2L2FjdHByb29mLWV2ZW50cykiXSwibWFpbnRhaW5lcl9sZWdhbF9uYW1lIjoiRGV5YW4gUGFyb3VzaGV2IiwibWFpbnRhaW5lcl9vcmNpZCI6IjAwMDktMDAwMy04MjMxLTgyNjUiLCJuZXh0X21pbGVzdG9uZV9kYXRlIjoiMjAyNi0wNi0wMSIsInByaW9yX2VuZ2FnZW1lbnRfcmVmZXJlbmNlIjpudWxsLCJyZWxhdGVkX3NwZWNpZmljYXRpb25zIjpbImRyYWZ0LWlldGYtc2NpdHQtYXJjaGl0ZWN0dXJlLTIyIChJRVRGIFNDSVRUIHdvcmtpbmcgZ3JvdXAsIGludGVuZGVkIFN0YW5kYXJkcyBUcmFjaywgY3VycmVudGx5IGluIFJGQyBlZGl0b3IgcHVibGljYXRpb24gcXVldWUgQVVUSDQ4IHN0YXRlIGNsdXN0ZXIgQzU1NykiLCJkcmFmdC1pZXRmLWNvc2UtbWVya2xlLXRyZWUtcHJvb2ZzLTE4IChJRVRGIENPU0UvU0NJVFQsIEFVVEg0OCBzdGF0ZSBjbHVzdGVyIEM1NTcpIiwiUkZDIDg3ODUgKEpTT04gQ2Fub25pY2FsaXphdGlvbiBTY2hlbWUsIElFVEYsIFN0YW5kYXJkcyBUcmFjaykiLCJSRkMgMzE2MSAoVGltZS1TdGFtcCBQcm90b2NvbCwgSUVURiwgU3RhbmRhcmRzIFRyYWNrKSIsImRyYWZ0LWZhc3NiZW5kZXItc2NpdHQtdGltZS1hbmNob3ItMDEgKElFVEYsIEluZm9ybWF0aW9uYWwsIHJlbGF0ZWQgaW1wbGVtZW50YXRpb24gY29udGV4dCwgZXhwaXJlcyAyMDI2LTEwLTI5KSIsImRyYWZ0LWhpbGxpZXItc2NpdHQtYXJwLTAwIChJRVRGLCByZWxhdGVkIGltcGxlbWVudGF0aW9uIGNvbnRleHQsIGV4cGlyZXMgMjAyNi0xMS0wMikiXSwic3RhbmRhcmRzX2JvZHlfbmFtZSI6IkludGVybmV0IEVuZ2luZWVyaW5nIFRhc2sgRm9yY2UiLCJ3b3JraW5nX2dyb3VwX2lkZW50aWZpZXIiOiJzY2l0dCJ9LCJldmlkZW5jZSI6W3siYnl0ZV9zaXplIjoxNzM2LCJmaWxlbmFtZSI6ImltcGxlbWVudGF0aW9uX3JlcG9zaXRvcnlfc3RhdGUudHh0IiwibGFiZWwiOiJpbXBsZW1lbnRhdGlvbl9yZXBvc2l0b3J5X3N0YXRlIiwic2hhMjU2X2hleCI6IjUxZGUyNjhiMGMyNmY0NGIxMjE0MDIzNTIxYjhjZTU5YWFjYmQ1ZWE0N2Y0MjUxMjNkMjc2NTFjMDBhYzQ0MWYifSx7ImJ5dGVfc2l6ZSI6MTc2NCwiZmlsZW5hbWUiOiJ3b3JraW5nX2dyb3VwX2NoYXJ0ZXJfcmVmZXJlbmNlLnR4dCIsImxhYmVsIjoid29ya2luZ19ncm91cF9jaGFydGVyX3JlZmVyZW5jZSIsInNoYTI1Nl9oZXgiOiI0ZjM5MDYyNGNhYjdlZjkzZWY1OTEzNDdjYTUxZWZkNWJmMTk5NGYxYWM4ZGJmYmMzZGI2ZTk2MGUyNDIxNDU2In1dLCJpc3N1ZXJfb3JnX25hbWUiOiJBZHZpc2EgRU9PRCIsIm1hbmlmZXN0X3ZlcnNpb24iOjEsInJlY2lwaWVudHMiOlt7ImVtYWlsIjoiZXZpZGVuY2VAc3RzLXJldmlldy5leGFtcGxlIiwib3JnX25hbWUiOiJTb3ZlcmVpZ24gVGVjaCBTdGFuZGFyZHMgcmV2aWV3ZXIiLCJwdXJwb3NlIjoiSW5kZXBlbmRlbnQgdmVyaWZpY2F0aW9uIG9mIHRoZSBzdGFuZGFyZHMgZW5nYWdlbWVudCBhdHRlc3RhdGlvbiB0aGF0IHN1cHBvcnRzIHRoZSBtYWludGFpbmVyJ3MgU1RTIGNvaG9ydCBhcHBsaWNhdGlvbi4iLCJyb2xlIjoiZ3JhbnRfZXZhbHVhdG9yIn0seyJlbWFpbCI6InNjaXR0LWV2aWRlbmNlQGlldGYuZXhhbXBsZSIsIm9yZ19uYW1lIjoiSUVURiBTQ0lUVCB3b3JraW5nIGdyb3VwIiwicHVycG9zZSI6IldvcmtpbmcgZ3JvdXAgc2l0dWF0aW9uYWwgYXdhcmVuZXNzIG9mIGFuIGltcGxlbWVudGVyIGVuZ2FnaW5nIHdpdGggdGhlIFdHIHNwZWNpZmljYXRpb25zLiIsInJvbGUiOiJzdGFuZGFyZHNfd29ya2luZ19ncm91cCJ9LHsiZW1haWwiOiJldmlkZW5jZUBwdWJsaWMtYXJjaGl2ZS5leGFtcGxlIiwib3JnX25hbWUiOiJQdWJsaWMgYXJjaGl2ZSIsInB1cnBvc2UiOiJPcGVuIGFyY2hpdmFsIG9mIHRoZSBlbmdhZ2VtZW50IHJlY29yZCBmb3IgbG9uZy10ZXJtIGluZGVwZW5kZW50IHZlcmlmaWNhdGlvbi4iLCJyb2xlIjoicHVibGljX2FyY2hpdmUifV0sInNjaGVtYSI6ImFjdHByb29mLmF0dGVzdGF0aW9uX21hbmlmZXN0LnYxIiwic3VidGl0bGUiOiJSZWZlcmVuY2UgaW1wbGVtZW50YXRpb24gY29udHJpYnV0b3IgZW5nYWdlbWVudCBmb3IgZ3JhbnQgZXZhbHVhdGlvbiBhbmQgcHVibGljIGFyY2hpdmFsIiwic3lzdGVtX2NyZWF0ZWRfYXQiOiIyMDI2LTA1LTE5VDAwOjAwOjAwWiIsInRlbmFudF9pZCI6InRlc3QtdGVuYW50LWFjdHByb29mLTAwMSIsInRpdGxlIjoiSUVURiBTQ0lUVCB3b3JraW5nIGdyb3VwIGVuZ2FnZW1lbnQgcmVjb3JkIn0=",
+  "manifest_canonical_byte_length": 3113,
+  "manifest_hash_hex": "b2d67c1c0239f369cb3599e03d68cae5ae5c6c7ad5687e6df5d85ff7fabb723f",
+  "merkle_root_hex": "b2d67c1c0239f369cb3599e03d68cae5ae5c6c7ad5687e6df5d85ff7fabb723f",
+  "envelope": {
+    "schema": "actproof.attestation_envelope.v1",
+    "envelope_version": 1,
+    "act_type_id": "op:actproof.standards_engagement_record.v1",
+    "catalogue_entry_version": 1,
+    "manifest_hash": "b2d67c1c0239f369cb3599e03d68cae5ae5c6c7ad5687e6df5d85ff7fabb723f",
+    "merkle_root": "b2d67c1c0239f369cb3599e03d68cae5ae5c6c7ad5687e6df5d85ff7fabb723f"
+  },
+  "envelope_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOmFjdHByb29mLnN0YW5kYXJkc19lbmdhZ2VtZW50X3JlY29yZC52MSIsImNhdGFsb2d1ZV9lbnRyeV92ZXJzaW9uIjoxLCJlbnZlbG9wZV92ZXJzaW9uIjoxLCJtYW5pZmVzdF9oYXNoIjoiYjJkNjdjMWMwMjM5ZjM2OWNiMzU5OWUwM2Q2OGNhZTVhZTVjNmM3YWQ1Njg3ZTZkZjVkODVmZjdmYWJiNzIzZiIsIm1lcmtsZV9yb290IjoiYjJkNjdjMWMwMjM5ZjM2OWNiMzU5OWUwM2Q2OGNhZTVhZTVjNmM3YWQ1Njg3ZTZkZjVkODVmZjdmYWJiNzIzZiIsInNjaGVtYSI6ImFjdHByb29mLmF0dGVzdGF0aW9uX2VudmVsb3BlLnYxIn0=",
+  "envelope_canonical_byte_length": 317,
+  "envelope_hash_hex": "1ca482b74c194f4965bc5a12a0e5d611231895b0893612496e71dd6d9fb91766",
+  "arc2_note": {
+    "mode": "disclosed",
+    "prefix": "actproof/v1:",
+    "inner_canonical_b64": "eyJlIjoiSEtTQ3Qwd1pUMGxsdkZvU29PWFdFU01ZbGJDSk5oSkpibkhkYlotNUYyWSIsIm0iOjEsInEiOiIxIiwiciI6InN0WjhIQUk1ODJuTE5abmdQV2pLNWE1Y2JIclZhSDV0OWRoZjlfcTdjajgiLCJzIjoib3A6YWN0cHJvb2Yuc3RhbmRhcmRzX2VuZ2FnZW1lbnRfcmVjb3JkLnYxIiwidCI6ImEifQ==",
+    "full_note_b64": "YWN0cHJvb2YvdjE6eyJlIjoiSEtTQ3Qwd1pUMGxsdkZvU29PWFdFU01ZbGJDSk5oSkpibkhkYlotNUYyWSIsIm0iOjEsInEiOiIxIiwiciI6InN0WjhIQUk1ODJuTE5abmdQV2pLNWE1Y2JIclZhSDV0OWRoZjlfcTdjajgiLCJzIjoib3A6YWN0cHJvb2Yuc3RhbmRhcmRzX2VuZ2FnZW1lbnRfcmVjb3JkLnYxIiwidCI6ImEifQ==",
+    "full_note_byte_length": 184,
+    "field_meanings": {
+      "r": "base64url-no-padding of merkle_root bytes",
+      "m": "number of leaves in the merkle tree",
+      "t": "type discriminator ('a' = attestation)",
+      "q": "actproof note format version",
+      "e": "base64url-no-padding of envelope_hash bytes",
+      "s": "act_type_id (disclosed mode only)"
+    },
+    "consumer_profile_note": "Generic actproof-events test vector uses the actproof/v1: prefix. Application-specific consumers that fork this layout MAY use their own prefix (e.g. a Quoruna consumer recording its own protocol version) and SHOULD document the substitution in their own consumer profile."
+  },
+  "reference_anchor": {
+    "network": "algorand-testnet",
+    "status": "placeholder",
+    "txid": null,
+    "round": null,
+    "anchored_at": null,
+    "anchoring_address": null,
+    "verify_url_template": "https://testnet.allo.info/tx/{txid}",
+    "instructions": "Decode arc2_note.full_note_b64 to raw bytes. Anchor those bytes as the transaction note from any funded Algorand testnet account. After confirmation, populate txid, round, anchored_at, and anchoring_address."
+  },
+  "expected_verifier_output": "PASS",
+  "verifier_checklist": [
+    "Compute the catalogue_entry_hash by SHA-256 of the catalogue entry JSON file bytes; confirm equal to profile.catalogue_entry_hash",
+    "Recompute manifest_hash_hex by canonicalizing raw_manifest with RFC 8785 JCS and applying SHA-256",
+    "Confirm merkle_root_hex equals manifest_hash_hex (single-leaf tree convention for v1)",
+    "Recompute envelope_hash_hex by canonicalizing envelope with RFC 8785 JCS and applying SHA-256",
+    "Recompose arc2_note.full_note_b64 by concatenating the prefix bytes (actproof/v1:) with the canonical note inner bytes",
+    "Once reference_anchor.txid is populated, fetch the on-chain note and confirm byte-identical match"
+  ]
+}

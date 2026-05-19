@@ -1,0 +1,108 @@
+{
+  "schema": "actproof.act_catalogue_entry.v3",
+  "act_type_id": "op:actproof.standards_engagement_record.v1",
+  "claim_type": "standards_engagement_record",
+  "display_name": "Open-source maintainer standards engagement record",
+  "regulatory_citation": null,
+  "required_claim_fields": [
+    "maintainer_legal_name",
+    "standards_body_name",
+    "working_group_identifier",
+    "engagement_focus_summary",
+    "related_specifications",
+    "implementation_artifacts",
+    "engagement_date"
+  ],
+  "optional_claim_fields": [
+    "maintainer_orcid",
+    "funding_basis_reference",
+    "next_milestone_date",
+    "prior_engagement_reference"
+  ],
+  "required_evidence_labels": [
+    "implementation_repository_state",
+    "working_group_charter_reference"
+  ],
+  "eligible_issuer_roles": [
+    "open_source_maintainer",
+    "software_publisher",
+    "researcher"
+  ],
+  "recommended_witness_roles": [
+    "grant_evaluator",
+    "standards_working_group",
+    "external_auditor",
+    "public_archive",
+    "funder",
+    "downstream_integrator"
+  ],
+  "signature_policy": {
+    "minimum": "issuer_record",
+    "supports": [
+      "gpg_signed_release",
+      "sigstore_cosign_signature",
+      "internal_attestation_record"
+    ]
+  },
+  "version": 1,
+  "supersedes": null,
+  "maintainer": "actproof-events",
+  "test_vector_reference": "catalogue/acts/actproof/standards_engagement_record.v1.test_vectors.json",
+  "regulated_context_profile": {
+    "allowed_context_types": ["release_or_publication"],
+    "allowed_submission_stages": ["prepared", "published", "superseded", "withdrawn"],
+    "default_context_type": "release_or_publication"
+  },
+  "prior_receipts_profile": {
+    "required_roles": [],
+    "optional_roles": ["prior_engagement", "superseded_engagement"]
+  },
+  "reliance_context": {
+    "issuer_role": "open-source maintainer, software publisher, or researcher attesting to a current or planned engagement with a named standards-developing organisation working group, supported by named implementation artifacts",
+    "counterparty_action": "the funder, working group, or public reader records the maintainer's attestation of standards-engagement intent for grant evaluation, working group situational awareness, or public archival; downstream integrators record the attestation as context for the named implementation artifacts",
+    "later_verifiers": [
+      "grant_evaluator",
+      "standards_working_group",
+      "external_auditor",
+      "public_archive",
+      "funder",
+      "downstream_integrator"
+    ],
+    "non_claims": [
+      "does_not_prove_admission_to_the_working_group",
+      "does_not_prove_acceptance_of_any_contribution_by_the_working_group",
+      "does_not_prove_completion_of_standards_work",
+      "does_not_prove_evaluation_of_technical_merit",
+      "does_not_imply_endorsement_by_the_standards_developing_organisation_or_its_officers",
+      "does_not_create_obligations_for_working_group_chairs_or_area_directors"
+    ],
+    "reliance_statement": "The named maintainer attests on the stated engagement date to current or planned participation in the named standards-developing organisation working group, with the named related specifications and implementation artifacts as the basis of the engagement. Verifiers may rely on the maintainer's identity, the engagement date, the existence of the named working group at the named standards-developing organisation, and the existence of the named implementation artifacts at the versions, repository URLs, and evidence references named in the evidence. The receipt does not constitute admission to the working group, acceptance of any specific contribution by the working group, completion of any standards work, evaluation of technical merit, endorsement by the standards-developing organisation or its officers, or any obligation on the part of the working group chairs or area directors. Working group membership and contribution acceptance are determined exclusively by the standards body's own published processes. The machine-readable non_claims array on this entry is the authoritative enumeration of what the receipt does not prove."
+  },
+  "disclosure_profile": {
+    "public_fields": [
+      "maintainer_legal_name",
+      "standards_body_name",
+      "working_group_identifier",
+      "engagement_focus_summary",
+      "related_specifications",
+      "implementation_artifacts",
+      "engagement_date",
+      "maintainer_orcid",
+      "funding_basis_reference",
+      "next_milestone_date",
+      "prior_engagement_reference",
+      "manifest.title",
+      "manifest.issuer.legal_name"
+    ],
+    "commitment_fields": [],
+    "private_fields": [],
+    "back_propagation_scope": {
+      "prior_engagement": [
+        "manifest.claim.maintainer_legal_name",
+        "manifest.claim.standards_body_name",
+        "manifest.claim.working_group_identifier",
+        "manifest.claim.engagement_date"
+      ]
+    }
+  }
+}

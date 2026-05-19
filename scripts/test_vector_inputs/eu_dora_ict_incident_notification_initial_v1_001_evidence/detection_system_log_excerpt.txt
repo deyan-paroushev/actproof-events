@@ -1,0 +1,83 @@
+Detection system log excerpt
+============================
+Source system:                 Enterprise SIEM (vendor and version
+                               redacted in the public evidence; the
+                               internal full-fidelity log is retained for
+                               5 years per DORA Article 13).
+Detection datetime (UTC):      2026-05-19T14:32:07Z
+Discovery method:              Automated detection (rule-based alert).
+Filing entity LEI:             5493001KJTIIGC8Y1R12 (Example Financial Entity)
+Incident reference code:       INC-2026-05-19-001
+
+This file is the detection_system_log_excerpt evidence for the
+op:eu.dora.ict_incident_notification_initial.v1 receipt issued on
+2026-05-19 for incident INC-2026-05-19-001. The receipt's manifest binds
+the SHA-256 of these raw bytes; any modification to this file invalidates
+the receipt.
+
+NOTE: This is a CC0 1.0 conformance test vector with fictional content.
+Real log excerpts attached to live filings will carry production data
+under the entity's own data classification controls.
+
+
+Triggering alert
+----------------
+Rule identifier:      AUTH-FAILURE-RATE-EXCESS
+Severity:             HIGH
+Threshold breached:   Authentication failure rate at IDP exceeded
+                      500 failures per 60-second window for three
+                      consecutive windows.
+Trigger time (UTC):   2026-05-19T14:32:07Z
+
+
+Triggering log lines (extract)
+------------------------------
+2026-05-19T14:30:01.842Z idp-eu-west-1 jwt-verify ERROR
+  signature_validation_failed key_id=jwt-signing-2026-05-rotation
+  upstream=customer-idp expected=ES256 reason=key-not-found
+2026-05-19T14:30:02.117Z idp-eu-west-1 jwt-verify ERROR
+  signature_validation_failed key_id=jwt-signing-2026-05-rotation
+  upstream=customer-idp expected=ES256 reason=key-not-found
+2026-05-19T14:30:02.355Z idp-eu-west-1 jwt-verify ERROR
+  signature_validation_failed key_id=jwt-signing-2026-05-rotation
+  upstream=customer-idp expected=ES256 reason=key-not-found
+[... approx. 41,200 similar lines suppressed across the 14:30 to 14:32
+window ...]
+2026-05-19T14:32:07.001Z siem alerting WARN
+  rule=AUTH-FAILURE-RATE-EXCESS triggered window_count=3
+  observed_rate_per_60s=14267 threshold=500
+2026-05-19T14:32:07.018Z siem alerting INFO
+  paging on-call-soc severity=high
+2026-05-19T14:32:07.219Z siem alerting INFO
+  paging on-call-iam severity=high
+
+
+Initial triage outcome
+----------------------
+14:34:11 UTC   On-call SOC engineer acknowledges page.
+14:34:50 UTC   On-call IAM engineer acknowledges page.
+14:36:02 UTC   Joint triage call opened; IT incident commander assigned.
+14:38:14 UTC   Root cause identified at first-pass review: the scheduled
+               JWT signing-key rotation completed at 14:00 UTC but the
+               new key was not propagated to the verification side of the
+               IDP federation. All tokens issued after 14:00 UTC fail
+               signature verification.
+14:41:33 UTC   Mitigation plan drafted: temporary roll-back to previous
+               signing key while the propagation pipeline is repaired.
+14:48:00 UTC   Decision escalated to the Classification Committee per
+               internal DORA Operational Resilience Policy v3.2.
+
+
+Customer impact observed in the window 14:32 to 16:48 UTC
+---------------------------------------------------------
+Authentication attempts:       ~1.4M
+Authentication failures:       ~98.7% of attempts
+Distinct customers affected:   ~180,000 (de-duplicated by stable customer
+                              identifier)
+Already-authenticated sessions: unaffected; existing tokens continued to
+                              validate against the prior signing key
+                              cached at relying parties.
+Cross-border distribution:     FR ~45%, DE ~24%, IT ~17%, ES ~14%.
+
+
+End of detection_system_log_excerpt evidence.

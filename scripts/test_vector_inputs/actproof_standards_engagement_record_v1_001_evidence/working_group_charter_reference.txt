@@ -1,0 +1,39 @@
+Working group charter reference
+Standards engagement record: op:actproof.standards_engagement_record.v1
+Date of reference: 2026-05-19
+
+Standards-developing organisation:
+  Internet Engineering Task Force (IETF)
+  https://www.ietf.org
+
+Working group:
+  Identifier: scitt
+  Title:      Supply Chain Integrity, Transparency, and Trust
+  Datatracker: https://datatracker.ietf.org/wg/scitt/
+  Charter:    https://datatracker.ietf.org/doc/charter-ietf-scitt/
+  Mailing list: scitt@ietf.org
+  Community page: https://scitt.io/community
+  GitHub organisation: https://github.com/ietf-wg-scitt
+
+Charter scope (as published by the WG):
+  The SCITT WG defines a set of interoperable building blocks that allow
+  implementers to build integrity and accountability into supply chain
+  systems to help assure trustworthy operation. The WG reuses existing
+  work from IETF WGs such as COSE and RATS, and coordinates with other
+  standards bodies including OpenSSF, W3C, ISO, and the Trusted Computing
+  Group.
+
+Primary specification under development at the time of this engagement:
+  draft-ietf-scitt-architecture-22 (10 October 2025)
+  Authors: H. Birkholz (Fraunhofer SIT), A. Delignat-Lavaud (Microsoft
+           Research), C. Fournet (Microsoft Research), Y. Deshpande (ARM),
+           S. Lasker
+  Status:  Internet-Draft, intended Standards Track
+  Position: RFC editor publication queue, AUTH48*R state, cluster C557
+  Companion in same cluster: draft-ietf-cose-merkle-tree-proofs-18
+
+The architecture document has not yet been published as an RFC.
+The maintainer attests engagement with the working group's process
+through subscription to the mailing list, participation in community
+discussions, and the implementation artefacts listed in the companion
+evidence file.
