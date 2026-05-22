@@ -79,5 +79,12 @@
         "manifest.claim.release_commit_sha"
       ]
     }
+  },
+  "claim_field_types": {
+    "release_org": "string",
+    "release_repository": "string",
+    "release_version": "string",
+    "release_commit_sha": "string",
+    "release_published_at": "datetime"
   }
 }

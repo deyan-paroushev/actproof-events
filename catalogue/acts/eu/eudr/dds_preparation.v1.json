@@ -94,5 +94,16 @@
         "manifest.claim.preparation_timestamp"
       ]
     }
+  },
+  "claim_field_types": {
+    "operator_org_name": "string",
+    "operator_eori": "string",
+    "product_commodity_codes": "string_list",
+    "country_of_production": "string",
+    "preparation_timestamp": "datetime",
+    "supplier_name": "string",
+    "lot_reference": "string",
+    "harvest_period": "string",
+    "geometry_collection_reference": "string"
   }
 }

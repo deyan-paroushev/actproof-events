@@ -94,5 +94,16 @@
         "manifest.claim.authority_basis_reference"
       ]
     }
+  },
+  "claim_field_types": {
+    "approving_body_name": "string",
+    "decision_date": "date",
+    "approved_measures_summary": "text",
+    "authority_basis_reference": "string",
+    "responsible_officers": "string_list",
+    "implementation_oversight_reference": "string",
+    "meeting_minutes_reference": "string",
+    "supersedes_attestation_id": "string",
+    "next_review_date": "date"
   }
 }

@@ -104,5 +104,18 @@
         "manifest.claim.engagement_date"
       ]
     }
+  },
+  "claim_field_types": {
+    "maintainer_legal_name": "string",
+    "standards_body_name": "string",
+    "working_group_identifier": "string",
+    "engagement_focus_summary": "text",
+    "related_specifications": "string_list",
+    "implementation_artifacts": "string_list",
+    "engagement_date": "date",
+    "maintainer_orcid": "string",
+    "funding_basis_reference": "string",
+    "next_milestone_date": "date",
+    "prior_engagement_reference": "string"
   }
 }

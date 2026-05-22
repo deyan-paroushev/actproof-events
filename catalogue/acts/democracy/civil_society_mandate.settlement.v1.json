@@ -79,5 +79,12 @@
         "manifest.claim.authorised_representative_org"
       ]
     }
+  },
+  "claim_field_types": {
+    "issuing_organisation": "string",
+    "member_approval_basis": "text",
+    "mandate_scope": "text",
+    "mandate_expiry": "date",
+    "authorised_representative_org": "string"
   }
 }

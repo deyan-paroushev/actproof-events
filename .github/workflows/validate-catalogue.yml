@@ -1,0 +1,45 @@
+# Catalogue conformance gate.
+#
+# Validates every ActProof Events catalogue entry against its JSON Schema on
+# pull requests and on pushes to main, so a non-conforming entry cannot be
+# merged. The work is done by scripts/validate_catalogue.py, which is
+# self-contained and depends only on jsonschema.
+#
+# The gate runs in normal mode: it fails the build on schema non-conformance,
+# a duplicate act_type_id, malformed JSON, or an unrecognised entry
+# discriminator. claim_field_types coverage gaps are reported as warnings and
+# do not fail the build. To enforce full coverage as well, add the --strict
+# flag to the validate step.
+
+name: Validate catalogue
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-catalogue-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate catalogue against schema
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install jsonschema
+        run: python -m pip install "jsonschema>=4.21"
+
+      - name: Validate the catalogue against the schema
+        run: python scripts/validate_catalogue.py

@@ -60,9 +60,8 @@
   "signature_policy": {
     "minimum": "issuer_record",
     "supports": [
-      "qualified_electronic_signature_eidas",
-      "internal_attestation_record",
-      "secure_electronic_channel_acknowledgement"
+      "external_qes_artifact",
+      "internal_attestation_record"
     ]
   },
   "version": 1,
@@ -71,7 +70,7 @@
   "test_vector_reference": "catalogue/acts/eu/dora/ict_incident_notification_initial.v1.test_vectors.json",
   "regulated_context_profile": {
     "allowed_context_types": ["regulatory_filing"],
-    "allowed_submission_stages": ["initial", "reclassification_to_non_major", "withdrawn"],
+    "allowed_submission_stages": ["initial_notification", "reclassification_to_non_major", "withdrawn"],
     "default_context_type": "regulatory_filing"
   },
   "prior_receipts_profile": {
@@ -138,5 +137,36 @@
         "manifest.claim.incident_reference_code"
       ]
     }
+  },
+  "submission_evidence_policy": {
+    "required": false,
+    "supports": ["secure_electronic_channel_acknowledgement"]
+  },
+  "claim_field_types": {
+    "entity_legal_identifier": "string",
+    "entity_legal_name": "string",
+    "submission_type": "string",
+    "incident_reference_code": "string",
+    "detection_datetime_utc": "datetime",
+    "classification_datetime_utc": "datetime",
+    "classification_criteria_triggered": "string_list",
+    "affected_member_states": "string_list",
+    "incident_discovery_method": "string",
+    "business_continuity_plan_activated": "boolean",
+    "affected_functions_and_services": "string_list",
+    "initial_impact_description": "text",
+    "primary_contact_name": "string",
+    "primary_contact_email": "email",
+    "competent_authority": "string",
+    "secondary_contact_name": "string",
+    "secondary_contact_email": "email",
+    "first_disruption_datetime_utc": "datetime",
+    "preliminary_estimated_clients_affected": "integer",
+    "preliminary_estimated_financial_amount_eur": "number",
+    "third_party_provider_involved": "boolean",
+    "outsourcing_arrangement_reference": "string",
+    "linked_threat_notification_reference": "string",
+    "linked_nis2_notification_reference": "string",
+    "linked_gdpr_breach_notification_reference": "string"
   }
 }

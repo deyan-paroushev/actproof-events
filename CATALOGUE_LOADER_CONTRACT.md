@@ -1,289 +1,267 @@
 # Catalogue loader contract
 
-This document is the binding contract between the ActProof Events substrate and any implementation that loads catalogue entries from the substrate's filesystem layout. Implementations that satisfy this contract are conforming catalogue loaders for v1.4 of the specification.
+This document is the binding contract between the ActProof Events substrate and any implementation that loads catalogue entries from the substrate's filesystem layout. An implementation that satisfies this contract is a conforming catalogue loader for v1.5-rc1 of the specification.
 
-The contract is intentionally implementation-agnostic. The reference implementation in Quoruna is written in Python and lives at `catalogue_loader.py` in the Quoruna repository. Future implementations in other languages (Go, Rust, TypeScript) MUST satisfy the same contract to be considered conforming.
+The contract is implementation-agnostic. The reference implementation is the actproof-py library, at `actproof/catalogue.py`. Implementations in other languages, such as Go, Rust, or TypeScript, MUST satisfy the same contract to be considered conforming. A consuming application, such as Quoruna, uses a conforming loader rather than reimplementing one.
 
 ## Scope
 
 This document covers:
 
-- How a loader reads catalogue entries from the filesystem
-- How a loader distinguishes v2 entries from deprecated v1 entries
+- How a loader discovers and reads catalogue entries from the filesystem
+- Which entry schema versions a loader accepts
+- How a loader validates each entry against its JSON Schema
 - How a loader validates a candidate manifest against a catalogue entry
-- How a loader caches and reloads catalogue entries
+- How the optional v3 blocks are preserved and exposed
+- How a consuming application caches and reloads the loaded catalogue
 - How a loader reports errors
 
 This document does NOT cover:
 
 - The transport layer between the loader and any UI or API surface
-- The persistence layer for issued attestations (that lives in the consuming implementation)
-- The signing or anchoring pipeline (that is downstream of the loader)
-- Any internal database schema choices
+- The persistence layer for issued attestations
+- The signing or anchoring pipeline, which is downstream of the loader
+- The semantics of the controlled vocabularies, which are governed by `spec/vocabularies.md`
+- Any internal database schema choices in a consuming application
 
 ## Terminology
 
-The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are interpreted per RFC 2119.
+The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are interpreted per RFC 2119 and RFC 8174.
 
-**Catalogue entry** refers to a JSON document conforming to `actproof.act_catalogue_entry.v2` (defined in spec Section 2.1).
+**Catalogue entry** is a JSON document conforming to `actproof.act_catalogue_entry.v2` or `actproof.act_catalogue_entry.v3`. v3 is the current entry schema and a strict additive superset of v2.
 
-**v1 entry** refers to a JSON document under any `_deprecated/` directory that uses the predecessor voting-shaped schema.
+**v3 entry** is a catalogue entry whose `schema` field is `"actproof.act_catalogue_entry.v3"`. **v2 entry** is one whose `schema` field is `"actproof.act_catalogue_entry.v2"`.
 
-**Manifest** refers to a candidate `actproof.attestation_manifest.v1` document (defined in spec Section 3).
+**v1 entry** is a JSON document under a `_deprecated/` directory using the predecessor voting-shaped schema. v1 entries are not loaded. See Section 1.4.
+
+**Manifest** is a candidate attestation manifest document, defined in the specification.
 
 **New issuance** means the loader is being asked to surface or accept an act_type_id for the purpose of creating a new attestation.
 
-**Historical rendering** means the loader is being asked to resolve an act_type_id that was issued previously, in order to render a receipt or verification page for an existing attestation.
+**The load** is the act of discovering, validating, and indexing every catalogue entry. The reference loader performs the load through a single `load_catalogue` call that returns an immutable catalogue snapshot.
 
 ## 1. Loading requirements
 
-### 1.1 Surfacing v2 entries
+### 1.1 Entry schemas the loader accepts
 
-The loader MUST surface only v2 entries for new issuance. A v2 entry is one whose `schema` field equals the literal string `"actproof.act_catalogue_entry.v2"`.
+A conforming loader MUST accept entries carrying either the `actproof.act_catalogue_entry.v2` or the `actproof.act_catalogue_entry.v3` discriminator. Both are valid for new issuance.
 
-The loader MUST validate each loaded entry against the JSON Schema at `spec/schemas/act_catalogue_entry.v2.json`. Entries that fail schema validation MUST NOT be surfaced for new issuance and SHOULD be logged at warning level for operator attention.
+v3 is the current entry schema and the schema under which new entries SHOULD be authored. Because v3 is a strict additive superset of v2, a v2 entry is a valid, if less rich, act type. A v2 entry carries none of the optional v3 blocks described in Section 3, so a consumer treats its claim fields with the default field type. See Section 3.2.
 
-### 1.2 Refusing v1 entries for new issuance
+A JSON file under `catalogue/acts/` whose `schema` value is a string beginning with `actproof.act_catalogue_entry.` but is neither of the two recognised discriminators MUST be treated as an error, per Section 5.1, not silently skipped. This catches a typo'd or wrong-version discriminator on a file that is clearly intended to be a catalogue entry.
 
-The loader MUST refuse to surface entries from any `_deprecated/` directory for new issuance. Specifically:
+### 1.2 Path discovery
 
-- Any catalogue file whose path contains a `_deprecated/` segment MUST NOT appear in the list of available act types for new attestation creation.
-- Any attempt to begin a new attestation against a v1 act_type_id (e.g., `op:eu.nis2.art20.approval`) MUST be rejected with a clear error message indicating the v1 entry has been superseded.
-
-### 1.3 Allowing v1 read-only access for historical rendering
-
-The loader MUST allow read-only access to v1 entries when resolving an act_type_id that was used in a previously committed attestation. This requirement preserves the namespace and ensures that historical receipts continue to render correctly.
-
-The loader SHOULD distinguish at the API boundary between "list act types for new issuance" (returns only v2 entries) and "resolve act type for historical rendering" (returns v2 and v1 entries). Reference implementations expose two distinct functions for this purpose; see Section 6.
-
-### 1.4 Path discovery
-
-The loader MUST discover catalogue entries by walking the `catalogue/` directory tree. The discovery rules are:
+A conforming loader MUST discover catalogue entries by recursively walking the `catalogue/acts/` directory tree. The discovery rules are:
 
 - Files ending in `.json` are candidate catalogue entries.
-- Files under a `_deprecated/` subdirectory are v1 entries (read-only, historical access only).
-- Files under any other path are v2 entries (subject to v2 schema validation).
-- Files ending in `.test_vectors.json` are NOT catalogue entries and MUST be ignored by the loader.
-- `README.md` files and other non-JSON files MUST be ignored.
+- Files ending in `.test_vectors.json` are NOT catalogue entries and MUST be ignored.
+- Files under any `_deprecated/` subdirectory are v1 entries and MUST be skipped. See Section 1.4.
+- A `.json` file that is not a JSON object, or that has no `schema` field, or whose `schema` value does not look like a catalogue entry discriminator, is not a catalogue entry and MUST be ignored. This permits non-entry JSON files to coexist in the tree.
+- `README.md` and other non-JSON files MUST be ignored.
 
-The loader MUST treat the `catalogue/` directory as the root. Catalogue entries deeper in the tree (under `catalogue/acts/eu/nis2/art20/` etc.) are discovered recursively.
+The schema files used for validation, described in Section 1.3, live under `spec/schemas/`, as siblings of `catalogue/`, not under `catalogue/acts/`.
 
-## 2. Validation requirements
+### 1.3 Schema validation is mandatory
 
-When a candidate manifest is submitted for transition to `awaiting_commit` state, the loader MUST perform the following validations against the corresponding catalogue entry. Failure of any validation MUST block the transition and return a structured error.
+A conforming loader MUST validate every discovered catalogue entry against the JSON Schema for its declared discriminator: `spec/schemas/act_catalogue_entry.v3.json` for a v3 entry and `spec/schemas/act_catalogue_entry.v2.json` for a v2 entry.
+
+A catalogue entry that does not conform to its schema MUST cause the load to fail. The loader MUST NOT silently skip a non-conforming entry, and MUST NOT return a catalogue in which some entries were validated and others were not. The reference loader raises `CatalogueLoadError` and returns no catalogue at all when any entry fails validation.
+
+This is the default behaviour. The reference loader exposes an explicit opt-out, the `validate_schema=False` argument to `load_catalogue`, for development use and for environments that do not ship the schema files or the validation library. The opt-out MUST be an explicit, non-default choice. A loader MUST NOT default to skipping schema validation.
+
+The rationale is that the substrate's value depends on every loader rejecting the same non-conforming entries. A loader that surfaced a non-conforming entry would let issuers create attestations the substrate cannot describe. The actproof-events repository additionally runs a conformance gate, `scripts/validate_catalogue.py`, invoked by the `validate-catalogue` workflow, so that a non-conforming entry cannot be merged in the first place. The loader's load-time validation is the defence in depth at the point of consumption.
+
+A loader MUST also fail the load if two entries share an `act_type_id`. A duplicate `act_type_id` makes resolution ambiguous and MUST be treated as a load failure, not a last-writer-wins merge.
+
+### 1.4 v1 deprecated entries are not loaded
+
+Entries under any `_deprecated/` directory use the predecessor voting-shaped v1 schema. A conforming loader MUST skip them. They do not appear in the loaded catalogue, they cannot be resolved through the loader, and new issuance against a v1 act_type_id is therefore impossible by construction. A request to resolve a v1 act_type_id resolves as not found, per Section 5.1.
+
+Rendering historical receipts that reference a v1 act_type_id is outside the scope of this contract. It is a concern of the consuming application and of the self-contained provenance carried by the receipt itself. A loader MAY scan `_deprecated/` for the sole purpose of returning a more specific deprecated-entry error instead of a generic not-found error, but it MUST NOT load v1 entries as usable catalogue entries.
+
+## 2. Manifest validation requirements
+
+When a candidate manifest is submitted for transition to the `awaiting_commit` state, the loader MUST perform the following validations against the corresponding catalogue entry. Failure of any validation MUST block the transition and return a structured error, per Section 5.
+
+These validations apply identically to v2 and v3 entries. They concern the fifteen v2 wire-schema fields, which v3 leaves unchanged.
 
 ### 2.1 act_type_id match
 
-The manifest's `act_type_id` MUST exactly match the catalogue entry's `act_type_id`. Case-sensitive comparison.
+The manifest's `act_type_id` MUST exactly match the catalogue entry's `act_type_id`, compared case-sensitively.
 
 ### 2.2 catalogue_entry_version match
 
-The manifest's `catalogue_entry_version` MUST exactly match the catalogue entry's `version`. Mismatches indicate the manifest was created against a different version of the catalogue entry; the consuming implementation MUST either re-validate against the current version or surface the version mismatch as a structured error.
+The manifest's `catalogue_entry_version` MUST exactly match the catalogue entry's `version`. A mismatch indicates the manifest was created against a different version of the entry. The consuming application MUST either re-validate against the current version or surface the mismatch as a structured error.
 
 ### 2.3 required_claim_fields presence
 
-For every identifier in the catalogue entry's `required_claim_fields`, the manifest's `claim_fields` object MUST contain a key with the same identifier. The value of the key MUST NOT be null, empty string, or empty array.
-
-The loader MUST report each missing required field individually, not as a single aggregate error, so the issuer can correct all gaps in a single revision cycle.
+For every identifier in the entry's `required_claim_fields`, the manifest's claim fields MUST contain that key with a value that is not null, not an empty string, and not an empty array. The loader MUST report each missing required field individually, so the issuer can correct every gap in one revision cycle.
 
 ### 2.4 required_evidence_labels coverage
 
-For every identifier in the catalogue entry's `required_evidence_labels`, the manifest's `evidence` array MUST contain at least one item whose `label` equals that identifier. The corresponding evidence item MUST have a non-null `sha256_hex` value.
+For every identifier in the entry's `required_evidence_labels`, the manifest's `evidence` array MUST contain at least one item whose `label` equals that identifier and whose hash value is non-null. The loader MUST report each missing label individually.
 
-The loader MUST report each missing required evidence label individually.
+### 2.5 Recipient validation
 
-### 2.5 Recipient role validation
-
-For every recipient in the manifest's `recipients` array, the recipient's `role` SHOULD match an identifier in the catalogue entry's `recommended_witness_roles`. Recipients with non-recommended roles MAY be permitted but the loader MUST flag them as non-standard in a warning that the consuming implementation surfaces to the issuer.
-
-The loader MUST validate that every recipient has a syntactically valid email address in the `email` field. Invalid email addresses MUST be reported as structured errors.
-
-The loader MUST validate that no two recipients share the same `(role, email)` pair. Duplicate designations MUST be reported as structured errors.
+Every recipient's `role` SHOULD match an identifier in the entry's `recommended_witness_roles`. A recipient with a non-recommended role MAY be permitted, but the loader MUST flag it as non-standard in a warning the consuming application surfaces to the issuer. The loader MUST report a syntactically invalid recipient email address as a structured error, and MUST report two recipients sharing the same `(role, email)` pair as a structured error.
 
 ### 2.6 signature_policy compatibility
 
-If the catalogue entry's `signature_policy.minimum` is `external_signature`, the manifest MUST include at least one evidence item whose label appears in the catalogue entry's `signature_policy.supports` list. If the manifest contains only `issuer_record`-equivalent evidence, the loader MUST block the transition.
+If the entry's `signature_policy.minimum` is `external_signature`, the manifest MUST include at least one evidence item whose label appears in the entry's `signature_policy.supports` list. A manifest carrying only issuer-record-equivalent evidence MUST block the transition. If `signature_policy.minimum` is `issuer_record` or `either`, the loader MUST permit the transition without external signature evidence.
 
-If the catalogue entry's `signature_policy.minimum` is `issuer_record` or `either`, the loader MUST permit transition without external signature evidence (the platform-recorded commit action satisfies the floor).
+## 3. Optional v3 blocks
 
-## 3. Caching requirements
+v3 adds six optional blocks to a catalogue entry: `regulated_context_profile`, `prior_receipts_profile`, `reliance_context`, `disclosure_profile`, `submission_evidence_policy`, and `claim_field_types`. A conforming loader MUST preserve and expose every optional block that is present on an entry. A loader MUST NOT drop a block it does not itself interpret, because a consuming application or a later loader version may rely on it.
 
-### 3.1 Startup load
+The semantics of the controlled vocabularies used by these blocks are governed by `spec/vocabularies.md`.
 
-The loader MUST load and cache all catalogue entries in memory at process startup. After successful startup, no catalogue entry SHALL be read from the filesystem on the path of a request.
+### 3.1 Non-validating blocks
 
-### 3.2 Explicit reload
+`regulated_context_profile`, `prior_receipts_profile`, `reliance_context`, and `disclosure_profile` describe receipt context, lifecycle, reliance, and disclosure semantics. They are entry metadata. A loader MUST expose them to consumers. `reliance_context.non_claims`, where present, enumerates the inferences a verifier must not draw from a receipt. A consuming application SHOULD render it on receipts and verification surfaces.
 
-The loader MUST support an explicit reload operation triggered by an operator signal. Acceptable signal mechanisms include:
+### 3.2 claim_field_types
 
-- A POSIX signal (e.g., `SIGHUP`) handled by the process
-- An admin HTTP endpoint that triggers an in-process reload
-- A scheduled reload at known process restart points (e.g., daily deploy)
+`claim_field_types` maps each claim field identifier to its primitive data type. A consuming application uses it to render the input control, parse the submitted value, and serialise the manifest with no hardcoded per-act-type knowledge. A loader MUST expose `claim_field_types` where present. A consumer that encounters a claim field absent from the map, or an entry that declares no map at all, such as any v2 entry, MUST treat that field as type `string`.
 
-The loader MUST NOT reload catalogue entries based on file modification time, inotify events, or any other implicit trigger. All reloads MUST be operator-initiated.
+### 3.3 submission_evidence_policy
 
-### 3.3 Atomicity
+`submission_evidence_policy` declares whether submission or transmission evidence is required for the act type and which evidence labels it recognises. A loader MUST expose the block where present. A loader MAY additionally validate a candidate manifest against it: where `submission_evidence_policy.required` is `true`, a conforming manifest is expected to carry at least one recognised submission evidence artifact. Manifest validation against `submission_evidence_policy` is not yet a requirement of this contract. A loader that does not perform it is still conforming.
 
-The reload operation MUST be atomic with respect to concurrent reads. A consuming request that is mid-flight when reload begins MUST observe either the pre-reload catalogue or the post-reload catalogue in its entirety, never a mixed state.
+## 4. Catalogue lifecycle in a consuming application
 
-The reference implementation accomplishes this by computing the new catalogue cache fully in a temporary structure, then atomically swapping the active cache pointer.
+The reference loader's `load_catalogue` is a stateless function. It reads the catalogue from disk and returns an immutable snapshot. Caching that snapshot, and reloading it, is the responsibility of the consuming application.
 
-### 3.4 Reload failure handling
+### 4.1 Load at startup
 
-If reload fails (e.g., a newly added catalogue entry fails schema validation), the loader MUST retain the previous valid cache and surface the failure as a structured error. A failed reload MUST NOT leave the loader in an unloaded or partially-loaded state.
+A consuming application MUST perform the load once at process startup and hold the resulting snapshot in memory. After startup, no catalogue entry SHALL be read from the filesystem on the path of a request.
 
-## 4. Error reporting
+### 4.2 Explicit, operator-initiated reload
 
-The loader MUST report validation errors as structured objects, not as opaque strings. The recommended structure is:
+A consuming application that supports reloading the catalogue without a process restart MUST trigger the reload only by an explicit operator signal: a POSIX signal, an authenticated admin endpoint, or a scheduled restart point. It MUST NOT reload based on file modification time, filesystem watch events, or any other implicit trigger.
+
+### 4.3 Atomic swap
+
+A reload MUST be atomic with respect to concurrent reads. A request in flight when a reload begins MUST observe either the pre-reload snapshot or the post-reload snapshot in its entirety, never a mixed state. The immutable-snapshot model of the reference loader makes this straightforward: build the new snapshot fully, then swap the active reference in one step.
+
+### 4.4 Reload failure preserves the prior snapshot
+
+If a reload fails, for example because a newly added entry fails schema validation, the consuming application MUST retain the previous snapshot and surface the failure as a structured error. A failed reload MUST NOT leave the application with no catalogue or a partial one.
+
+## 5. Error reporting
+
+A loader MUST report errors as structured objects, not opaque strings. The recommended structure is:
 
 ```
 {
   "error_type": "REQUIRED_CLAIM_FIELD_MISSING",
-  "field_path": "claim_fields.approving_body_name",
+  "field_path": "claim.approving_body_name",
   "act_type_id": "op:eu.nis2.art20.management_body_approval.v1",
   "catalogue_entry_version": 1,
   "human_message": "The required claim field 'approving_body_name' is missing from the manifest."
 }
 ```
 
-Each structured error MUST include:
+Each structured error MUST include `error_type`, an identifier from the taxonomy in Section 5.1, and `human_message`, a human-readable explanation suitable for display to the issuer. Each error SHOULD include, where applicable, a `field_path`, the `act_type_id` and `catalogue_entry_version` for context, `expected` and `actual` values for a mismatch, and `valid_options` listing the permissible values.
 
-- `error_type`: an enumerated identifier from the error taxonomy in Section 4.1
-- `human_message`: a human-readable explanation suitable for display to the issuer
+### 5.1 Error taxonomy
 
-Each structured error SHOULD include where applicable:
+A conforming loader MUST recognise and report the following error types:
 
-- `field_path`: a JSON pointer-like path identifying the offending field
-- `act_type_id` and `catalogue_entry_version` for context
-- `expected` and `actual` values for mismatches
-- `valid_options` listing the permissible values when applicable
+- `CATALOGUE_ENTRY_NOT_FOUND`: the requested act_type_id matches no loaded entry.
+- `CATALOGUE_ENTRY_SCHEMA_INVALID`: a catalogue entry on disk fails schema validation. This stops the load, per Section 1.3.
+- `CATALOGUE_DUPLICATE_ACT_TYPE_ID`: two entries share an act_type_id. This stops the load, per Section 1.3.
+- `CATALOGUE_ENTRY_VERSION_MISMATCH`: the manifest's catalogue_entry_version does not match the entry's version.
+- `REQUIRED_CLAIM_FIELD_MISSING`: a required claim field is absent or empty.
+- `REQUIRED_EVIDENCE_LABEL_MISSING`: no evidence item carries a required label.
+- `RECIPIENT_ROLE_NOT_RECOMMENDED`: a recipient's role is not in recommended_witness_roles. This is a warning unless the consuming application enforces a strict mode.
+- `RECIPIENT_EMAIL_INVALID`: a recipient email is malformed.
+- `RECIPIENT_DUPLICATE_DESIGNATION`: two recipients share the same (role, email) pair.
+- `SIGNATURE_POLICY_VIOLATED`: the entry requires an external signature but the manifest provides none.
 
-### 4.1 Error taxonomy
+A loader MAY additionally report `CATALOGUE_ENTRY_DEPRECATED` when it can determine that a requested act_type_id corresponds to a v1 entry under `_deprecated/`, in order to give a more specific error than `CATALOGUE_ENTRY_NOT_FOUND`. This is OPTIONAL, per Section 1.4.
 
-The loader MUST recognise and report the following error types:
+## 6. Concurrency
 
-- `CATALOGUE_ENTRY_NOT_FOUND`: requested act_type_id does not match any loaded entry
-- `CATALOGUE_ENTRY_DEPRECATED`: requested act_type_id is a v1 entry; new issuance refused
-- `CATALOGUE_ENTRY_VERSION_MISMATCH`: manifest's catalogue_entry_version does not match catalogue
-- `REQUIRED_CLAIM_FIELD_MISSING`: a required claim field is absent or empty
-- `REQUIRED_EVIDENCE_LABEL_MISSING`: no evidence item carries a required label
-- `RECIPIENT_ROLE_NOT_RECOMMENDED`: a recipient's role is not in recommended_witness_roles (warning, not error, unless implementation enforces strict mode)
-- `RECIPIENT_EMAIL_INVALID`: a recipient's email is malformed
-- `RECIPIENT_DUPLICATE_DESIGNATION`: two recipients share the same (role, email) pair
-- `SIGNATURE_POLICY_VIOLATED`: catalogue requires external signature but manifest provides none
-- `CATALOGUE_ENTRY_SCHEMA_INVALID`: a catalogue entry on disk fails v2 schema validation (operator-facing error at startup or reload)
+A loader's read operations, resolving an entry and validating a manifest, MUST be safe for concurrent invocation. The reference loader achieves this by returning an immutable snapshot: once returned, a snapshot is never mutated. A consuming application achieves concurrency-safe reload by the atomic reference swap of Section 4.3.
 
-## 5. Concurrency
+## 7. Reference interface
 
-The loader's read operations (resolve catalogue entry, validate manifest) MUST be safe for concurrent invocation. Implementations MAY achieve concurrency safety by treating the cached catalogue as immutable after each reload and using atomic pointer swap for updates.
-
-The loader's reload operation SHOULD be safe to invoke concurrently with read operations as described in Section 3.3. The loader MAY serialize concurrent reload calls to prevent redundant work.
-
-## 6. Recommended interface
-
-Reference implementations are RECOMMENDED to expose at least the following operations. Type signatures are written in Python-flavoured pseudocode for clarity; equivalent signatures in other languages are conforming.
+The reference implementation, actproof-py, exposes the surface below. Type signatures are written in Python-flavoured pseudocode. Equivalent signatures in other languages are conforming, and a loader in another language MAY use different names and idioms, provided the obligations of Sections 1 through 6 are met.
 
 ```python
-class CatalogueLoader:
-    def load_all(self, catalogue_root: Path) -> None:
-        """
-        Discover and cache all catalogue entries. Called at process startup
-        and on explicit reload signal.
-        """
+def load_catalogue(
+    acts_path: Path | None = None,
+    *,
+    schema_path: Path | None = None,
+    source_uri: str | None = None,
+    git_commit: str | None = None,
+    validate_schema: bool = True,
+) -> Catalogue:
+    """
+    Discover, validate, and index every catalogue entry, and return an
+    immutable Catalogue snapshot. validate_schema defaults to True; see
+    Section 1.3. Raises CatalogueLoadError on a non-conforming entry, on
+    a duplicate act_type_id, or on a missing schema or validation library.
+    """
 
-    def list_act_types_for_issuance(self) -> list[ActTypeDescriptor]:
-        """
-        Return the list of v2 act types currently available for new
-        attestation creation. v1 entries are excluded.
-        """
+class Catalogue:
+    """
+    An immutable snapshot. Holds every loaded entry indexed by
+    act_type_id, the source paths, and the schema hash used for catalogue
+    binding. Resolving an act_type_id returns its CatalogueEntry or
+    signals CATALOGUE_ENTRY_NOT_FOUND.
+    """
 
-    def resolve_for_issuance(self, act_type_id: str) -> CatalogueEntry:
-        """
-        Return the v2 catalogue entry matching act_type_id. Raises
-        CatalogueEntryNotFound if no match exists, or CatalogueEntryDeprecated
-        if the match is a v1 entry.
-        """
+class CatalogueEntry:
+    """
+    One catalogue entry: the fifteen v2 wire-schema fields, two derived
+    fields, and the optional v3 fields, including claim_field_types,
+    populated where the entry declares them and otherwise None.
+    """
 
-    def resolve_for_history(self, act_type_id: str) -> CatalogueEntry:
-        """
-        Return the catalogue entry matching act_type_id, including v1 entries.
-        Used for rendering receipts of attestations issued before the v2
-        migration.
-        """
-
-    def validate_manifest(
-        self,
-        manifest: dict,
-        catalogue_entry: CatalogueEntry,
-    ) -> list[ValidationError]:
-        """
-        Validate a candidate manifest against a catalogue entry. Returns a
-        list of structured errors; empty list means the manifest is valid
-        for transition to awaiting_commit.
-        """
-
-    def reload(self) -> ReloadResult:
-        """
-        Re-discover and re-cache all catalogue entries atomically. Returns
-        a summary of what changed.
-        """
+def validate_manifest(
+    manifest: dict,
+    entry: CatalogueEntry,
+) -> list[ValidationIssue]:
+    """
+    Validate a candidate manifest against a catalogue entry, per
+    Section 2. Returns a list of structured issues; an empty list means
+    the manifest may transition to awaiting_commit.
+    """
 ```
 
-Implementations MAY add additional operations beyond this minimum (e.g., bulk validation, partial reload, schema diff). Such extensions MUST NOT change the semantics of the operations above.
+A consuming application performs the load once and caches the `Catalogue`, per Section 4. It reloads by calling `load_catalogue` again and swapping the cached reference.
 
-## 7. Test scenarios
+## 8. Conformance test scenarios
 
-A conforming loader implementation MUST pass at least the following test scenarios. The reference implementation in Quoruna includes these as integration tests under `tests/test_catalogue_loader.py` (added in Batch B).
+A conforming loader MUST pass at least the following scenarios.
 
-### Scenario A: Successful v2 load
+**Scenario A, successful load.** Given a catalogue directory of well-formed v3 entries and the v3 schema file, the load succeeds and every entry is resolvable by its act_type_id.
 
-Given a clean catalogue directory containing `management_body_approval.v1.json` and `dds_preparation.v1.json`, the loader's `load_all` succeeds, `list_act_types_for_issuance` returns both entries, and `resolve_for_issuance` returns the correct entry for each act_type_id.
+**Scenario B, non-conforming entry stops the load.** Given a catalogue directory where one entry does not conform to its schema, the load fails with a `CATALOGUE_ENTRY_SCHEMA_INVALID` error and returns no catalogue. No entry is surfaced.
 
-### Scenario B: v1 namespace preservation
+**Scenario C, duplicate act_type_id stops the load.** Given two entries sharing an act_type_id, the load fails with a `CATALOGUE_DUPLICATE_ACT_TYPE_ID` error.
 
-Given a catalogue directory containing the v1 `_deprecated/approval.json` alongside the v2 `management_body_approval.v1.json`:
+**Scenario D, deprecated entries are skipped.** Given a `_deprecated/` directory alongside the active entries, no v1 entry appears in the loaded catalogue, and resolving a v1 act_type_id signals not found.
 
-- `list_act_types_for_issuance` returns only the v2 entry.
-- `resolve_for_issuance("op:eu.nis2.art20.approval")` raises CatalogueEntryDeprecated.
-- `resolve_for_history("op:eu.nis2.art20.approval")` succeeds and returns the v1 entry.
+**Scenario E, missing required claim field.** Given a manifest that omits a required claim field, `validate_manifest` returns a single `REQUIRED_CLAIM_FIELD_MISSING` issue identifying that field.
 
-### Scenario C: Missing required claim field
+**Scenario F, missing required evidence label.** Given a manifest that omits a required evidence label, `validate_manifest` returns a `REQUIRED_EVIDENCE_LABEL_MISSING` issue for the missing label.
 
-Given a manifest against `management_body_approval.v1` that omits `responsible_officers`, `validate_manifest` returns a single structured error of type `REQUIRED_CLAIM_FIELD_MISSING` with `field_path: "claim_fields.responsible_officers"`.
+**Scenario G, duplicate recipient.** Given a manifest with two recipients sharing a `(role, email)` pair, `validate_manifest` returns a `RECIPIENT_DUPLICATE_DESIGNATION` issue.
 
-### Scenario D: Missing required evidence label
+**Scenario H, non-recommended role warning.** Given a manifest with a recipient whose role is not in `recommended_witness_roles`, `validate_manifest` returns a `RECIPIENT_ROLE_NOT_RECOMMENDED` warning, and the transition is permitted.
 
-Given a manifest against `dds_preparation.v1` that includes only the `geojson_plot_geometries` evidence and omits `due_diligence_screening_report`, `validate_manifest` returns a `REQUIRED_EVIDENCE_LABEL_MISSING` error for the missing label.
+**Scenario I, claim_field_types exposure.** Given a v3 entry that declares `claim_field_types`, the loaded entry exposes the map. Given a v2 entry, or a claim field absent from the map, a consumer treats the field as type `string`.
 
-### Scenario E: Duplicate recipient
+**Scenario J, reload preserves the prior snapshot on failure.** After a successful initial load, a reload in which a catalogue file has been corrupted fails atomically. The prior snapshot remains active and the failure is reported as a structured error.
 
-Given a manifest with two recipients sharing the same `(role, email)`, `validate_manifest` returns a `RECIPIENT_DUPLICATE_DESIGNATION` error identifying both indices.
-
-### Scenario F: Non-recommended role warning
-
-Given a manifest with a recipient whose role is not in `recommended_witness_roles`, `validate_manifest` returns a warning (not an error) of type `RECIPIENT_ROLE_NOT_RECOMMENDED`. The transition to `awaiting_commit` is permitted but the consuming implementation MUST surface the warning to the issuer.
-
-### Scenario G: Invalid catalogue entry on disk
-
-Given a catalogue directory where one of the JSON files fails v2 schema validation, `load_all` succeeds for the valid entries, logs the failure at warning level, and `list_act_types_for_issuance` returns only the valid v2 entries. The invalid entry is NOT surfaced.
-
-### Scenario H: Reload preserves prior cache on failure
-
-After successful initial load, given a `reload` call where one of the catalogue files has been corrupted, the reload fails atomically. The loader's existing cache remains active and serving requests. The failure is reported as a structured error.
-
-### Scenario I: No filesystem read on issuance path
-
-A profiling test confirms that calling `resolve_for_issuance` for any cached act_type_id triggers zero filesystem reads after the initial `load_all` completes.
-
-## 8. Reference implementation
-
-The reference implementation lives in the Quoruna repository at `catalogue_loader.py`. It is implemented in Python with `asyncpg` for any database-side persistence concerns and `jsonschema` for v2 schema validation. The full implementation lands in Quoruna Batch B alongside the attestation schema and the issuer flow.
-
-Future implementations in other languages may diverge in idioms, frameworks, and persistence choices, but MUST satisfy the contract documented here to be considered conforming.
+**Scenario K, no filesystem read on the issuance path.** After the initial load, resolving any cached act_type_id triggers no filesystem read.
 
 ## 9. Versioning
 
-This contract is bound to v1.4 of the ActProof Events specification. Substrate changes that affect the loader contract (new schema versions, new validation requirements, new error types) will be accompanied by a new version of this contract. Implementations that satisfy the v1.4 contract are NOT automatically conforming to future contract versions; each substrate release MUST be reviewed against the corresponding contract.
+This contract is bound to v1.5-rc1 of the ActProof Events specification, the release that introduces the v3 entry schema. A substrate change that affects the loader contract, such as a new entry schema version, a new validation requirement, or a new error type, will be accompanied by a new version of this contract. An implementation conforming to one contract version is not automatically conforming to another. Each substrate release MUST be reviewed against its corresponding contract.
 
 ---
 
