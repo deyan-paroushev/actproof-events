@@ -3,6 +3,12 @@
   "test_vector_id": "actproof_software_release_v1_001",
   "catalogue_act_type_id": "op:actproof.software_release.v1",
   "catalogue_entry_version": 1,
+  "profile": {
+    "act_type_id": "op:actproof.software_release.v1",
+    "catalogue_entry_version": 1,
+    "catalogue_entry_hash": "sha256:42e828b4850ba15bb94ce4d5dee860e5639b774cf21aa1885ff404158fa4127b",
+    "catalogue_entry_hash_basis": "SHA-256 of the catalogue entry JSON file bytes as written to disk in the actproof-events repository at the named version."
+  },
   "raw_manifest": {
     "schema": "actproof.attestation_manifest.v1",
     "manifest_version": 1,
@@ -56,32 +62,32 @@
       }
     ]
   },
-  "manifest_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOm9wZW5wcm9vZi5zb2Z0d2FyZV9yZWxlYXNlLnYxIiwiYXV0aG9yaXR5X2xhYmVsIjoiT3Blbi1zb3VyY2UgbWFpbnRhaW5lciBvZiBvcGVucHJvb2YtcHkiLCJjYXRhbG9ndWVfZW50cnlfdmVyc2lvbiI6MSwiY2xhaW1fZmllbGRzIjp7InJlbGVhc2VfY29tbWl0X3NoYSI6Ijk3YzljYzNhNGU5YzFiYzFjNGJlOGE1ZDBjOGU5YTJlM2Y2YjdhOGMiLCJyZWxlYXNlX29yZyI6IkFkdmlzYSBFT09EIiwicmVsZWFzZV9wdWJsaXNoZWRfYXQiOiIyMDI2LTA1LTE3VDAwOjAwOjAwWiIsInJlbGVhc2VfcmVwb3NpdG9yeSI6Imh0dHBzOi8vZ2l0aHViLmNvbS9kZXlhbi1wYXJvdXNoZXYvb3BlbnByb29mLXB5IiwicmVsZWFzZV92ZXJzaW9uIjoidjAuMS4xIn0sImV2aWRlbmNlIjpbeyJieXRlX3NpemUiOjEyOCwiZmlsZW5hbWUiOiJvcGVucHJvb2YtcHktdjAuMS4xLXJlbGVhc2UtbWFuaWZlc3QudHh0IiwibGFiZWwiOiJyZWxlYXNlX21hbmlmZXN0Iiwic2hhMjU2X2hleCI6ImExYzRkOGU3YjlmMmE1YzhlNmQzYjdmOWE0YzJlNWQ4YjFmNGE3YzNlNmQ5YjJmNWE4YzFlNGQ3YjBmM2E2YzkifSx7ImJ5dGVfc2l6ZSI6MTkyLCJmaWxlbmFtZSI6Im9wZW5wcm9vZi1weS12MC4xLjEtc2hhMjU2c3Vtcy50eHQiLCJsYWJlbCI6InJlbGVhc2VfYXJ0aWZhY3RfY2hlY2tzdW1zIiwic2hhMjU2X2hleCI6ImIyZDVlOGEzYzZmOWIxZDRlN2EwYzNmNmI5ZDJlNWE4YzFmNGI3ZDBlM2E2YzlmMmI1ZDhlMWE0YzdmMGIzZDYifV0sImlzc3Vlcl9vcmdfbmFtZSI6IkFkdmlzYSBFT09EIiwibWFuaWZlc3RfdmVyc2lvbiI6MSwicmVjaXBpZW50cyI6W3siZW1haWwiOiJpbnRlZ3JhdGlvbkBxdW9ydW5hLmV4YW1wbGUiLCJvcmdfbmFtZSI6IlF1b3J1bmEgc3Vic3RyYXRlIGNvbnN1bWVyIiwicHVycG9zZSI6IkxpYnJhcnkgdmVyc2lvbiBwaW4gdmVyaWZpY2F0aW9uIGF0IG9wZW5wcm9vZiBAIGdpdCsuLi5AdjAuMS4xIiwicm9sZSI6ImRvd25zdHJlYW1faW50ZWdyYXRvciJ9LHsiZW1haWwiOiJzd2gtZXZpZGVuY2VAc29mdHdhcmVoZXJpdGFnZS5leGFtcGxlIiwib3JnX25hbWUiOiJTb2Z0d2FyZSBIZXJpdGFnZSBBcmNoaXZlIiwicHVycG9zZSI6Ik9wZW4tc291cmNlIHJlbGVhc2UgZXZpZGVuY2UgcHJlc2VydmF0aW9uIiwicm9sZSI6InB1YmxpY19hcmNoaXZlIn0seyJlbWFpbCI6ImV2aWRlbmNlQHN0cy1yZXZpZXcuZXhhbXBsZSIsIm9yZ19uYW1lIjoiU292ZXJlaWduIFRlY2ggU3RhbmRhcmRzIHJldmlld2VyIiwicHVycG9zZSI6IlNUUyBzdWJtaXNzaW9uIHJlbGVhc2UgZXZpZGVuY2UiLCJyb2xlIjoiZ3JhbnRfZXZhbHVhdG9yIn1dLCJzY2hlbWEiOiJvcGVucHJvb2YuYXR0ZXN0YXRpb25fbWFuaWZlc3QudjEiLCJzdWJ0aXRsZSI6Im9wZW5wcm9vZi1ldmVudHMgY2F0YWxvZ3VlIHNjaGVtYSB2MyBzdXBwb3J0Iiwic3lzdGVtX2NyZWF0ZWRfYXQiOiIyMDI2LTA1LTE3VDAwOjAwOjAwWiIsInRlbmFudF9pZCI6InRlc3QtdGVuYW50LW9wZW5wcm9vZi0wMDEiLCJ0aXRsZSI6Im9wZW5wcm9vZi1weSB2MC4xLjEgcmVsZWFzZSBhdHRlc3RhdGlvbiJ9",
-  "manifest_canonical_byte_length": 1578,
-  "manifest_hash_hex": "2ca22b68a8e57984a1f5d48f3ac21427f3eb69199483b1459ab5f807666ca1be",
-  "merkle_root_hex": "2ca22b68a8e57984a1f5d48f3ac21427f3eb69199483b1459ab5f807666ca1be",
+  "manifest_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOmFjdHByb29mLnNvZnR3YXJlX3JlbGVhc2UudjEiLCJhdXRob3JpdHlfbGFiZWwiOiJPcGVuLXNvdXJjZSBtYWludGFpbmVyIG9mIGFjdHByb29mLXB5IiwiY2F0YWxvZ3VlX2VudHJ5X3ZlcnNpb24iOjEsImNsYWltX2ZpZWxkcyI6eyJyZWxlYXNlX2NvbW1pdF9zaGEiOiI5N2M5Y2MzYTRlOWMxYmMxYzRiZThhNWQwYzhlOWEyZTNmNmI3YThjIiwicmVsZWFzZV9vcmciOiJBZHZpc2EgRU9PRCIsInJlbGVhc2VfcHVibGlzaGVkX2F0IjoiMjAyNi0wNS0xN1QwMDowMDowMFoiLCJyZWxlYXNlX3JlcG9zaXRvcnkiOiJodHRwczovL2dpdGh1Yi5jb20vZGV5YW4tcGFyb3VzaGV2L2FjdHByb29mLXB5IiwicmVsZWFzZV92ZXJzaW9uIjoidjAuMS4xIn0sImV2aWRlbmNlIjpbeyJieXRlX3NpemUiOjEyOCwiZmlsZW5hbWUiOiJhY3Rwcm9vZi1weS12MC4xLjEtcmVsZWFzZS1tYW5pZmVzdC50eHQiLCJsYWJlbCI6InJlbGVhc2VfbWFuaWZlc3QiLCJzaGEyNTZfaGV4IjoiYTFjNGQ4ZTdiOWYyYTVjOGU2ZDNiN2Y5YTRjMmU1ZDhiMWY0YTdjM2U2ZDliMmY1YThjMWU0ZDdiMGYzYTZjOSJ9LHsiYnl0ZV9zaXplIjoxOTIsImZpbGVuYW1lIjoiYWN0cHJvb2YtcHktdjAuMS4xLXNoYTI1NnN1bXMudHh0IiwibGFiZWwiOiJyZWxlYXNlX2FydGlmYWN0X2NoZWNrc3VtcyIsInNoYTI1Nl9oZXgiOiJiMmQ1ZThhM2M2ZjliMWQ0ZTdhMGMzZjZiOWQyZTVhOGMxZjRiN2QwZTNhNmM5ZjJiNWQ4ZTFhNGM3ZjBiM2Q2In1dLCJpc3N1ZXJfb3JnX25hbWUiOiJBZHZpc2EgRU9PRCIsIm1hbmlmZXN0X3ZlcnNpb24iOjEsInJlY2lwaWVudHMiOlt7ImVtYWlsIjoiaW50ZWdyYXRpb25AcXVvcnVuYS5leGFtcGxlIiwib3JnX25hbWUiOiJRdW9ydW5hIHN1YnN0cmF0ZSBjb25zdW1lciIsInB1cnBvc2UiOiJMaWJyYXJ5IHZlcnNpb24gcGluIHZlcmlmaWNhdGlvbiBhdCBhY3Rwcm9vZiBAIGdpdCsuLi5AdjAuMS4xIiwicm9sZSI6ImRvd25zdHJlYW1faW50ZWdyYXRvciJ9LHsiZW1haWwiOiJzd2gtZXZpZGVuY2VAc29mdHdhcmVoZXJpdGFnZS5leGFtcGxlIiwib3JnX25hbWUiOiJTb2Z0d2FyZSBIZXJpdGFnZSBBcmNoaXZlIiwicHVycG9zZSI6Ik9wZW4tc291cmNlIHJlbGVhc2UgZXZpZGVuY2UgcHJlc2VydmF0aW9uIiwicm9sZSI6InB1YmxpY19hcmNoaXZlIn0seyJlbWFpbCI6ImV2aWRlbmNlQHN0cy1yZXZpZXcuZXhhbXBsZSIsIm9yZ19uYW1lIjoiU292ZXJlaWduIFRlY2ggU3RhbmRhcmRzIHJldmlld2VyIiwicHVycG9zZSI6IlNUUyBzdWJtaXNzaW9uIHJlbGVhc2UgZXZpZGVuY2UiLCJyb2xlIjoiZ3JhbnRfZXZhbHVhdG9yIn1dLCJzY2hlbWEiOiJhY3Rwcm9vZi5hdHRlc3RhdGlvbl9tYW5pZmVzdC52MSIsInN1YnRpdGxlIjoiYWN0cHJvb2YtZXZlbnRzIGNhdGFsb2d1ZSBzY2hlbWEgdjMgc3VwcG9ydCIsInN5c3RlbV9jcmVhdGVkX2F0IjoiMjAyNi0wNS0xN1QwMDowMDowMFoiLCJ0ZW5hbnRfaWQiOiJ0ZXN0LXRlbmFudC1hY3Rwcm9vZi0wMDEiLCJ0aXRsZSI6ImFjdHByb29mLXB5IHYwLjEuMSByZWxlYXNlIGF0dGVzdGF0aW9uIn0=",
+  "manifest_canonical_byte_length": 1568,
+  "manifest_hash_hex": "23b87fb90ec0fce5cf8e7ea01e61271ff1c2571fc070f4b238d36f42a2f2496e",
+  "merkle_root_hex": "23b87fb90ec0fce5cf8e7ea01e61271ff1c2571fc070f4b238d36f42a2f2496e",
   "envelope": {
     "schema": "actproof.attestation_envelope.v1",
     "envelope_version": 1,
     "act_type_id": "op:actproof.software_release.v1",
     "catalogue_entry_version": 1,
-    "manifest_hash": "2ca22b68a8e57984a1f5d48f3ac21427f3eb69199483b1459ab5f807666ca1be",
-    "merkle_root": "2ca22b68a8e57984a1f5d48f3ac21427f3eb69199483b1459ab5f807666ca1be"
+    "manifest_hash": "23b87fb90ec0fce5cf8e7ea01e61271ff1c2571fc070f4b238d36f42a2f2496e",
+    "merkle_root": "23b87fb90ec0fce5cf8e7ea01e61271ff1c2571fc070f4b238d36f42a2f2496e"
   },
-  "envelope_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOm9wZW5wcm9vZi5zb2Z0d2FyZV9yZWxlYXNlLnYxIiwiY2F0YWxvZ3VlX2VudHJ5X3ZlcnNpb24iOjEsImVudmVsb3BlX3ZlcnNpb24iOjEsIm1hbmlmZXN0X2hhc2giOiIyY2EyMmI2OGE4ZTU3OTg0YTFmNWQ0OGYzYWMyMTQyN2YzZWI2OTE5OTQ4M2IxNDU5YWI1ZjgwNzY2NmNhMWJlIiwibWVya2xlX3Jvb3QiOiIyY2EyMmI2OGE4ZTU3OTg0YTFmNWQ0OGYzYWMyMTQyN2YzZWI2OTE5OTQ4M2IxNDU5YWI1ZjgwNzY2NmNhMWJlIiwic2NoZW1hIjoib3BlbnByb29mLmF0dGVzdGF0aW9uX2VudmVsb3BlLnYxIn0=",
-  "envelope_canonical_byte_length": 308,
-  "envelope_hash_hex": "6ca3a93531a55e6c2e33170f097249bdb0bb0c0b1eb74ac51a27041c7489bccc",
+  "envelope_canonical_b64": "eyJhY3RfdHlwZV9pZCI6Im9wOmFjdHByb29mLnNvZnR3YXJlX3JlbGVhc2UudjEiLCJjYXRhbG9ndWVfZW50cnlfdmVyc2lvbiI6MSwiZW52ZWxvcGVfdmVyc2lvbiI6MSwibWFuaWZlc3RfaGFzaCI6IjIzYjg3ZmI5MGVjMGZjZTVjZjhlN2VhMDFlNjEyNzFmZjFjMjU3MWZjMDcwZjRiMjM4ZDM2ZjQyYTJmMjQ5NmUiLCJtZXJrbGVfcm9vdCI6IjIzYjg3ZmI5MGVjMGZjZTVjZjhlN2VhMDFlNjEyNzFmZjFjMjU3MWZjMDcwZjRiMjM4ZDM2ZjQyYTJmMjQ5NmUiLCJzY2hlbWEiOiJhY3Rwcm9vZi5hdHRlc3RhdGlvbl9lbnZlbG9wZS52MSJ9",
+  "envelope_canonical_byte_length": 306,
+  "envelope_hash_hex": "a2b6a599a3c32b2ceb7b20562d63d81f09fe608eaccc5e74b3292502c73fb058",
   "arc2_note": {
     "mode": "disclosed",
-    "prefix": "quoruna/v1:",
-    "inner_canonical_b64": "eyJlIjoiYktPcE5UR2xYbXd1TXhjUENYSkp2YkM3REFzZXQwckZHaWNFSEhTSnZNdyIsIm0iOjEsInEiOiIxIiwiciI6IkxLSXJhS2psZVlTaDlkU1BPc0lVSl9QcmFSbVVnN0ZGbXJYNEIyWnNvYjQiLCJzIjoib3A6b3BlbnByb29mLnNvZnR3YXJlX3JlbGVhc2UudjEiLCJ0IjoiYSJ9",
-    "full_note_b64": "cXVvcnVuYS92MTp7ImUiOiJiS09wTlRHbFhtd3VNeGNQQ1hKSnZiQzdEQXNldDByRkdpY0VISFNKdk13IiwibSI6MSwicSI6IjEiLCJyIjoiTEtJcmFLamxlWVNoOWRTUE9zSVVKX1ByYVJtVWc3RkZtclg0QjJac29iNCIsInMiOiJvcDpvcGVucHJvb2Yuc29mdHdhcmVfcmVsZWFzZS52MSIsInQiOiJhIn0=",
+    "prefix": "actproof/v1:",
+    "inner_canonical_b64": "eyJlIjoib3JhbG1hUERLeXpyZXlCV0xXUFlId24tWUk2c3pGNTBzeWtsQXNjX3NGZyIsIm0iOjEsInEiOiIxIiwiciI6Ikk3aF91UTdBX09YUGpuNmdIbUVuSF9IQ1Z4X0FjUFN5T05OdlFxTHlTVzQiLCJzIjoib3A6YWN0cHJvb2Yuc29mdHdhcmVfcmVsZWFzZS52MSIsInQiOiJhIn0=",
+    "full_note_b64": "YWN0cHJvb2YvdjE6eyJlIjoib3JhbG1hUERLeXpyZXlCV0xXUFlId24tWUk2c3pGNTBzeWtsQXNjX3NGZyIsIm0iOjEsInEiOiIxIiwiciI6Ikk3aF91UTdBX09YUGpuNmdIbUVuSF9IQ1Z4X0FjUFN5T05OdlFxTHlTVzQiLCJzIjoib3A6YWN0cHJvb2Yuc29mdHdhcmVfcmVsZWFzZS52MSIsInQiOiJhIn0=",
     "full_note_byte_length": 173,
     "field_meanings": {
       "r": "base64url-no-padding of merkle_root bytes",
       "m": "number of leaves in the merkle tree",
       "t": "type discriminator ('a' = attestation)",
-      "q": "Quoruna protocol version",
+      "q": "actproof note format version",
       "e": "base64url-no-padding of envelope_hash bytes",
       "s": "act_type_id (disclosed mode only)"
     }
@@ -98,10 +104,11 @@
   },
   "expected_verifier_output": "PASS",
   "verifier_checklist": [
+    "Compute the catalogue_entry_hash by SHA-256 of the catalogue entry JSON file bytes; confirm equal to profile.catalogue_entry_hash",
     "Recompute manifest_hash_hex by canonicalizing raw_manifest with RFC 8785 JCS and applying SHA-256",
-    "Confirm merkle_root_hex equals manifest_hash_hex (single-leaf tree convention for v2.0)",
+    "Confirm merkle_root_hex equals manifest_hash_hex (single-leaf tree convention for v1)",
     "Recompute envelope_hash_hex by canonicalizing envelope with RFC 8785 JCS and applying SHA-256",
-    "Recompose arc2_note.full_note_b64 by concatenating the prefix bytes with the canonical note inner bytes",
-    "Once reference_anchor.txid is populated, fetch the on-chain note and confirm byte-identical match"
+    "Recompose arc2_note.full_note_b64 by concatenating prefix bytes (actproof/v1:) with the canonical note inner bytes",
+    "Recompute each evidence file SHA-256 and confirm equality with manifest.evidence[].sha256_hex"
   ]
 }

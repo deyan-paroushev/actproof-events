@@ -1,17 +1,26 @@
-# Catalogue conformance gate.
+# Catalogue and vector conformance gate.
 #
-# Validates every ActProof Events catalogue entry against its JSON Schema on
-# pull requests and on pushes to main, so a non-conforming entry cannot be
-# merged. The work is done by scripts/validate_catalogue.py, which is
-# self-contained and depends only on jsonschema.
+# Runs on pull requests and on pushes to main so a non-conforming change
+# cannot be merged. Two independent gates run in parallel:
 #
-# The gate runs in normal mode: it fails the build on schema non-conformance,
-# a duplicate act_type_id, malformed JSON, or an unrecognised entry
-# discriminator. claim_field_types coverage gaps are reported as warnings and
-# do not fail the build. To enforce full coverage as well, add the --strict
-# flag to the validate step.
+#   validate-catalogue: every ActProof Events catalogue entry is checked
+#     against its JSON Schema by scripts/validate_catalogue.py. It fails the
+#     build on schema non-conformance, a duplicate act_type_id, malformed
+#     JSON, or an unrecognised entry discriminator. claim_field_types
+#     coverage gaps are reported as warnings only and do not fail the build.
+#     To enforce full coverage as well, add the --strict flag to the step.
+#
+#   validate-vectors: every committed *.test_vectors.json file is re-derived
+#     from its own raw_manifest and the catalogue entry beside it by
+#     scripts/validate_vectors.py, then compared field by field. It fails the
+#     build if any vector is stale, which catches a profile or input change
+#     that was not accompanied by a vector regeneration.
+#
+# validate_catalogue.py depends only on jsonschema. validate_vectors.py
+# re-derives each vector through compute_test_vectors.py, which depends on
+# the jcs package for RFC 8785 canonicalization.
 
-name: Validate catalogue
+name: Validate catalogue and vectors
 
 on:
   push:
@@ -22,11 +31,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: validate-catalogue-${{ github.ref }}
+  group: conformance-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  validate:
+  validate-catalogue:
     name: Validate catalogue against schema
     runs-on: ubuntu-latest
     steps:
@@ -43,3 +52,21 @@ jobs:
 
       - name: Validate the catalogue against the schema
         run: python scripts/validate_catalogue.py
+
+  validate-vectors:
+    name: Validate conformance test vectors
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install jcs
+        run: python -m pip install jcs
+
+      - name: Validate test vectors against their manifests
+        run: python scripts/validate_vectors.py

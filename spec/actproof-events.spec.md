@@ -1,6 +1,6 @@
 # ActProof Events Specification
 
-**Version**: v1.4-rc1
+**Version**: v1.5-rc1
 **Status**: Pre-release candidate
 **License**: Spec text is CC0. Schemas and test vectors are Apache-2.0.
 **Maintainer**: actproof-events project
@@ -11,7 +11,7 @@
 
 ActProof Events specifies an open substrate for issuing verifiable attestations of regulated or governance acts. The substrate defines a catalogue of act types, a manifest format for attestation content, an envelope structure for anchoring, a canonical hashing pipeline, and an on-chain note format for public ledger commitment. Any conforming implementation that follows this specification produces test vector-reproducible attestations whose proof trails can be verified independently by any third party against the public ledger, without trusting either the issuer or any intermediary platform.
 
-The v1.4 release is the first act-native release. Earlier v1.x releases modelled regulated acts as voting events. The v2 catalogue entry schema documented here removes those voting derivatives. This is a substrate change, not a behaviour change: any attestations issued under the deprecated v1 entries can still be resolved for historical reference.
+The catalogue entry schema documented here is `actproof.act_profile.v3`. It is act-native: an earlier voting-shaped schema that modelled regulated acts as voting events was replaced, and v3 extends the act-native schema with optional source-binding, reliance, disclosure, and maturity blocks. Attestations issued under the deprecated v1 entries can still be resolved for historical reference.
 
 ---
 
@@ -21,7 +21,7 @@ The v1.4 release is the first act-native release. Earlier v1.x releases modelled
 
 This specification defines:
 
-- The catalogue entry schema (`actproof.act_profile.v2`)
+- The catalogue entry schema (`actproof.act_profile.v3`)
 - The attestation manifest schema (`actproof.attestation_manifest.v1`)
 - The envelope schema (`actproof.attestation_envelope.v1`)
 - The canonicalization pipeline (RFC 8785 JCS)
@@ -39,7 +39,7 @@ This specification does NOT define:
 
 ### 1.2 Relationship to SCITT
 
-ActProof Events is architecturally aligned with the IETF SCITT architecture (`draft-ietf-scitt-architecture`, RFC 9943 to-be, currently at AUTH48 as of the publication of this specification). The mapping of ActProof Events concepts to SCITT concepts is documented in Section 6. A COSE_Sign1 wire-format bridge is planned and will land in a v1.5 specification iteration once RFC 9943 is published. Until that bridge ships, ActProof Events implementations emit JSON-canonical receipts. They are NOT yet SCITT-compatible at the wire level.
+ActProof Events is architecturally aligned with the IETF SCITT architecture (`draft-ietf-scitt-architecture`, RFC 9943 to-be, currently at AUTH48 as of the publication of this specification). The mapping of ActProof Events concepts to SCITT concepts is documented in Section 6. A COSE_Sign1 wire-format bridge is planned and will land in a later specification iteration once RFC 9943 is published. Until that bridge ships, ActProof Events implementations emit JSON-canonical receipts. They are NOT yet SCITT-compatible at the wire level.
 
 ### 1.3 Conformance language
 
@@ -49,13 +49,13 @@ The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RE
 
 ## 2. Catalogue
 
-### 2.1 Catalogue entry schema v2
+### 2.1 Catalogue entry schema v3
 
-A catalogue entry describes a single regulated or governance act type. The schema is at `spec/schemas/act_profile.v2.json` and validates against JSON Schema draft 2020-12.
+A catalogue entry describes a single regulated or governance act type. The schema is at `spec/schemas/act_profile.v3.json` and validates against JSON Schema draft 2020-12.
 
-A v2 catalogue entry MUST include the following top-level fields:
+A v3 catalogue entry MUST include the following top-level fields:
 
-- `schema`: the literal string `"actproof.act_profile.v2"`
+- `schema`: the literal string `"actproof.act_profile.v3"`
 - `act_type_id`: canonical identifier under the `op:` namespace
 - `claim_type`: short snake_case identifier describing the semantic shape
 - `display_name`: human-readable display name
@@ -71,7 +71,7 @@ A v2 catalogue entry MUST include the following top-level fields:
 - `maintainer`: maintainer identifier
 - `test_vector_reference`: repository-relative path to the entry's test vector file
 
-A v2 catalogue entry MUST NOT include any of the following fields, which were present in v1 entries:
+A v3 catalogue entry MUST NOT include any of the following fields, which were present in the deprecated v1 entries:
 
 - `method_constraints` or any `method_*` field
 - `receipt_profile_recommendations`
@@ -81,6 +81,21 @@ A v2 catalogue entry MUST NOT include any of the following fields, which were pr
 - `result_hash`
 
 These fields encoded voting-event assumptions that do not describe regulated acts.
+
+A v3 catalogue entry MAY additionally include the following optional blocks. The JSON Schema at `spec/schemas/act_profile.v3.json` is authoritative for their structure; the descriptions here state their purpose.
+
+- `claim_field_types`: a map from each claim field name to its data type.
+- `regulated_context_profile`: the regulatory context the act is issued within, including the allowed context types and submission stages.
+- `prior_receipts_profile`: the receipts of other act types that a receipt under this act type may reference, by role.
+- `reliance_context`: what a receipt asserts and what it does not. It carries the issuer role, the counterparty action, the expected later verifiers, a `reliance_statement`, and a machine-readable `non_claims` array.
+- `disclosure_profile`: the disclosure tier of each field, separating public fields, commitment fields, and private fields.
+- `submission_evidence_policy`: whether evidence of submission to an authority is required, and which forms of such evidence are supported.
+- `source_bindings`: the official sources the profile is built against, each cited by a stable identifier and pinned to a SHA-256 hash.
+- `generation`: how the entry was produced, and whether it was reconciled against its hashed sources.
+- `transparency_note_reference`: the repository-relative path to the prose transparency note for a source-bound profile.
+- `profile_status`: the entry's maturity, declared as one of `draft`, `candidate`, `stable`, or `deprecated`.
+
+A profile that cites a regulatory or other official basis SHOULD carry `source_bindings`, `generation`, and `transparency_note_reference`, and SHOULD declare `profile_status`. A source-bound, reconciled profile declares `profile_status.maturity` of `candidate`; one that is not yet source-bound declares `draft`.
 
 ### 2.2 act_type_id namespace
 
@@ -100,26 +115,26 @@ The trailing `.v[0-9]+` segment is REQUIRED for new act_type_ids. Legacy v1 iden
 
 ### 2.3 Deprecated v1 entries
 
-Catalogue directories MAY contain a `_deprecated/` subdirectory holding v1 entries that have been superseded by v2 entries. Each `_deprecated/` directory MUST contain a README documenting the migration map from v1 to v2.
+Catalogue directories MAY contain a `_deprecated/` subdirectory holding v1 entries that have been superseded. Each `_deprecated/` directory MUST contain a README documenting the migration map from the v1 entry to its successor.
 
 Conforming catalogue loaders:
 
-- MUST surface only v2 entries for new issuance.
+- MUST surface only v3 entries for new issuance.
 - MUST refuse to load v1 entries for new issuance.
 - MUST allow read-only access to v1 entries for historical attestation rendering (a receipt for an attestation issued against `op:eu.nis2.art20.approval` in v1 must still render).
 - MUST cache catalogue entries in memory at process startup and reload only on explicit signal (no per-request filesystem reads).
 
 ### 2.4 Migration path
 
-When a v1 entry is superseded by a v2 entry, the v1 file is moved into the `_deprecated/` subdirectory with git history preserved. The v2 entry's `supersedes` field references the v1 act_type_id. Issuers who previously issued attestations against the v1 act_type_id can still resolve their historical commitments because the namespace is preserved.
+When a v1 entry is superseded by a v3 entry, the v1 file is moved into the `_deprecated/` subdirectory with git history preserved. The v3 entry's `supersedes` field references the v1 act_type_id. Issuers who previously issued attestations against the v1 act_type_id can still resolve their historical commitments because the namespace is preserved.
 
-The reference v2 entries included with this release supersede the following v1 entries:
+The reference v3 entries included with this release supersede the following v1 entries:
 
-| v1 act_type_id | v2 act_type_id |
+| v1 act_type_id | v3 act_type_id |
 | --- | --- |
 | `op:eu.nis2.art20.approval` | `op:eu.nis2.art20.management_body_approval.v1` |
 
-New v2 entries with no v1 predecessor set `supersedes` to null.
+New v3 entries with no v1 predecessor set `supersedes` to null.
 
 ---
 
@@ -133,7 +148,7 @@ A manifest MUST include:
 
 - `schema`: the literal string `"actproof.attestation_manifest.v1"`
 - `manifest_version`: integer (currently 1)
-- `act_type_id`: matches a v2 catalogue entry
+- `act_type_id`: matches a v3 catalogue entry
 - `catalogue_entry_version`: integer matching the catalogue entry's `version`
 - `tenant_id`: implementation-specific tenant identifier
 - `issuer_org_name`: legal name of the issuing entity
@@ -241,7 +256,7 @@ Field key length is intentionally minimised because Algorand transaction notes h
 
 In disclosed mode (REQUIRED for v2.0), the inner object includes the `s` (act_type_id) field. This makes the act type publicly inspectable from the on-chain note alone, without requiring the verifier to fetch the manifest or envelope separately.
 
-A future undisclosed mode is reserved for v1.5+ implementations that wish to anchor act_type_id privately. Undisclosed mode is NOT defined in this specification.
+A future undisclosed mode that anchors the act_type_id privately is reserved for a later specification iteration. Undisclosed mode is NOT defined in this specification.
 
 ### 5.3 Algorand mainnet anchoring
 
@@ -279,7 +294,7 @@ ActProof Events is architecturally aligned with the IETF SCITT architecture (`dr
 | Witness recipient | Relying Party |
 | Commit operation | Registration |
 
-A COSE_Sign1 wire-format bridge is planned and will land in a v1.5 specification iteration once RFC 9943 is published. Until that bridge ships, ActProof Events implementations emit JSON-canonical receipts. They are NOT yet SCITT-compatible at the wire level.
+A COSE_Sign1 wire-format bridge is planned and will land in a later specification iteration once RFC 9943 is published. Until that bridge ships, ActProof Events implementations emit JSON-canonical receipts. They are NOT yet SCITT-compatible at the wire level.
 
 Implementations and external publications MUST NOT describe ActProof Events as a "SCITT reference implementation" or "SCITT-compatible" prior to the publication of the COSE_Sign1 bridge in v1.5+. The accurate descriptor is "SCITT-aligned, COSE_Sign1 bridge planned."
 
@@ -293,7 +308,7 @@ Whether the email address belongs to an individual or to an organisational intak
 
 A `recipient_contact_name` field MAY be carried as informational metadata. It is not used as the authoritative delivery target; the email address is authoritative.
 
-The set of `recommended_witness_roles` in any v2 catalogue entry SHOULD be drawn from a stable role vocabulary:
+The set of `recommended_witness_roles` in any v3 catalogue entry SHOULD be drawn from a stable role vocabulary:
 
 - `external_auditor`
 - `competent_authority_supervisor`
@@ -367,7 +382,7 @@ Examples:
 - `x.com.example.acme:internal.governance_act.v1`
 - `x.org.example.consortium:joint_disclosure.v1`
 
-Federation is **a v1.5+ feature**. v2.0 reference implementations are expected to ship canonical `op:` entries only. Third-party namespace minting and resolution under `x.<reverse-dns>:` is deferred to a future specification iteration and is NOT REQUIRED for v1.4 conformance. Implementations MAY defer federation support without losing conformance to this version of the specification.
+Federation is **a v1.5+ feature**. v2.0 reference implementations are expected to ship canonical `op:` entries only. Third-party namespace minting and resolution under `x.<reverse-dns>:` is deferred to a future specification iteration and is NOT REQUIRED for conformance to this specification. Implementations MAY defer federation support without losing conformance to this version of the specification.
 
 ---
 
@@ -393,20 +408,26 @@ Additional test vectors will be added for other catalogue entries as they land.
 
 ## Appendix A. Schema files
 
-The authoritative JSON Schema files for v1.4-rc1 are:
+The authoritative JSON Schema file for v1.5-rc1 is:
 
-- `spec/schemas/act_profile.v2.json`
+- `spec/schemas/act_profile.v3.json`
 
-The attestation manifest schema and envelope schema are described prose-only in Sections 3 and 4 of this document. JSON Schema files for these schemas are deferred to v1.5.
+The earlier `spec/schemas/act_profile.v2.json` is retained so that receipts issued against v1.4-rc1 entries can still be verified against the schema bytes they were bound to.
+
+The attestation manifest schema and envelope schema are described prose-only in Sections 3 and 4 of this document. JSON Schema files for these schemas are deferred to a later specification iteration.
 
 ---
 
 ## Appendix B. Reference catalogue entries
 
-The reference catalogue entries included with v1.4-rc1 are:
+The catalogue entries included with v1.5-rc1 are:
 
-- `catalogue/acts/eu/nis2/art20/management_body_approval.v1.json`
+- `catalogue/acts/eu/dora/ict_incident_notification_initial.v1.json`, the reference source-bound profile
 - `catalogue/acts/eu/eudr/dds_preparation.v1.json`
+- `catalogue/acts/eu/nis2/art20/management_body_approval.v1.json`
+- `catalogue/acts/actproof/software_release.v1.json`
+- `catalogue/acts/actproof/standards_engagement_record.v1.json`
+- `catalogue/acts/democracy/civil_society_mandate.settlement.v1.json`
 
 Deprecated v1 entries are preserved under their respective `_deprecated/` directories with migration documentation.
 
@@ -442,7 +463,20 @@ Deprecated v1 entries are preserved under their respective `_deprecated/` direct
 
 ## Appendix D. Changelog
 
-### v1.4-rc1 (this release)
+### v1.5-rc1 (this release)
+
+**Schema changes**:
+- Introduced the `actproof.act_profile.v3` catalogue entry schema. v3 is a strict superset of v2: it adds the optional `claim_field_types`, `regulated_context_profile`, `prior_receipts_profile`, `reliance_context`, `disclosure_profile`, `submission_evidence_policy`, `source_bindings`, `generation`, `transparency_note_reference`, and `profile_status` blocks. The v2 schema is retained for verifying receipts issued against v1.4-rc1 entries.
+- Added the source-binding model: a profile cites each official source by a stable identifier and pins its SHA-256 hash in `source_bindings`, records its provenance in `generation`, and references a prose transparency note.
+- Added `profile_status`, a per-profile machine-readable maturity declaration.
+
+**New catalogue entries**:
+- `op:eu.dora.ict_incident_notification_initial.v1`, the reference source-bound profile
+- `op:actproof.software_release.v1`
+- `op:actproof.standards_engagement_record.v1`
+- `op:democracy.civil_society_mandate.settlement.v1`
+
+### v1.4-rc1
 
 **Substrate changes**:
 - Introduced `actproof.act_profile.v2` schema with act-native fields.

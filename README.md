@@ -20,12 +20,12 @@ The standard's position is simple. Check us, do not trust us. Provenance and con
 
 ## What this package ships
 
-`actproof-events` is a Python package with no required runtime dependencies. Installing it gives a consuming application four things as bundled data:
+`actproof-events` is a Python package with no required runtime dependencies. Installing it gives a consuming application the following, as bundled data:
 
 - **The act-profile catalogue.** JSON catalogue entries, one per regulated act, each describing the act's claim fields, evidence requirements, and source bindings.
 - **The JSON Schemas** that define the structure of a catalogue entry, so a consumer can validate the entries it loads.
 - **The conformance test vectors**, one companion file per catalogue entry, released CC0 so any implementation can use them as a shared conformance suite with no licensing friction.
-- **The specification**, bundled as text, so an installed copy carries the standard it implements.
+- **The specification text**, together with the vocabularies, the schema versioning policy, and the catalogue loader contract, bundled so an installed copy carries the standard it implements.
 
 The package exposes a small, typed API for locating this data:
 
@@ -33,6 +33,7 @@ The package exposes a small, typed API for locating this data:
 from actproof_events import (
     get_catalogue_path,
     get_schema_path,
+    get_spec_path,
     list_catalogue_entries,
     __version__,
     __spec_version__,
@@ -46,11 +47,14 @@ for entry_path in list_catalogue_entries():
 # The bundled JSON Schema for catalogue entries.
 schema_path = get_schema_path("act_profile.v3")
 
+# The bundled specification text.
+spec_path = get_spec_path()
+
 # The catalogue directory, if you would rather walk it yourself.
 catalogue_dir = get_catalogue_path()
 ```
 
-`__version__` is the package version. `__spec_version__` records which revision of the specification the installed package embodies.
+`__version__` is the package version. `__spec_version__` records which revision of the specification the installed package embodies. The companion documents are reachable the same way, through `get_vocabularies_path`, `get_schema_version_policy_path`, and `get_contract_path`.
 
 ## Install
 
@@ -74,9 +78,9 @@ The canonical namespace `op:` is curated by this project. An entry earns a place
 
 The third-party namespace `x.<reverse-dns>:` is permissionless. Any organization that controls a DNS domain may publish its own entries by serving them under `.well-known/actproof-events/acts/` on that domain. No pull request and no coordination with this project are needed. Verifiers resolve third-party identifiers at verification time. Third-party publication is the architectural default, not a downgrade.
 
-The catalogue currently spans EU regulatory acts (DORA, EUDR, NIS2), a civil-society mandate settlement, and the project's own software-release and standards-engagement acts, which ActProof Events anchors for itself.
+The catalogue currently spans EU regulatory acts (DORA, EUDR, NIS2), a civil-society mandate settlement, and the project's own software-release and standards-engagement acts.
 
-The DORA ICT-incident initial-notification profile, `op:eu.dora.ict_incident_notification_initial.v1`, is the reference profile. It has been authored end to end under the source-binding process. It pins the SHA-256 of every official EU instrument it draws from, Regulation (EU) 2022/2554 together with its delegated and implementing acts, and it ships a transparency note recording every interpretive decision. It is the worked example the rest of the catalogue is being brought up to. Profiles that predate the source-binding process are still loadable, but they do not yet carry source bindings.
+The DORA ICT-incident initial-notification profile, `op:eu.dora.ict_incident_notification_initial.v1`, is the reference profile. It has been authored end to end under the source-binding process. It pins the SHA-256 of every official EU instrument it draws from, Regulation (EU) 2022/2554 together with its delegated and implementing acts, and it ships a transparency note recording every interpretive decision. It is the worked example the rest of the catalogue is being brought up to. Each entry declares its maturity in a `profile_status` block: the DORA profile is `candidate`, and the profiles that predate the source-binding process are `draft` and do not yet carry source bindings.
 
 Superseded entries are kept under `_deprecated/` subdirectories. They remain in the tree so historical receipts can still be resolved, and they are excluded from the authoritative API by default.
 
@@ -117,11 +121,13 @@ Contributions to the specification text, the reference code, and the test infras
 
 ## License
 
-The reference implementation, the JSON schemas, and the catalogue are licensed under Apache-2.0. See `LICENSE`.
+ActProof Events combines two licenses, and the distributed package carries the full text of both, `LICENSE` and `LICENSES/CC0-1.0.txt`.
 
-The specification text is dedicated to the public domain under CC0, so it can be implemented and re-published without restriction.
+The Python package code, the JSON schemas, and the catalogue entries are licensed under Apache-2.0.
 
-The conformance test vectors are released under CC0, so any implementation, open or proprietary, can use them as a shared conformance suite.
+The specification text is dedicated to the public domain under CC0-1.0, so it can be implemented and re-published without restriction.
+
+The conformance test vectors are released under CC0-1.0, so any implementation, open or proprietary, can use them as a shared conformance suite.
 
 ## Maintainer
 

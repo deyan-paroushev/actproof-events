@@ -105,5 +105,10 @@
     "lot_reference": "string",
     "harvest_period": "string",
     "geometry_collection_reference": "string"
+  },
+  "profile_status": {
+    "maturity": "draft",
+    "since": "1.5-rc1",
+    "summary": "Illustrative profile. Unlike the DORA reference profile it is not yet source-bound: it carries no hashed official sources, no reconciliation record, and no transparency note. Source-binding against the cited instrument would move it toward candidate."
   }
 }

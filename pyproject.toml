@@ -4,12 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "actproof-events"
-version = "1.4.0rc1"
-description = "Federated cryptographic substrate for verifiable regulatory acts: specification, profile catalogue, and CC0 conformance test vectors."
+version = "1.5.0rc1"
+description = "Open catalogue, JSON schemas, source-bound act profiles, and CC0 conformance vectors for machine-readable organisational acts."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
-license-files = ["LICENSE"]
+license-files = ["LICENSE", "LICENSES/CC0-1.0.txt"]
 authors = [
   { name = "Deyan Paroushev", email = "deyan@advisa.tech" },
 ]
@@ -50,11 +50,12 @@ classifiers = [
   "Typing :: Typed",
 ]
 
-# actproof-events 1.4.0rc1 ships the catalogue and schema bytes as installed
-# resources. There are no required runtime dependencies. Consumers that load
-# the catalogue typically use the standard library (json, pathlib) and may
-# optionally pull in jsonschema for full schema validation, which we leave to
-# the consumer's discretion rather than bundling here.
+# actproof-events 1.5.0rc1 ships the catalogue, schema, and specification
+# bytes as installed resources. There are no required runtime dependencies.
+# Consumers that load the catalogue typically use the standard library
+# (json, pathlib) and may optionally pull in jsonschema for full schema
+# validation, which we leave to the consumer's discretion rather than
+# bundling here.
 dependencies = []
 
 [project.optional-dependencies]
@@ -84,8 +85,15 @@ Specification = "https://github.com/deyan-paroushev/actproof-events/blob/main/sp
 packages = ["actproof_events"]
 
 [tool.hatch.build.targets.wheel.force-include]
+# Catalogue, schemas, and the normative specification text are rolled into
+# actproof_events/data/ so an installed copy is self-contained. The path
+# accessors in actproof_events/__init__.py resolve files under that root.
 "catalogue/acts" = "actproof_events/data/catalogue/acts"
 "spec/schemas" = "actproof_events/data/schemas"
+"spec/actproof-events.spec.md" = "actproof_events/data/spec/actproof-events.spec.md"
+"spec/vocabularies.md" = "actproof_events/data/spec/vocabularies.md"
+"spec/schema_version_policy.md" = "actproof_events/data/spec/schema_version_policy.md"
+"CATALOGUE_LOADER_CONTRACT.md" = "actproof_events/data/CATALOGUE_LOADER_CONTRACT.md"
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -98,6 +106,7 @@ include = [
   "/CATALOGUE_LOADER_CONTRACT.md",
   "/CONTRIBUTING_ACTS.md",
   "/LICENSE",
+  "/LICENSES",
   "/README.md",
   "/pyproject.toml",
 ]

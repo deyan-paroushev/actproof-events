@@ -1,16 +1,17 @@
-"""actproof-events: federated cryptographic substrate for verifiable regulatory acts.
+"""actproof-events: open catalogue and JSON schemas for source-bound act profiles.
 
-This package ships the actproof-events specification artefacts that other
-software needs at runtime: the act-catalogue entries, the JSON Schema files
-that define their structure, and (when present) the expanded profile JSON
-files used to drive profile-conformant evidence receipts.
+This package ships the actproof-events artefacts that other software needs
+at runtime: the act-catalogue entries, the JSON Schema files that define
+their structure, the specification text, the controlled vocabularies, the
+schema versioning policy, and the catalogue loader contract. Each catalogue
+entry has a companion ``*.test_vectors.json`` file carrying CC0-licensed
+conformance vectors.
 
-The repository keeps the source tree organised for humans: catalogue entries
-live at the top-level ``catalogue/`` directory, schemas at ``spec/schemas/``,
-and (in subsequent releases) profile files at ``profiles/``. The wheel rolls
+The repository keeps the source tree organised for humans: catalogue
+entries live at the top-level ``catalogue/`` directory, schemas at
+``spec/schemas/``, and the specification text at ``spec/``. The wheel rolls
 all of these into a single ``actproof_events/data/`` hierarchy so that
-installed consumers see one place to look regardless of how the package was
-installed.
+installed consumers see one place to look.
 
 Typical usage from a consuming application::
 
@@ -26,13 +27,15 @@ Typical usage from a consuming application::
             ...
 
 The package version tracks the actproof-events specification version. A
-package version of ``1.4.0rc1`` ships the v1.4-rc1 specification and the
+package version of ``1.5.0rc1`` ships the v1.5-rc1 specification and the
 catalogue state at that release tag.
 
 References:
-    Specification: spec/actproof-events.spec.md (bundled at install time)
-    Catalogue loader contract: CATALOGUE_LOADER_CONTRACT.md
-    Contributing acts:        CONTRIBUTING_ACTS.md
+    Specification:             get_spec_path()
+    Controlled vocabularies:   get_vocabularies_path()
+    Schema versioning policy:  get_schema_version_policy_path()
+    Catalogue loader contract: get_contract_path()
+    Contributing acts:         CONTRIBUTING_ACTS.md (repository only)
 """
 
 from __future__ import annotations
@@ -46,6 +49,10 @@ __all__ = [
     "get_data_root",
     "get_catalogue_path",
     "get_schema_path",
+    "get_spec_path",
+    "get_vocabularies_path",
+    "get_schema_version_policy_path",
+    "get_contract_path",
     "list_catalogue_entries",
 ]
 
@@ -53,11 +60,12 @@ __all__ = [
 #
 # The package version is the authoritative source. The specification version
 # is exposed as a separate constant so that consumers can record which
-# specification revision a given installation embodies (useful when receipts
-# need to claim "issued against actproof-events specification v1.4-rc1").
+# specification revision a given installation embodies (useful when a
+# downstream artefact records "issued against actproof-events specification
+# v1.5-rc1").
 
-__version__: Final[str] = "1.4.0rc1"
-__spec_version__: Final[str] = "1.4-rc1"
+__version__: Final[str] = "1.5.0rc1"
+__spec_version__: Final[str] = "1.5-rc1"
 
 
 # ─── Bundled data location ──────────────────────────────────────────────────
@@ -72,7 +80,7 @@ _DATA_ROOT: Final[Path] = Path(__file__).parent / "data"
 def get_data_root() -> Path:
     """Return the root directory of bundled actproof-events data.
 
-    The directory contains the following subdirectories:
+    The directory contains the following:
 
     - ``catalogue/acts/``: act-catalogue entries, keyed by act_type_id.
       Authoritative entries currently follow the
@@ -80,10 +88,13 @@ def get_data_root() -> Path:
       may exist for historical rendering and are loaded as best-effort.
       For example, ``eu/nis2/art20/management_body_approval.v1.json``.
     - ``schemas/``: JSON Schema files describing catalogue entry structure.
+    - ``spec/``: the specification text, the controlled vocabularies, and
+      the schema versioning policy.
+    - ``CATALOGUE_LOADER_CONTRACT.md``: the catalogue loader contract.
 
-    Future releases of actproof-events may add additional subdirectories
-    such as ``profiles/`` for expanded profile JSON files. Callers should
-    test for the existence of subdirectories before relying on them.
+    Prefer the ``get_*_path`` accessors below over composing these paths by
+    hand, so that a later change to the bundled layout does not break
+    callers.
 
     Returns:
         Path: The absolute path to the bundled data directory.
@@ -141,6 +152,66 @@ def get_schema_path(name: str) -> Path:
     if not name.endswith(".json"):
         name = f"{name}.json"
     return _DATA_ROOT / "schemas" / name
+
+
+def get_spec_path() -> Path:
+    """Return the path to the bundled actproof-events specification.
+
+    ``actproof-events.spec.md`` is the normative specification. It defines
+    the catalogue model, the attestation manifest, the envelope, anchoring,
+    federation, and the verifier conformance rules.
+
+    Returns:
+        Path: The path to
+            ``actproof_events/data/spec/actproof-events.spec.md``.
+
+    Example:
+        >>> from actproof_events import get_spec_path
+        >>> spec_text = get_spec_path().read_text(encoding="utf-8")
+    """
+    return _DATA_ROOT / "spec" / "actproof-events.spec.md"
+
+
+def get_vocabularies_path() -> Path:
+    """Return the path to the bundled controlled vocabularies.
+
+    ``vocabularies.md`` defines the closed enumeration terms referenced by
+    catalogue entries and schemas, the ``non_claims`` vocabulary, and the
+    process by which those vocabularies change.
+
+    Returns:
+        Path: The path to ``actproof_events/data/spec/vocabularies.md``.
+    """
+    return _DATA_ROOT / "spec" / "vocabularies.md"
+
+
+def get_schema_version_policy_path() -> Path:
+    """Return the path to the bundled schema versioning policy.
+
+    ``schema_version_policy.md`` describes what may change within a schema
+    version, what requires a new schema version, and how the schema archive
+    is maintained. Consult it before pinning a schema major version.
+
+    Returns:
+        Path: The path to
+            ``actproof_events/data/spec/schema_version_policy.md``.
+    """
+    return _DATA_ROOT / "spec" / "schema_version_policy.md"
+
+
+def get_contract_path() -> Path:
+    """Return the path to the bundled catalogue loader contract.
+
+    ``CATALOGUE_LOADER_CONTRACT.md`` specifies the behaviour a conforming
+    catalogue loader must implement: the loading rules, manifest validation
+    requirements, error reporting, and the conformance test scenarios a
+    loader is checked against.
+
+    Returns:
+        Path: The path to
+            ``actproof_events/data/CATALOGUE_LOADER_CONTRACT.md``.
+    """
+    return _DATA_ROOT / "CATALOGUE_LOADER_CONTRACT.md"
 
 
 def list_catalogue_entries(

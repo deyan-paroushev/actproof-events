@@ -86,5 +86,10 @@
     "release_version": "string",
     "release_commit_sha": "string",
     "release_published_at": "datetime"
+  },
+  "profile_status": {
+    "maturity": "draft",
+    "since": "1.5-rc1",
+    "summary": "Illustrative profile published to exercise the catalogue and schema. Its claim schema is provisional, has not been through independent review, and may change while actproof-events is at release-candidate stage."
   }
 }

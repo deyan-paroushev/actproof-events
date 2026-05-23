@@ -1,8 +1,8 @@
 # Contributing to the ActProof Events Act Catalogue
 
-This document describes the contribution flow for proposing new entries to the ActProof Events federated act-type catalogue. It is distinct from general code contributions to the reference implementation, the specification text, or the test infrastructure, each of which follows the standard GitHub pull-request flow described in `CONTRIBUTING.md`.
+This document describes the contribution flow for proposing new entries to the ActProof Events federated act-type catalogue. It is distinct from general code contributions to the reference implementation, the specification text, or the test infrastructure, each of which follows the standard GitHub pull-request flow.
 
-The catalogue is the substrate's mechanism for typing governance events by the regulatory or organizational act they record. Each catalogue entry codifies a recognized act (a NIS2 Article 20 director approval, an AI Act Article 26 deployer risk assessment, a corporate board resolution under articles of incorporation, an OpenSSF Alpha-Omega security advisory acknowledgment) as a structured schema that verifiers can apply to a receipt. The catalogue grows by accretion, not by central planning. Contributions are welcome from regulators, industry associations, standards bodies, downstream implementers, and individual experts.
+The catalogue is how ActProof Events types an act. Each catalogue entry codifies a recognized regulatory or organizational act (a DORA major ICT-related incident notification, an EUDR Due Diligence Statement preparation, a NIS2 Article 20 management-body approval, an open-source software release attestation) as a structured profile that a verifier can apply to a receipt. The catalogue grows by accretion, not by central planning. Contributions are welcome from regulators, industry associations, standards bodies, downstream implementers, and individual experts.
 
 ## The two namespaces
 
@@ -42,35 +42,45 @@ The discussion step prevents duplicated effort and surfaces scoping concerns bef
 
 ### Step 2: Prepare the catalogue entry
 
-The catalogue entry is a single JSON file conforming to the `actproof.act_profile.v1` schema defined in section 9.5 of the ActProof Events specification. The file path follows the convention `catalogue/acts/<jurisdiction>/<instrument>/<article>/<short-name>.json`. For acts under EU directives or regulations, the convention is `catalogue/acts/eu/<directive-or-regulation>/<article>/<short-name>.json`. For acts under national law, `catalogue/acts/<iso-3166-1-alpha-2>/<instrument>/<short-name>.json`. For corporate or generic acts not tied to a specific jurisdiction, `catalogue/acts/corporate/<short-name>.json`.
+A catalogue entry is a single JSON file conforming to the `actproof.act_profile.v3` schema. The schema, published at `spec/schemas/act_profile.v3.json`, is the authority on structure; this section describes the authoring task rather than restating the schema.
 
-The catalogue entry must contain all eleven required top-level fields specified in section 9.5 of the master specification: `schema`, `act_type_id`, `display_name`, `regulatory_citation`, `required_manifest_fields`, `method_constraints`, `receipt_profile_recommendations`, `version`, `supersedes`, `maintainer`, and `test_vector_reference`. The first canonical entry, `catalogue/acts/eu/nis2/art20/approval.json`, serves as the reference template for new submissions.
+The file lives under `catalogue/acts/`, in a path that reflects the act's jurisdiction and instrument. The existing entries show the convention: `catalogue/acts/eu/dora/ict_incident_notification_initial.v1.json`, `catalogue/acts/eu/nis2/art20/management_body_approval.v1.json`, `catalogue/acts/eu/eudr/dds_preparation.v1.json`. The filename ends with the entry version, `.v1`, `.v2`, and so on. For an act not tied to a regulatory instrument, a domain segment such as `actproof/` or `democracy/` takes the place of the jurisdiction path.
 
-Required attention points when authoring the entry follow.
+An entry has fifteen required top-level fields: `schema`, `act_type_id`, `claim_type`, `display_name`, `regulatory_citation`, `required_claim_fields`, `optional_claim_fields`, `required_evidence_labels`, `eligible_issuer_roles`, `recommended_witness_roles`, `signature_policy`, `version`, `supersedes`, `maintainer`, and `test_vector_reference`. The reconciled DORA profile, `catalogue/acts/eu/dora/ict_incident_notification_initial.v1.json`, is the worked reference for a new submission.
 
-The `act_type_id` uses dot-separated lowercase ASCII under the `op:` namespace. The convention for EU directive articles is `op:eu.<instrument>.<article>.<short-name>`, where instrument is a short identifier (`nis2`, `ai_act`, `gdpr`, `cra`). For national-law acts, `op:<iso-3166-1-alpha-2>.<instrument>.<short-name>`. For corporate or generic acts, `op:corporate.<short-name>.<version>` where version disambiguates iterations.
+Authoring attention points follow.
 
-The `regulatory_citation` block contains four fields. The `instrument` field carries the short instrument identifier as commonly cited, for example `Directive (EU) 2022/2555` for NIS2 or `Regulation (EU) 2024/1689` for the AI Act. The `article` field is the bare article number as a string, for example `20` or `26`, not `Article 20` or `Article 26`. The `jurisdiction` field is the issuing authority, for example `EU` for European Union instruments, or the ISO 3166-1 alpha-2 code for national instruments. The `in_force_from` field is the date on which obligated entities first become subject to the requirement, in ISO 8601 date format, not the date of enactment or publication. CELEX identifiers, EUR-Lex ELI URLs, and equivalent stable references for non-EU jurisdictions are proposed for inclusion as optional fields in v1.4 of the catalogue entry schema.
+The `schema` field is the literal constant `"actproof.act_profile.v3"` and is the first field in the file.
 
-The `required_manifest_fields` list enumerates the dot-paths into the canonical manifest that a verifier must check for presence in order to consider the receipt structurally complete for this act type. By NIS2 reference convention, the list starts with `manifest_version` followed by the structural identifier fields (`decision_id`, `decision_type`, `tenant_id`, `system_created_at`), then `method_parameters` paths, then the four content-anchor hash fields (`eligibility_snapshot_hash`, `action_set_hash`, `tally_output_hash`, `result_hash`), with `attachment_hashes` last. The list should be neither over-inclusive (requiring fields a verifier cannot use) nor under-inclusive (omitting fields a verifier needs to validate the regulatory requirement). Authoring the field list well usually requires writing the test vectors in parallel; gaps surface quickly.
+The `act_type_id` is a dot-separated lowercase identifier under the `op:` namespace, ending with the entry version. The canonical identifiers follow the shape `op:<jurisdiction>.<instrument>[.<article>].<short_name>.v<n>`, for example `op:eu.dora.ict_incident_notification_initial.v1` or `op:eu.nis2.art20.management_body_approval.v1`. The version segment matches the filename and the integer `version` field.
 
-The `method_constraints` block is a nested object containing both `allowed_method_ids` and `minimum_quorum_basis_points`. The `method_constraints.allowed_method_ids` array names the voting or decision methods that satisfy the substantive regulatory requirement. For acts requiring management body or governance committee approval, methods that produce a clear binary approve-or-reject outcome (`simple_majority_v1`, `supermajority_two_thirds_v1`, `approval_voting_v1`, `consent_based_v1`) are typically included. Methods that produce ranked or scored outcomes without a clear binary decision are typically excluded unless the regulatory instrument explicitly permits them. Non-voting attestation methods such as a single designated officer attestation are a documented v1.4 schema gap; v1.0 catalogue entries support voting methods only.
+The `claim_type` field is a short identifier for the kind of claim a receipt under this act type carries, for example `ict_incident_notification_initial`.
 
-The `method_constraints.minimum_quorum_basis_points` field specifies the lowest quorum (in integer basis points, where 5001 means more than 50 percent) consistent with the regulatory requirement. For acts requiring majority participation, the minimum is 5001. For acts requiring supermajority participation, higher minimums apply.
+The `regulatory_citation` block carries `instrument`, `article`, `jurisdiction`, and `in_force_from`. The `instrument` is the instrument as commonly cited, for example `Regulation (EU) 2022/2554`. The `article` is the bare article number as a string, for example `19(4)`, not `Article 19(4)`. The `jurisdiction` is the issuing authority, `EU` or an ISO 3166-1 alpha-2 code. The `in_force_from` field is the date on which obligated entities first become subject to the requirement, as an RFC 3339 full-date, not the date of enactment or publication. For an organizational act with no regulatory basis, `regulatory_citation` is `null`.
 
-The `receipt_profile_recommendations` list names the audiences for which receipts of this act type are typically rendered. Standard profiles include `regulator`, `auditor`, `director`, `competent_authority`, and `counterparty`. Custom profiles may be added if the act type has audiences that the standard list does not cover.
+The `required_claim_fields` and `optional_claim_fields` arrays name the claim fields a receipt under this act type carries. The optional `claim_field_types` block records the data type of each named field. The `required_evidence_labels` array names the evidence files a conforming receipt must carry. The field lists should be neither over-inclusive, requiring fields a verifier cannot use, nor under-inclusive, omitting fields a verifier needs. Authoring them well usually means preparing the test vector input in parallel, where gaps surface quickly.
 
-The remaining fields complete the entry. The `schema` field is the literal constant `"actproof.act_profile.v1"` identifying the schema version, and is the first field in the file. The `version` field is the catalogue entry's own semantic version; the first publication is `"1.0"`. The `supersedes` field is `null` for new entries; when an updated entry replaces an older one, this field carries the repository path of the superseded file. The `maintainer` field carries the string `"actproof-events"` for canonical entries (a structured object form with organization, contact, and role is a documented v1.4 gap). The `test_vector_reference` field carries the repository path to the companion `.test_vectors.json` file produced in Step 3.
+The `eligible_issuer_roles` and `recommended_witness_roles` arrays name who may issue a receipt under this act type and who is expected to witness it. The `signature_policy` block records the minimum signature form and the forms supported.
+
+The `version` field is the entry's own version as an integer, `1` for a first publication. The `supersedes` field is `null` for a new entry, or the `act_type_id` of the entry this one replaces. The `maintainer` field is the string `"actproof-events"` for canonical entries. The `test_vector_reference` field is the repository path to the companion `*.test_vectors.json` file produced in Step 3.
+
+A v3 entry may also carry optional blocks that strengthen it. The `reliance_context` block states what a receipt asserts and, in its `non_claims` array, what it does not. The `regulated_context_profile`, `prior_receipts_profile`, `disclosure_profile`, and `submission_evidence_policy` blocks refine the act's context further. A canonical entry SHOULD additionally be source-bound: `source_bindings` cites each official source by a stable identifier and pins its SHA-256, `generation` records how the entry was produced and reconciled, and `transparency_note_reference` points to a prose transparency note. The DORA profile carries all of these. Finally, `profile_status` declares the entry's maturity: an entry that is not yet source-bound declares `draft`, and a source-bound, reconciled entry declares `candidate`.
 
 ### Step 3: Prepare the conformance test vectors
 
-Each canonical catalogue entry must ship with a companion conformance test vector file at the same path with the suffix `.test_vectors.json`. For example, `catalogue/acts/eu/nis2/art20/approval.json` is accompanied by `catalogue/acts/eu/nis2/art20/approval.test_vectors.json`.
+Each canonical catalogue entry ships with one companion conformance test vector file, at the same path with the suffix `.test_vectors.json`. For example, `ict_incident_notification_initial.v1.json` is accompanied by `ict_incident_notification_initial.v1.test_vectors.json`.
 
-The test vector file conforms to the `actproof.act_catalogue_test_vectors.v1` schema. It contains at minimum three test vectors: one positive case demonstrating `PASS_WITH_SEMANTICS` for a conforming manifest, and at least two negative cases demonstrating expected failure codes for the most likely conformance violations (typically: wrong method, below-quorum, missing required field).
+A test vector is not written by hand. It is generated by `scripts/compute_test_vectors.py`, a pure and deterministic function of two inputs: the catalogue entry, and a manifest input file that is a concrete example of a receipt manifest for the act type. From those, the script computes the canonical manifest bytes, the manifest hash, the envelope and its hash, the ARC-2 JCS note bytes, the hash of the catalogue entry the vector was computed against, and a verifier checklist. The same two inputs produce a byte-identical file on any machine.
 
-Each test vector contains a synthetic manifest exercising the conformance check, a synthetic compact note as it would appear on the chain, the expected conformance result, the expected verifier result code, and a brief rationale explaining what the vector demonstrates. Synthetic hash placeholders should be deterministic and reproducible from a documented seed pattern, so reviewers can confirm hashes were not silently fabricated. Test vector files are published under CC0-1.0 to allow downstream verifier implementations to import them without attribution friction.
+To produce the vector, prepare a representative manifest input that exercises every required claim field, then run:
 
-The first canonical entry's test vector file, `catalogue/acts/eu/nis2/art20/approval.test_vectors.json`, serves as the reference template.
+    python scripts/compute_test_vectors.py <entry>.json <manifest_input>.json <entry>.test_vectors.json
+
+The script depends on the `jcs` package for RFC 8785 canonicalization. Run `python scripts/compute_test_vectors.py --help` for the current invocation, and use the DORA entry and its companion vector as the worked example.
+
+Commit the generated file unmodified. A `*.test_vectors.json` file must never be hand-edited: `scripts/validate_vectors.py` re-derives every vector from its inputs and fails the build if a committed file no longer matches, so a hand-edit is caught as staleness. When the catalogue entry changes, regenerate the vector.
+
+Test vector files are published under CC0-1.0 so that downstream verifier implementations can import them without attribution friction. A broader conformance set, with negative vectors that exercise expected failure modes, is on the project roadmap; a contributed entry today ships the single positive vector that its inputs produce.
 
 ### Step 4: Open the pull request
 
@@ -84,7 +94,7 @@ The full text of the regulatory citation, with a stable URL pointing to the auth
 
 A justification for the canonical-namespace placement, addressing the four eligibility criteria in turn.
 
-Any schema gaps surfaced during authoring. Many entries surface gaps in the v1.0 catalogue entry schema. Documenting them in the PR description helps the spec maintenance process and informs eventual v1.4 schema iteration.
+Any schema gaps surfaced during authoring. If the `actproof.act_profile.v3` schema cannot express something the act genuinely needs, describe the gap in the pull request description. This feeds the schema versioning process, which is governed by `spec/schema_version_policy.md`.
 
 ### Step 5: Respond to review
 
@@ -94,23 +104,23 @@ The maintainer team reviews the pull request against the criteria in the next se
 
 The maintainer team reviews canonical entry submissions against the following criteria, in approximate order of priority.
 
-Regulatory citation quality. The cited instrument must be in force, the article or provision cited must be the correct one, the in-force date must reflect when obligated entities first become subject, and the authoritative source must be linked.
+Regulatory citation quality. For an act with a regulatory basis, the cited instrument must be in force, the article or provision cited must be the correct one, the in-force date must reflect when obligated entities first become subject, and an authoritative source must be linked. For an organizational act with no regulatory basis, `regulatory_citation` is `null` and this criterion does not apply.
 
-Schema conformance. The entry must validate against the `actproof.act_profile.v1` schema as specified in section 9.5 of the master specification. Validation is automated where possible.
+Schema conformance. The entry must validate against the `actproof.act_profile.v3` schema. This is checked automatically by `scripts/validate_catalogue.py`, which also enforces the `format` constraints declared in the schema and rejects a duplicate `act_type_id`.
 
-Required manifest fields completeness. The field list must be sufficient for a verifier to check structural conformance for the act type without being overly broad. Reviewers test this by inspecting the test vectors and confirming that the positive case exercises all listed fields and that the negative cases break only listed constraints.
+Claim and evidence field completeness. The `required_claim_fields`, `optional_claim_fields`, and `required_evidence_labels` lists must be sufficient for a verifier to check structural conformance for the act type, without being overly broad. Reviewers test this against the companion test vector: the manifest input should exercise every required claim field.
 
-Method constraint alignment. The allowed methods must satisfy the substantive regulatory requirement. Where the regulatory text is ambiguous, the maintainer team errs on the side of including more methods rather than fewer, with the rationale documented in the PR.
+Test vector freshness. The companion `.test_vectors.json` file must be the unmodified output of `scripts/compute_test_vectors.py` for the committed entry. `scripts/validate_vectors.py` re-derives it and fails the build if it has drifted.
 
-Quorum minimum justification. The quorum minimum must be defensible given the substantive regulatory requirement. For acts requiring majority participation, 5001 basis points is the floor.
+Source binding, where applicable. For an act with a regulatory basis, `source_bindings` should cite each official source by a stable identifier and pin its SHA-256, `generation` should record how the entry was produced and reconciled, and a transparency note should accompany it. An entry without these is accepted, but it declares `profile_status` `draft` rather than `candidate`.
 
-Test vector coverage. Minimum three vectors (one positive, two negative). Vectors must use synthetic but realistic data. Hash placeholders must be deterministic and reproducible from a documented seed pattern.
+Reliance honesty. Where `reliance_context` is present, its `reliance_statement` and `counterparty_action` must not claim more than a receipt actually proves, and `non_claims` must enumerate the limits as machine-readable identifiers. A receipt evidences an issuer's attestation and the integrity of the committed content; it does not by itself prove that any authority accepted the act.
 
 License compatibility. Catalogue entries are Apache-2.0. Test vectors are CC0-1.0. Pull requests proposing other licenses are reformatted before merge.
 
 Identifier conventions. The `act_type_id` follows the naming conventions described in Step 2. Deviation is permitted only where the standard convention would produce an unreasonably long or ambiguous identifier, and only with explicit maintainer agreement.
 
-Documentation quality. The catalogue entry should include sufficient inline content that a reader of the JSON file alone can understand what the entry codifies. Brief description text in the `display_name` and similar natural-language fields is encouraged.
+Documentation quality. The catalogue entry should carry enough inline natural-language content, in `display_name` and similar fields, that a reader of the JSON file alone can understand what the entry codifies.
 
 ## Common reasons for declining canonical status
 
@@ -132,7 +142,7 @@ Decline is not a rejection of the act's importance. Many third-party entries are
 
 Third-party catalogue entries are published by the issuing organization at their own DNS domain. There is no pull request, no maintainer review, and no central registry. The publication flow is straightforward.
 
-The organization owns a DNS domain (for example, `example.com`). The organization decides on an act identifier under the reverse-DNS path (for example, `x.com.example.<segment>`). The organization writes a catalogue entry JSON conforming to the same `actproof.act_profile.v1` schema used for canonical entries. The organization serves the JSON at `https://example.com/.well-known/actproof-events/acts/<segment>.json`.
+The organization owns a DNS domain (for example, `example.com`). The organization decides on an act identifier under the reverse-DNS path (for example, `x.com.example.<segment>`). The organization writes a catalogue entry JSON conforming to the same `actproof.act_profile.v3` schema used for canonical entries. The organization serves the JSON at `https://example.com/.well-known/actproof-events/acts/<segment>.json`.
 
 Verifiers that encounter a third-party identifier in a receipt resolve it by reverse-mapping the identifier to the DNS path and fetching the JSON over HTTPS. The DNS hierarchy is the trust root; if the organization controls the domain, it controls the namespace under it.
 
@@ -150,11 +160,11 @@ The maintainer team encourages promotion of mature third-party entries. The thir
 
 ## Versioning and maintenance
 
-Canonical catalogue entries are versioned through the `version` field of the schema. Substantive changes to an entry (changing required manifest fields, modifying method constraints, raising or lowering quorum minimums) require a version increment. Non-substantive changes (correcting typos in `display_name`, clarifying inline documentation, updating maintainer contact) do not require version increments but do follow the same pull-request review process.
+Each catalogue entry carries its own version as an integer in the `version` field, starting at `1`. A substantive change to an entry, changing the required claim fields, the evidence labels, the eligible issuer roles, or the reliance context, requires a new entry at an incremented version: a new file whose name and `act_type_id` carry the new version, with the `supersedes` field of the new entry pointing to the `act_type_id` of the one it replaces. The superseded entry remains published at its original path, and receipts issued against it remain verifiable. A non-substantive change, correcting a typo in `display_name` or clarifying inline text, is made in place and does not increment the version.
 
-When a canonical entry's underlying regulatory instrument is amended, the maintainer team produces an updated version of the entry. Older versions remain published at their original paths with the `version` field unchanged. New versions are published at paths suffixed with the new version number. Receipts issued against older versions remain verifiable indefinitely.
+When a canonical entry's underlying regulatory instrument is amended, the maintainer team produces a new version of the entry in the same way.
 
-Deprecation of canonical entries is rare and only occurs when the underlying regulatory instrument is repealed or substantially superseded. Deprecated entries are marked with a `deprecated_at` field and a `superseded_by` field pointing to the replacement, but remain accessible at their original paths for historical verification.
+Deprecation is handled structurally. When an entry is retired, because its instrument was repealed or because it was replaced by an incompatible successor, the entry file is moved into a `_deprecated/` directory beside the active entries. The catalogue loader does not load entries under `_deprecated/`: they cannot be resolved and cannot be issued against, by construction. The predecessor voting-shaped v1 entries are retained this way. Receipts already issued against a now-deprecated entry remain verifiable from the self-contained provenance carried by the receipt itself.
 
 ## Maintainer commitments
 

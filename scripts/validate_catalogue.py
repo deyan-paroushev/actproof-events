@@ -5,9 +5,12 @@ validate_catalogue.py
 Validate every ActProof Events catalogue entry against its JSON Schema.
 
 This is the catalogue conformance gate. It walks catalogue/acts/, validates
-each entry against the schema for its discriminator in spec/schemas/, checks
-for duplicate act_type_id values across the catalogue, and reports
-claim_field_types coverage. It is self-contained: it depends only on the
+each entry against the schema for its discriminator in spec/schemas/,
+enforces the schema `format` constraints (date and date-time), checks for
+duplicate act_type_id values across the catalogue, and reports
+claim_field_types coverage. If a schema declares a `format` for which no
+checker is registered, the gate refuses to run rather than skip the
+constraint silently. It is self-contained: it depends only on the
 jsonschema package and the schema files in this repository, not on the
 actproof-py reference loader.
 
@@ -33,11 +36,14 @@ Dependencies:
 """
 
 import argparse
+import datetime
 import json
+import re
 import sys
 from pathlib import Path
 
 try:
+    from jsonschema import FormatChecker
     from jsonschema.exceptions import SchemaError
     from jsonschema.validators import Draft202012Validator
 except ImportError:
@@ -54,6 +60,65 @@ except ImportError:
 # treated as a catalogue entry, so a typo'd or wrong-version discriminator
 # is reported rather than silently skipped.
 ENTRY_DISCRIMINATOR_PREFIX = "actproof.act_profile."
+
+
+# Format enforcement.
+#
+# jsonschema does not check `format` keywords unless a FormatChecker is
+# passed to the validator, and then only for formats it has a checker for.
+# The schemas use `date` and `date-time`. We register self-contained,
+# standard-library checkers for both, so the gate enforces them without
+# depending on optional format-checking libraries. collect_schema_formats
+# and the guard in load_validators ensure that if a schema later declares a
+# format with no registered checker, the gate fails loudly rather than
+# skipping it.
+
+FORMAT_CHECKER = FormatChecker()
+
+_FULL_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+@FORMAT_CHECKER.checks("date", raises=ValueError)
+def _is_rfc3339_full_date(value):
+    """Check an RFC 3339 full-date (YYYY-MM-DD). Non-strings pass through."""
+    if not isinstance(value, str):
+        return True
+    if not _FULL_DATE_RE.match(value):
+        raise ValueError(f"{value!r} is not an RFC 3339 full-date")
+    datetime.date.fromisoformat(value)
+    return True
+
+
+@FORMAT_CHECKER.checks("date-time", raises=ValueError)
+def _is_rfc3339_datetime(value):
+    """Check an RFC 3339 date-time. Non-strings pass through.
+
+    RFC 3339 permits a trailing 'Z' for UTC. datetime.fromisoformat before
+    Python 3.11 needs a numeric offset, so 'Z' is normalised to '+00:00'
+    before parsing to keep the gate correct on Python 3.10.
+    """
+    if not isinstance(value, str):
+        return True
+    candidate = value
+    if candidate.endswith(("Z", "z")):
+        candidate = candidate[:-1] + "+00:00"
+    datetime.datetime.fromisoformat(candidate)
+    return True
+
+
+def collect_schema_formats(node):
+    """Return the set of `format` string values used anywhere in a schema."""
+    formats = set()
+    if isinstance(node, dict):
+        fmt = node.get("format")
+        if isinstance(fmt, str):
+            formats.add(fmt)
+        for value in node.values():
+            formats |= collect_schema_formats(value)
+    elif isinstance(node, list):
+        for value in node:
+            formats |= collect_schema_formats(value)
+    return formats
 
 
 def fail_setup(message):
@@ -79,12 +144,15 @@ def load_validators(schema_dir):
         )
 
     validators = {}
+    used_formats = set()
     for path in schema_files:
         try:
             schema = json.loads(path.read_text(encoding="utf-8"))
             Draft202012Validator.check_schema(schema)
         except (OSError, json.JSONDecodeError, SchemaError) as exc:
             fail_setup(f"schema file {path.name} is not usable: {exc}")
+
+        used_formats |= collect_schema_formats(schema)
 
         schema_prop = schema.get("properties", {}).get("schema", {})
         if "const" in schema_prop:
@@ -97,9 +165,21 @@ def load_validators(schema_dir):
                 f"properties.schema.const or properties.schema.enum"
             )
 
-        validator = Draft202012Validator(schema)
+        validator = Draft202012Validator(schema, format_checker=FORMAT_CHECKER)
         for discriminator in discriminators:
             validators[discriminator] = validator
+
+    # Every `format` the schemas declare must have a registered checker.
+    # Otherwise the gate would validate entries while silently ignoring that
+    # format constraint, which is worse than not claiming to check it.
+    unenforceable = sorted(used_formats - set(FORMAT_CHECKER.checkers))
+    if unenforceable:
+        fail_setup(
+            "the schemas declare format(s) with no registered checker: "
+            f"{', '.join(unenforceable)}. The gate would skip them "
+            "silently. Register a checker in the FORMAT_CHECKER section of "
+            "validate_catalogue.py before relying on this gate."
+        )
 
     return validators
 

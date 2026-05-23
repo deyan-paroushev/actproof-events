@@ -117,5 +117,10 @@
     "funding_basis_reference": "string",
     "next_milestone_date": "date",
     "prior_engagement_reference": "string"
+  },
+  "profile_status": {
+    "maturity": "draft",
+    "since": "1.5-rc1",
+    "summary": "Illustrative profile published to exercise the catalogue and schema. Its claim schema is provisional, has not been through independent review, and may change while actproof-events is at release-candidate stage."
   }
 }

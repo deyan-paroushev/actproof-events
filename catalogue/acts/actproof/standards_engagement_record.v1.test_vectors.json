@@ -6,8 +6,8 @@
   "profile": {
     "act_type_id": "op:actproof.standards_engagement_record.v1",
     "catalogue_entry_version": 1,
-    "catalogue_entry_hash": "sha256:41fcb384eb34851002de34df80fbe5844ae8f6a83f4ace8cb4952eb047d01cf5",
-    "catalogue_entry_hash_basis": "SHA-256 of the catalogue entry JSON file bytes as written to disk in the actproof-events repository at the named version. Verifiers can reproduce by pip install actproof-events at the matching version, locating the entry file via actproof_events.get_catalogue_path(), and hashing its raw bytes."
+    "catalogue_entry_hash": "sha256:3870740991e733dec00d1b441e332e9ccb2fa1b22b9e011d43c76d1365292a20",
+    "catalogue_entry_hash_basis": "SHA-256 of the catalogue entry JSON file bytes as written to disk in the actproof-events repository at the named version."
   },
   "raw_manifest": {
     "schema": "actproof.attestation_manifest.v1",
@@ -106,8 +106,7 @@
       "q": "actproof note format version",
       "e": "base64url-no-padding of envelope_hash bytes",
       "s": "act_type_id (disclosed mode only)"
-    },
-    "consumer_profile_note": "Generic actproof-events test vector uses the actproof/v1: prefix. Application-specific consumers that fork this layout MAY use their own prefix (e.g. a Quoruna consumer recording its own protocol version) and SHOULD document the substitution in their own consumer profile."
+    }
   },
   "reference_anchor": {
     "network": "algorand-testnet",
@@ -125,7 +124,7 @@
     "Recompute manifest_hash_hex by canonicalizing raw_manifest with RFC 8785 JCS and applying SHA-256",
     "Confirm merkle_root_hex equals manifest_hash_hex (single-leaf tree convention for v1)",
     "Recompute envelope_hash_hex by canonicalizing envelope with RFC 8785 JCS and applying SHA-256",
-    "Recompose arc2_note.full_note_b64 by concatenating the prefix bytes (actproof/v1:) with the canonical note inner bytes",
-    "Once reference_anchor.txid is populated, fetch the on-chain note and confirm byte-identical match"
+    "Recompose arc2_note.full_note_b64 by concatenating prefix bytes (actproof/v1:) with the canonical note inner bytes",
+    "Recompute each evidence file SHA-256 and confirm equality with manifest.evidence[].sha256_hex"
   ]
 }

@@ -89,8 +89,8 @@
     ]
   },
   "reliance_context": {
-    "issuer_role": "financial entity within the scope of Regulation (EU) 2022/2554 (or a third-party service provider acting on its behalf under Article 19(5)) submitting an initial notification of a major ICT-related incident to its competent authority within the time limits set out in Article 5 of Delegated Regulation (EU) 2025/301 (no later than 4 hours after classification as major and at most 24 hours after detection)",
-    "counterparty_action": "the competent authority records receipt of the initial notification, opens the supervisory file for the incident, and starts the regulatory timeline for intermediate (within 72 hours) and final (within one month) reports; the financial entity records that the obligation under Article 19(4) of DORA has been discharged at the stated datetime; downstream verifiers (auditors, supervisors in subsequent inspections, the entity itself in audit defence) record the cryptographic proof that the named filing reached the named authority at the named time",
+    "issuer_role": "financial entity within the scope of Regulation (EU) 2022/2554 (or a third-party service provider acting on its behalf under Article 19(5)) preparing an initial notification of a major ICT-related incident for submission to its competent authority within the time limits set out in Article 5 of Delegated Regulation (EU) 2025/301 (no later than 4 hours after classification as major and at most 24 hours after detection)",
+    "counterparty_action": "the competent authority, on receiving the official notification through its own reporting channel, records its receipt and runs its supervisory process, including the regulatory timeline for intermediate (within 72 hours) and final (within one month) reports; the financial entity retains the receipt as cryptographic evidence that it prepared and attested the initial notification, with the cited content and classification, at the stated time; downstream verifiers (auditors, supervisors in subsequent inspections, the entity itself in audit defence) use the receipt to confirm the entity's identity, the timestamps, the classification criteria cited, and the integrity of the named evidence files, and, where secure_electronic_channel_acknowledgement evidence is included, to confirm that the notification was transmitted to the competent authority",
     "later_verifiers": [
       "competent_authority",
       "european_supervisory_authority",
@@ -105,9 +105,10 @@
       "does_not_replace_a_personal_data_breach_notification_under_regulation_eu_2016_679_gdpr_article_33",
       "does_not_constitute_the_final_legal_classification_of_the_incident",
       "does_not_predetermine_supervisory_findings_or_sanctions",
-      "does_not_exhaust_the_intermediate_and_final_reporting_obligations_under_dora_article_19_4"
+      "does_not_exhaust_the_intermediate_and_final_reporting_obligations_under_dora_article_19_4",
+      "does_not_prove_the_notification_was_transmitted_to_or_received_by_the_competent_authority"
     ],
-    "reliance_statement": "The named financial entity attests that an ICT-related incident was detected at the stated detection_datetime_utc, classified as a major ICT-related incident under Articles 1 to 8 of Delegated Regulation (EU) 2024/1772 at the stated classification_datetime_utc, and that the initial notification specified in Article 19(4) of Regulation (EU) 2022/2554 was submitted to the named competent authority through a secure electronic channel within the time limits of Article 5 of Delegated Regulation (EU) 2025/301. Verifiers may rely on the entity's identity (entity_legal_identifier), the timestamps, the classification criteria cited, and the cryptographic integrity of the named evidence files. The receipt does NOT constitute admission of liability, does NOT determine the final legal classification of the incident, does NOT replace separate notification obligations under NIS2 (Directive (EU) 2022/2555) or GDPR (Regulation (EU) 2016/679) Article 33, and does NOT exhaust the entity's continuing obligations to file the intermediate report (within 72 hours of detection) and the final report (within one month) under DORA Article 19(4). The machine-readable non_claims array on this entry is the authoritative enumeration of what the receipt does not prove. Supervisory findings, sanctions, and reclassification decisions are reserved to the competent authority's own published processes."
+    "reliance_statement": "The named financial entity attests that an ICT-related incident was detected at the stated detection_datetime_utc, classified as a major ICT-related incident under Articles 1 to 8 of Delegated Regulation (EU) 2024/1772 at the stated classification_datetime_utc, and that it has prepared the initial notification specified in Article 19(4) of Regulation (EU) 2022/2554, with the content and within the timing required by Article 5 of Delegated Regulation (EU) 2025/301, for submission to the named competent authority. Verifiers may rely on the entity's identity (entity_legal_identifier), the timestamps, the classification criteria cited, the declared notification content, and the cryptographic integrity of the named evidence files. The baseline receipt evidences the entity's attestation and the integrity of that content as of the receipt time; it does not by itself prove that the notification was transmitted to or received by the competent authority. Where secure_electronic_channel_acknowledgement evidence is attached under the submission_evidence_policy, that evidence additionally attests the transmission. The receipt does NOT constitute admission of liability, does NOT determine the final legal classification of the incident, does NOT replace separate notification obligations under NIS2 (Directive (EU) 2022/2555) or GDPR (Regulation (EU) 2016/679) Article 33, and does NOT exhaust the entity's continuing obligations to file the intermediate report (within 72 hours of detection) and the final report (within one month) under DORA Article 19(4). The machine-readable non_claims array on this entry is the authoritative enumeration of what the receipt does not prove. Supervisory findings, sanctions, and reclassification decisions are reserved to the competent authority's own published processes."
   },
   "disclosure_profile": {
     "public_fields": [
@@ -282,5 +283,10 @@
     "authoring_process": "actproof-events authoring process, eight-stage",
     "generated_at": "2026-05-23T16:00:00Z"
   },
-  "transparency_note_reference": "catalogue/acts/eu/dora/ict_incident_notification_initial.v1.transparency.md"
+  "transparency_note_reference": "catalogue/acts/eu/dora/ict_incident_notification_initial.v1.transparency.md",
+  "profile_status": {
+    "maturity": "candidate",
+    "since": "1.5-rc1",
+    "summary": "Source-bound and reconciled against the hashed DORA, RTS, ITS, and classification sources, with conformance vectors published. Held at candidate while the conformance vector set is broadened and the receipt manifest shape is finalised."
+  }
 }
