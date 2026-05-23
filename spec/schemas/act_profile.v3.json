@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://actproof.events/schemas/act_catalogue_entry.v3.json",
-  "title": "OpenProof Events Catalogue Entry v3",
-  "description": "Schema for a single catalogue entry describing a regulated or governance act type. v3 is a strict additive superset of v2. It adds six optional blocks for richer act-type semantics: regulated_context_profile (constrains receipt context shapes), prior_receipts_profile (declares bilateral lifecycle expectations), reliance_context (names who relies and who verifies, and what the receipt does not prove), disclosure_profile (per-field disclosure tier declarations and back-propagation scope), submission_evidence_policy (declares recognised submission and transmission evidence artifacts), and claim_field_types (declares the primitive data type of each claim field, so catalogue-driven consumers need no hardcoded field-type knowledge). All sixteen required v2 fields are unchanged. Any v2-shaped entry validates against v3 with only its schema discriminator updated to 'actproof.act_catalogue_entry.v3'. The v2 schema file remains in the repository as a historical record for consumers pinned to v2. submission_evidence_policy, claim_field_types, and the optional reliance_context.non_claims field were introduced in additive revisions of v3, alongside additional controlled-vocabulary values. Because these changes are optional or additive, entries authored before them remain valid.",
+  "$id": "https://actproof.events/schemas/act_profile.v3.json",
+  "title": "ActProof Events catalogue entry, v3",
+  "description": "Schema for a single catalogue entry describing a regulated or governance act type. v3 is a strict additive superset of v2. It adds six optional blocks for richer act-type semantics: regulated_context_profile (constrains receipt context shapes), prior_receipts_profile (declares bilateral lifecycle expectations), reliance_context (names who relies and who verifies, and what the receipt does not prove), disclosure_profile (per-field disclosure tier declarations and back-propagation scope), submission_evidence_policy (declares recognised submission and transmission evidence artifacts), and claim_field_types (declares the primitive data type of each claim field, so catalogue-driven consumers need no hardcoded field-type knowledge). All sixteen required v2 fields are unchanged. Any v2-shaped entry validates against v3 with only its schema discriminator updated to 'actproof.act_profile.v3'. The v2 schema file remains in the repository as a historical record for consumers pinned to v2. submission_evidence_policy, claim_field_types, and the optional reliance_context.non_claims field were introduced in additive revisions of v3, alongside additional controlled-vocabulary values. Because these changes are optional or additive, entries authored before them remain valid. The source_bindings, generation, and transparency_note_reference fields were introduced in a further additive revision: source_bindings pins the official legal instruments a profile is bound to, generation records how the profile was produced, and transparency_note_reference points to its human-readable transparency note. All three are optional, so entries authored before them remain valid.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema": {
-      "const": "actproof.act_catalogue_entry.v3",
+      "const": "actproof.act_profile.v3",
       "description": "Schema discriminator. Always the literal string above. v3 entries are recognised by actproof-py v0.1.1 and later. actproof-py v0.1.0 and earlier accept only v2 entries."
     },
     "act_type_id": {
@@ -419,6 +419,134 @@
         }
       },
       "description": "Maps each claim field identifier to its primitive data type, so a catalogue-driven consumer can render the input control, parse the submitted value, and serialise the manifest with no hardcoded per-act-type field knowledge. Keys are claim field identifiers and SHOULD cover every member of required_claim_fields and optional_claim_fields. A consumer encountering a claim field absent from this map SHOULD treat it as 'string'. Type meanings: 'string' is a short single-line value; 'text' is a long multi-line value; 'boolean' is true or false; 'integer' is a whole number; 'number' is a decimal number; 'date' is an ISO 8601 calendar date (YYYY-MM-DD); 'datetime' is an ISO 8601 timestamp in UTC; 'email' is an email address; 'string_list' is an ordered list of strings, that is a multi-value field. Optional at the schema level. A catalogue release MAY require it for all entries surfaced for new issuance. Introduced as an additive revision of v3."
+    },
+    "source_bindings": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The official legal instruments this profile is built from, each pinned by the SHA-256 hash of a retrieved official artefact. This block is the trust anchor of the profile. It lets anyone independently fetch the cited sources, reproduce the hashes, and audit the claim schema against the official text, with no AI and no cost. There is one entry per instrument; the provisions the profile relies on are listed inside the entry. The block is jurisdiction-agnostic: source_type names the official-source adapter and identifiers carries whatever citation schemes that jurisdiction uses. Optional at the schema level so that entries authored before source binding remain valid. The authoring process requires it for any newly authored profile.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_type", "authority", "instrument", "identifiers", "provisions", "artifact"],
+        "properties": {
+          "source_type": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "description": "Identifier of the official-source adapter the binding was retrieved through. 'eurlex' is the European Union adapter, resolving CELEX and ELI identifiers through the EU Publications Office. A United States profile would use a different value, for example 'us_ecfr'. The standard does not assume any one jurisdiction."
+          },
+          "authority": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The body that adopted the instrument. Examples: 'European Commission'; 'European Parliament and Council of the European Union'."
+          },
+          "instrument": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Human-readable name of the legal instrument. Example: 'Commission Delegated Regulation (EU) 2025/301'. Naming MUST be precise: a regulation is not a directive, and the instrument type is part of its name."
+          },
+          "identifiers": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": { "type": "string", "minLength": 1 },
+            "description": "Citation identifiers for the instrument, as a scheme-to-value map. Open by design, so a jurisdiction adds its own schemes with no schema change. For an EU instrument the schemes are 'celex' (for example '32025R0301') and 'eli' (the ELI URI). At least one identifier MUST be present, and each MUST be a stable, resolvable identifier in a published scheme."
+          },
+          "provisions": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 },
+            "description": "The specific provisions of this instrument that the profile's claim schema relies on. Examples: ['Article 2']; ['Annex I', 'Annex II']. These are the parts a reviewer reads against the claim schema when performing the open audit."
+          },
+          "artifact": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["artifact_type", "media_type", "sha256", "retrieved_at", "retrieved_from"],
+            "properties": {
+              "artifact_type": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+$",
+                "description": "The kind of official artefact that was retrieved and hashed. 'oj_pdf' is the Official Journal PDF, the authentic published form of an EU legal act."
+              },
+              "media_type": {
+                "type": "string",
+                "minLength": 1,
+                "description": "IANA media type of the retrieved artefact. Example: 'application/pdf'."
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^sha256:[0-9a-f]{64}$",
+                "description": "SHA-256 of the retrieved artefact's bytes, prefixed with 'sha256:'. A verifier re-fetching the cited source reproduces this value. A later mismatch means the instrument may have been amended and the profile must be revisited."
+              },
+              "retrieved_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 UTC timestamp at which the artefact was retrieved and hashed."
+              },
+              "retrieved_from": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["url"],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The exact URL the artefact was retrieved from, so the retrieval is reproducible."
+                  },
+                  "method": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The retrieval strategy used, recorded for build-time provenance. Examples: 'cellar-content-negotiation'; 'eurlex-direct-pdf'."
+                  }
+                },
+                "description": "Where and how the artefact was retrieved."
+              }
+            },
+            "description": "The official artefact retrieved and hashed for this instrument. The profile binds by reference: it cites and hashes the source, it does not copy the source text into the catalogue."
+          }
+        }
+      }
+    },
+    "generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "generated_at"],
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["ai_assisted_extraction_from_authoritative_sources", "manual_authoring"],
+          "description": "How the profile's claim schema was produced. 'ai_assisted_extraction_from_authoritative_sources' means a language model drafted the schema by reading the hashed official sources, and the draft was then reconciled against those sources. 'manual_authoring' means a person authored the schema directly. The method does not affect trust: every profile is audited against its hashed source regardless of how it was drafted."
+        },
+        "extraction_tool": {
+          "type": "string",
+          "minLength": 1,
+          "description": "For an ai-assisted profile, the model or tool that produced the draft. Recorded for transparency only. The extraction step is model-agnostic and sits outside the trust path, so this value is provenance, not a trust input. Omitted for a manually authored profile."
+        },
+        "reconciled": {
+          "type": "boolean",
+          "description": "Whether the draft schema was checked, field by field, against the hashed official text before publication. This is the Stage 4 reconciliation of the authoring process. It SHOULD be true for any published profile."
+        },
+        "reconciliation_note": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Short account of how reconciliation was performed and by whom or what, for example a human review, a second-model cross-check, or both. The full account belongs in the transparency note."
+        },
+        "authoring_process": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Name or reference of the authoring process the profile was produced under. Example: 'actproof-events authoring process, eight-stage'."
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 UTC timestamp at which the profile was assembled."
+        }
+      },
+      "description": "Machine-readable record of how this profile was produced. The transparency note referenced by transparency_note_reference is the human-readable companion to this block, and the two MUST agree. Optional at the schema level so that entries authored before this block remain valid. The authoring process requires it for any newly authored profile."
+    },
+    "transparency_note_reference": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_./-]+\\.md$",
+      "description": "Repository-relative path to the human-readable transparency note for this profile. The note is the prose companion to the generation block. It states the source as concrete hashes, what the law prescribes in plain language, the data-model choices and where authorial judgement entered, and an open invitation to compare the profile against its cited sources and contribute. A profile is not complete without it. Optional at the schema level for backward compatibility. The authoring process requires it for any newly authored profile."
     }
   }
 }

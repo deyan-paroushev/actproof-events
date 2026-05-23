@@ -53,7 +53,7 @@ except ImportError:
 # under catalogue/acts/ whose `schema` value starts with this prefix is
 # treated as a catalogue entry, so a typo'd or wrong-version discriminator
 # is reported rather than silently skipped.
-ENTRY_DISCRIMINATOR_PREFIX = "actproof.act_catalogue_entry."
+ENTRY_DISCRIMINATOR_PREFIX = "actproof.act_profile."
 
 
 def fail_setup(message):
@@ -65,17 +65,17 @@ def fail_setup(message):
 def load_validators(schema_dir):
     """Build a mapping from schema discriminator to a JSON Schema validator.
 
-    Reads every act_catalogue_entry.*.json file in the schema directory,
+    Reads every act_profile.*.json file in the schema directory,
     checks each against the JSON Schema 2020-12 metaschema, and keys it by
     the discriminator declared at properties.schema.const (or .enum).
     """
     if not schema_dir.is_dir():
         fail_setup(f"schema directory not found: {schema_dir}")
 
-    schema_files = sorted(schema_dir.glob("act_catalogue_entry.*.json"))
+    schema_files = sorted(schema_dir.glob("act_profile.*.json"))
     if not schema_files:
         fail_setup(
-            f"no act_catalogue_entry.*.json schema files in {schema_dir}"
+            f"no act_profile.*.json schema files in {schema_dir}"
         )
 
     validators = {}

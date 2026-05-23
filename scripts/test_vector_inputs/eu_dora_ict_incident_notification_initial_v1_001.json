@@ -12,31 +12,38 @@
   "claim_fields": {
     "entity_legal_identifier": "5493001KJTIIGC8Y1R12",
     "entity_legal_name": "Example Financial Entity S.A.",
+    "financial_entity_type": "credit_institution",
     "submission_type": "initial",
     "incident_reference_code": "INC-2026-05-19-001",
     "detection_datetime_utc": "2026-05-19T14:32:07Z",
     "classification_datetime_utc": "2026-05-19T16:48:00Z",
     "classification_criteria_triggered": [
-      "art_8_a_clients_counterparts_and_transactions",
-      "art_8_c_critical_services_affected",
-      "art_8_e_service_downtime_duration",
-      "art_8_f_geographical_spread"
+      "clients_financial_counterparts_and_transactions",
+      "duration_and_service_downtime",
+      "geographical_spread",
+      "criticality_of_services_affected"
     ],
-    "affected_member_states": ["FR", "DE", "IT", "ES"],
+    "affected_member_states": [
+      "FR",
+      "DE",
+      "IT",
+      "ES"
+    ],
     "incident_discovery_method": "automated_detection_siem_rule",
     "business_continuity_plan_activated": true,
-    "affected_functions_and_services": [
-      "retail_online_banking",
-      "sepa_instant_payments_outbound",
-      "mobile_banking_application_login"
-    ],
     "initial_impact_description": "Approximately 180,000 retail customers unable to authenticate following a JWT signing-key propagation failure after a scheduled rotation. Already-authenticated sessions unaffected. Containment in progress via roll-back to the previous signing key. No data exfiltration, integrity loss, or data unavailability observed at classification time. Estimated foregone transaction revenue during the authentication outage window: EUR 240,000.",
     "primary_contact_name": "Jean-Christophe Duval",
     "primary_contact_email": "jc.duval@example-financial-entity.test",
     "competent_authority": "Autorite des Marches Financiers (AMF), France",
     "first_disruption_datetime_utc": "2026-05-19T14:30:01Z",
+    "affected_functions_and_services": [
+      "retail_online_banking",
+      "sepa_instant_payments_outbound",
+      "mobile_banking_application_login"
+    ],
     "preliminary_estimated_clients_affected": 180000,
-    "preliminary_estimated_financial_amount_eur": 240000,
+    "preliminary_estimated_financial_amount": 240000,
+    "reporting_currency": "EUR",
     "third_party_provider_involved": false
   },
   "evidence": [

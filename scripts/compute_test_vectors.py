@@ -5,14 +5,15 @@ compute_test_vectors.py
 Generate ActProof Events test vector files from raw manifest inputs.
 
 A test vector binds a catalogue entry to a concrete example manifest and the
-deterministic outputs any conforming verifier should produce: the canonical
-manifest bytes, the manifest hash, the envelope, the envelope hash, and the
-ARC-2 JCS note bytes that get anchored on-chain.
+deterministic outputs any conforming verifier should produce: the hash of the
+catalogue entry the vector was computed against, the canonical manifest bytes,
+the manifest hash, the envelope, the envelope hash, and the ARC-2 JCS note
+bytes that get anchored on-chain.
 
 Usage:
-    python scripts/compute_test_vectors.py \\
-        <catalogue_entry.json> \\
-        <manifest_input.json> \\
+    python scripts/compute_test_vectors.py \
+        <catalogue_entry.json> \
+        <manifest_input.json> \
         <output_test_vectors.json>
 
 The script is a pure function over its inputs. Given the same catalogue entry
@@ -136,9 +137,9 @@ def compose_arc2_note_inner(
 
     Field meanings:
       r : merkle root (base64url no padding of merkle_root bytes)
-      m : number of leaves in the merkle tree (1 for v2.0 single-leaf)
+      m : number of leaves in the merkle tree (1 for the v1 single-leaf tree)
       t : type discriminator ("a" = attestation)
-      q : Quoruna protocol version
+      q : actproof note format version
       e : envelope hash (base64url no padding of envelope_hash bytes)
       s : act_type_id, present only in disclosed mode
     """
@@ -157,11 +158,17 @@ def compose_arc2_note_inner(
 def compute_test_vector(
     *,
     catalogue: dict,
+    catalogue_entry_bytes: bytes,
     raw_manifest: dict,
     test_vector_id: str,
 ) -> dict:
     """
     Produce a complete test vector from a catalogue entry and a raw manifest.
+
+    catalogue is the parsed catalogue entry. catalogue_entry_bytes is the exact
+    file bytes of that entry as written to disk; their SHA-256 is recorded in
+    the test vector's profile block so a verifier can confirm the vector is
+    bound to a specific catalogue entry state.
 
     Raises ValueError if the manifest fails validation against the catalogue.
     """
@@ -171,11 +178,15 @@ def compute_test_vector(
             "Manifest validation failed:\n  - " + "\n  - ".join(errors)
         )
 
+    # 0. Hash the catalogue entry file bytes, so the vector is bound to the
+    #    exact catalogue entry state it was computed against.
+    catalogue_entry_hash = "sha256:" + sha256_hex(catalogue_entry_bytes)
+
     # 1. Canonicalize and hash the manifest
     manifest_canonical = canonical(raw_manifest)
     manifest_hash_hex = sha256_hex(manifest_canonical)
 
-    # 2. Merkle root for v2.0 single-leaf tree equals the manifest hash
+    # 2. Merkle root for the v1 single-leaf tree equals the manifest hash
     merkle_root_hex = manifest_hash_hex
 
     # 3. Compose, canonicalize, and hash the envelope
@@ -195,7 +206,7 @@ def compute_test_vector(
         act_type_id=catalogue["act_type_id"],
     )
     note_inner_canonical = canonical(note_inner)
-    note_prefix = b"quoruna/v1:"
+    note_prefix = b"actproof/v1:"
     note_full = note_prefix + note_inner_canonical
 
     return {
@@ -203,6 +214,15 @@ def compute_test_vector(
         "test_vector_id": test_vector_id,
         "catalogue_act_type_id": catalogue["act_type_id"],
         "catalogue_entry_version": catalogue["version"],
+        "profile": {
+            "act_type_id": catalogue["act_type_id"],
+            "catalogue_entry_version": catalogue["version"],
+            "catalogue_entry_hash": catalogue_entry_hash,
+            "catalogue_entry_hash_basis": (
+                "SHA-256 of the catalogue entry JSON file bytes as written to "
+                "disk in the actproof-events repository at the named version."
+            ),
+        },
         "raw_manifest": raw_manifest,
         "manifest_canonical_b64": b64(manifest_canonical),
         "manifest_canonical_byte_length": len(manifest_canonical),
@@ -214,7 +234,7 @@ def compute_test_vector(
         "envelope_hash_hex": envelope_hash_hex,
         "arc2_note": {
             "mode": "disclosed",
-            "prefix": "quoruna/v1:",
+            "prefix": "actproof/v1:",
             "inner_canonical_b64": b64(note_inner_canonical),
             "full_note_b64": b64(note_full),
             "full_note_byte_length": len(note_full),
@@ -222,7 +242,7 @@ def compute_test_vector(
                 "r": "base64url-no-padding of merkle_root bytes",
                 "m": "number of leaves in the merkle tree",
                 "t": "type discriminator ('a' = attestation)",
-                "q": "Quoruna protocol version",
+                "q": "actproof note format version",
                 "e": "base64url-no-padding of envelope_hash bytes",
                 "s": "act_type_id (disclosed mode only)",
             },
@@ -244,11 +264,12 @@ def compute_test_vector(
         },
         "expected_verifier_output": "PASS",
         "verifier_checklist": [
+            "Compute the catalogue_entry_hash by SHA-256 of the catalogue entry JSON file bytes; confirm equal to profile.catalogue_entry_hash",
             "Recompute manifest_hash_hex by canonicalizing raw_manifest with RFC 8785 JCS and applying SHA-256",
-            "Confirm merkle_root_hex equals manifest_hash_hex (single-leaf tree convention for v2.0)",
+            "Confirm merkle_root_hex equals manifest_hash_hex (single-leaf tree convention for v1)",
             "Recompute envelope_hash_hex by canonicalizing envelope with RFC 8785 JCS and applying SHA-256",
-            "Recompose arc2_note.full_note_b64 by concatenating the prefix bytes with the canonical note inner bytes",
-            "Once reference_anchor.txid is populated, fetch the on-chain note and confirm byte-identical match",
+            "Recompose arc2_note.full_note_b64 by concatenating prefix bytes (actproof/v1:) with the canonical note inner bytes",
+            "Recompute each evidence file SHA-256 and confirm equality with manifest.evidence[].sha256_hex",
         ],
     }
 
@@ -272,13 +293,15 @@ def main():
     )
     args = parser.parse_args()
 
-    catalogue = json.loads(Path(args.catalogue_entry).read_text())
+    catalogue_entry_bytes = Path(args.catalogue_entry).read_bytes()
+    catalogue = json.loads(catalogue_entry_bytes.decode("utf-8"))
     raw_manifest = json.loads(Path(args.manifest_input).read_text())
 
     test_vector_id = args.test_vector_id or Path(args.manifest_input).stem
 
     test_vector = compute_test_vector(
         catalogue=catalogue,
+        catalogue_entry_bytes=catalogue_entry_bytes,
         raw_manifest=raw_manifest,
         test_vector_id=test_vector_id,
     )
@@ -289,6 +312,7 @@ def main():
 
     print(f"Test vector written to: {args.output}", file=sys.stderr)
     print(f"  catalogue:            {catalogue['act_type_id']}", file=sys.stderr)
+    print(f"  catalogue_entry_hash: {test_vector['profile']['catalogue_entry_hash']}", file=sys.stderr)
     print(f"  manifest_hash:        {test_vector['manifest_hash_hex']}", file=sys.stderr)
     print(f"  envelope_hash:        {test_vector['envelope_hash_hex']}", file=sys.stderr)
     print(f"  note byte length:     {test_vector['arc2_note']['full_note_byte_length']}", file=sys.stderr)

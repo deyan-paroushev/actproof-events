@@ -21,7 +21,7 @@ The v1.4 release is the first act-native release. Earlier v1.x releases modelled
 
 This specification defines:
 
-- The catalogue entry schema (`actproof.act_catalogue_entry.v2`)
+- The catalogue entry schema (`actproof.act_profile.v2`)
 - The attestation manifest schema (`actproof.attestation_manifest.v1`)
 - The envelope schema (`actproof.attestation_envelope.v1`)
 - The canonicalization pipeline (RFC 8785 JCS)
@@ -51,11 +51,11 @@ The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RE
 
 ### 2.1 Catalogue entry schema v2
 
-A catalogue entry describes a single regulated or governance act type. The schema is at `spec/schemas/act_catalogue_entry.v2.json` and validates against JSON Schema draft 2020-12.
+A catalogue entry describes a single regulated or governance act type. The schema is at `spec/schemas/act_profile.v2.json` and validates against JSON Schema draft 2020-12.
 
 A v2 catalogue entry MUST include the following top-level fields:
 
-- `schema`: the literal string `"actproof.act_catalogue_entry.v2"`
+- `schema`: the literal string `"actproof.act_profile.v2"`
 - `act_type_id`: canonical identifier under the `op:` namespace
 - `claim_type`: short snake_case identifier describing the semantic shape
 - `display_name`: human-readable display name
@@ -395,7 +395,7 @@ Additional test vectors will be added for other catalogue entries as they land.
 
 The authoritative JSON Schema files for v1.4-rc1 are:
 
-- `spec/schemas/act_catalogue_entry.v2.json`
+- `spec/schemas/act_profile.v2.json`
 
 The attestation manifest schema and envelope schema are described prose-only in Sections 3 and 4 of this document. JSON Schema files for these schemas are deferred to v1.5.
 
@@ -445,7 +445,7 @@ Deprecated v1 entries are preserved under their respective `_deprecated/` direct
 ### v1.4-rc1 (this release)
 
 **Substrate changes**:
-- Introduced `actproof.act_catalogue_entry.v2` schema with act-native fields.
+- Introduced `actproof.act_profile.v2` schema with act-native fields.
 - Deprecated v1 voting-derivative fields: `method_constraints`, `eligibility_snapshot_hash`, `action_set_hash`, `tally_output_hash`, `result_hash`, `receipt_profile_recommendations`.
 - Introduced `_deprecated/` directory convention for v1 namespace preservation.
 

@@ -42,7 +42,7 @@ The discussion step prevents duplicated effort and surfaces scoping concerns bef
 
 ### Step 2: Prepare the catalogue entry
 
-The catalogue entry is a single JSON file conforming to the `actproof.act_catalogue_entry.v1` schema defined in section 9.5 of the ActProof Events specification. The file path follows the convention `catalogue/acts/<jurisdiction>/<instrument>/<article>/<short-name>.json`. For acts under EU directives or regulations, the convention is `catalogue/acts/eu/<directive-or-regulation>/<article>/<short-name>.json`. For acts under national law, `catalogue/acts/<iso-3166-1-alpha-2>/<instrument>/<short-name>.json`. For corporate or generic acts not tied to a specific jurisdiction, `catalogue/acts/corporate/<short-name>.json`.
+The catalogue entry is a single JSON file conforming to the `actproof.act_profile.v1` schema defined in section 9.5 of the ActProof Events specification. The file path follows the convention `catalogue/acts/<jurisdiction>/<instrument>/<article>/<short-name>.json`. For acts under EU directives or regulations, the convention is `catalogue/acts/eu/<directive-or-regulation>/<article>/<short-name>.json`. For acts under national law, `catalogue/acts/<iso-3166-1-alpha-2>/<instrument>/<short-name>.json`. For corporate or generic acts not tied to a specific jurisdiction, `catalogue/acts/corporate/<short-name>.json`.
 
 The catalogue entry must contain all eleven required top-level fields specified in section 9.5 of the master specification: `schema`, `act_type_id`, `display_name`, `regulatory_citation`, `required_manifest_fields`, `method_constraints`, `receipt_profile_recommendations`, `version`, `supersedes`, `maintainer`, and `test_vector_reference`. The first canonical entry, `catalogue/acts/eu/nis2/art20/approval.json`, serves as the reference template for new submissions.
 
@@ -60,7 +60,7 @@ The `method_constraints.minimum_quorum_basis_points` field specifies the lowest 
 
 The `receipt_profile_recommendations` list names the audiences for which receipts of this act type are typically rendered. Standard profiles include `regulator`, `auditor`, `director`, `competent_authority`, and `counterparty`. Custom profiles may be added if the act type has audiences that the standard list does not cover.
 
-The remaining fields complete the entry. The `schema` field is the literal constant `"actproof.act_catalogue_entry.v1"` identifying the schema version, and is the first field in the file. The `version` field is the catalogue entry's own semantic version; the first publication is `"1.0"`. The `supersedes` field is `null` for new entries; when an updated entry replaces an older one, this field carries the repository path of the superseded file. The `maintainer` field carries the string `"actproof-events"` for canonical entries (a structured object form with organization, contact, and role is a documented v1.4 gap). The `test_vector_reference` field carries the repository path to the companion `.test_vectors.json` file produced in Step 3.
+The remaining fields complete the entry. The `schema` field is the literal constant `"actproof.act_profile.v1"` identifying the schema version, and is the first field in the file. The `version` field is the catalogue entry's own semantic version; the first publication is `"1.0"`. The `supersedes` field is `null` for new entries; when an updated entry replaces an older one, this field carries the repository path of the superseded file. The `maintainer` field carries the string `"actproof-events"` for canonical entries (a structured object form with organization, contact, and role is a documented v1.4 gap). The `test_vector_reference` field carries the repository path to the companion `.test_vectors.json` file produced in Step 3.
 
 ### Step 3: Prepare the conformance test vectors
 
@@ -96,7 +96,7 @@ The maintainer team reviews canonical entry submissions against the following cr
 
 Regulatory citation quality. The cited instrument must be in force, the article or provision cited must be the correct one, the in-force date must reflect when obligated entities first become subject, and the authoritative source must be linked.
 
-Schema conformance. The entry must validate against the `actproof.act_catalogue_entry.v1` schema as specified in section 9.5 of the master specification. Validation is automated where possible.
+Schema conformance. The entry must validate against the `actproof.act_profile.v1` schema as specified in section 9.5 of the master specification. Validation is automated where possible.
 
 Required manifest fields completeness. The field list must be sufficient for a verifier to check structural conformance for the act type without being overly broad. Reviewers test this by inspecting the test vectors and confirming that the positive case exercises all listed fields and that the negative cases break only listed constraints.
 
@@ -132,7 +132,7 @@ Decline is not a rejection of the act's importance. Many third-party entries are
 
 Third-party catalogue entries are published by the issuing organization at their own DNS domain. There is no pull request, no maintainer review, and no central registry. The publication flow is straightforward.
 
-The organization owns a DNS domain (for example, `example.com`). The organization decides on an act identifier under the reverse-DNS path (for example, `x.com.example.<segment>`). The organization writes a catalogue entry JSON conforming to the same `actproof.act_catalogue_entry.v1` schema used for canonical entries. The organization serves the JSON at `https://example.com/.well-known/actproof-events/acts/<segment>.json`.
+The organization owns a DNS domain (for example, `example.com`). The organization decides on an act identifier under the reverse-DNS path (for example, `x.com.example.<segment>`). The organization writes a catalogue entry JSON conforming to the same `actproof.act_profile.v1` schema used for canonical entries. The organization serves the JSON at `https://example.com/.well-known/actproof-events/acts/<segment>.json`.
 
 Verifiers that encounter a third-party identifier in a receipt resolve it by reverse-mapping the identifier to the DNS path and fetching the JSON over HTTPS. The DNS hierarchy is the trust root; if the organization controls the domain, it controls the namespace under it.
 

@@ -76,7 +76,7 @@ def get_data_root() -> Path:
 
     - ``catalogue/acts/``: act-catalogue entries, keyed by act_type_id.
       Authoritative entries currently follow the
-      ``actproof.act_catalogue_entry.v3`` schema. Older v1 and v2 entries
+      ``actproof.act_profile.v3`` schema. Older v1 and v2 entries
       may exist for historical rendering and are loaded as best-effort.
       For example, ``eu/nis2/art20/management_body_approval.v1.json``.
     - ``schemas/``: JSON Schema files describing catalogue entry structure.
@@ -95,7 +95,7 @@ def get_catalogue_path() -> Path:
     """Return the bundled act-catalogue directory.
 
     The directory contains JSON files following the
-    ``actproof.act_catalogue_entry.v3`` schema for authoritative entries
+    ``actproof.act_profile.v3`` schema for authoritative entries
     (with v1 and v2 entries potentially present for historical
     rendering), plus companion ``*.test_vectors.json`` files providing
     CC0-licensed conformance test vectors for each entry. Deprecated
@@ -127,15 +127,15 @@ def get_schema_path(name: str) -> Path:
 
     Args:
         name: The schema's base name. For example,
-            ``"act_catalogue_entry.v3"`` or
-            ``"act_catalogue_entry.v3.json"``.
+            ``"act_profile.v3"`` or
+            ``"act_profile.v3.json"``.
 
     Returns:
         Path: The path under ``actproof_events/data/schemas/``.
 
     Example:
         >>> from actproof_events import get_schema_path
-        >>> schema_path = get_schema_path("act_catalogue_entry.v3")
+        >>> schema_path = get_schema_path("act_profile.v3")
         >>> assert schema_path.exists()
     """
     if not name.endswith(".json"):
@@ -152,7 +152,7 @@ def list_catalogue_entries(
     By default returns only authoritative entries: paths under
     ``_deprecated/`` directories are excluded, and companion
     ``*.test_vectors.json`` files are excluded. Authoritative entries
-    follow ``actproof.act_catalogue_entry.v3`` for the current release;
+    follow ``actproof.act_profile.v3`` for the current release;
     historical v1 and v2 entries may also surface and are returned
     as-is.
 

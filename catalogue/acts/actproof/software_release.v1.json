@@ -1,5 +1,5 @@
 {
-  "schema": "actproof.act_catalogue_entry.v3",
+  "schema": "actproof.act_profile.v3",
   "act_type_id": "op:actproof.software_release.v1",
   "claim_type": "software_release",
   "display_name": "Open-source software release attestation",

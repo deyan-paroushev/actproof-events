@@ -1,5 +1,5 @@
 {
-  "schema": "actproof.act_catalogue_entry.v3",
+  "schema": "actproof.act_profile.v3",
   "act_type_id": "op:eu.nis2.art20.management_body_approval.v1",
   "claim_type": "management_body_approval",
   "display_name": "NIS2 Article 20 management body approval of cybersecurity risk-management measures",

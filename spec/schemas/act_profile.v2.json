@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://actproof.events/schemas/act_catalogue_entry.v2.json",
+  "$id": "https://actproof.events/schemas/act_profile.v2.json",
   "title": "OpenProof Events Catalogue Entry v2",
   "description": "Schema for a single catalogue entry describing a regulated or governance act type. v2 removes voting-derivative fields (method_constraints, eligibility_snapshot_hash, action_set_hash, tally_output_hash, result_hash, receipt_profile_recommendations) and adopts an act-native model with explicit signature policy and witness role recommendations. issuer_record under signature_policy is an evidence record, not an Advanced Electronic Signature under eIDAS.",
   "type": "object",
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema": {
-      "const": "actproof.act_catalogue_entry.v2",
+      "const": "actproof.act_profile.v2",
       "description": "Schema discriminator. Always the literal string above."
     },
     "act_type_id": {

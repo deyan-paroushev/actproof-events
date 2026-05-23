@@ -28,9 +28,9 @@ This document does NOT cover:
 
 The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are interpreted per RFC 2119 and RFC 8174.
 
-**Catalogue entry** is a JSON document conforming to `actproof.act_catalogue_entry.v2` or `actproof.act_catalogue_entry.v3`. v3 is the current entry schema and a strict additive superset of v2.
+**Catalogue entry** is a JSON document conforming to `actproof.act_profile.v2` or `actproof.act_profile.v3`. v3 is the current entry schema and a strict additive superset of v2.
 
-**v3 entry** is a catalogue entry whose `schema` field is `"actproof.act_catalogue_entry.v3"`. **v2 entry** is one whose `schema` field is `"actproof.act_catalogue_entry.v2"`.
+**v3 entry** is a catalogue entry whose `schema` field is `"actproof.act_profile.v3"`. **v2 entry** is one whose `schema` field is `"actproof.act_profile.v2"`.
 
 **v1 entry** is a JSON document under a `_deprecated/` directory using the predecessor voting-shaped schema. v1 entries are not loaded. See Section 1.4.
 
@@ -44,11 +44,11 @@ The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RE
 
 ### 1.1 Entry schemas the loader accepts
 
-A conforming loader MUST accept entries carrying either the `actproof.act_catalogue_entry.v2` or the `actproof.act_catalogue_entry.v3` discriminator. Both are valid for new issuance.
+A conforming loader MUST accept entries carrying either the `actproof.act_profile.v2` or the `actproof.act_profile.v3` discriminator. Both are valid for new issuance.
 
 v3 is the current entry schema and the schema under which new entries SHOULD be authored. Because v3 is a strict additive superset of v2, a v2 entry is a valid, if less rich, act type. A v2 entry carries none of the optional v3 blocks described in Section 3, so a consumer treats its claim fields with the default field type. See Section 3.2.
 
-A JSON file under `catalogue/acts/` whose `schema` value is a string beginning with `actproof.act_catalogue_entry.` but is neither of the two recognised discriminators MUST be treated as an error, per Section 5.1, not silently skipped. This catches a typo'd or wrong-version discriminator on a file that is clearly intended to be a catalogue entry.
+A JSON file under `catalogue/acts/` whose `schema` value is a string beginning with `actproof.act_profile.` but is neither of the two recognised discriminators MUST be treated as an error, per Section 5.1, not silently skipped. This catches a typo'd or wrong-version discriminator on a file that is clearly intended to be a catalogue entry.
 
 ### 1.2 Path discovery
 
@@ -64,7 +64,7 @@ The schema files used for validation, described in Section 1.3, live under `spec
 
 ### 1.3 Schema validation is mandatory
 
-A conforming loader MUST validate every discovered catalogue entry against the JSON Schema for its declared discriminator: `spec/schemas/act_catalogue_entry.v3.json` for a v3 entry and `spec/schemas/act_catalogue_entry.v2.json` for a v2 entry.
+A conforming loader MUST validate every discovered catalogue entry against the JSON Schema for its declared discriminator: `spec/schemas/act_profile.v3.json` for a v3 entry and `spec/schemas/act_profile.v2.json` for a v2 entry.
 
 A catalogue entry that does not conform to its schema MUST cause the load to fail. The loader MUST NOT silently skip a non-conforming entry, and MUST NOT return a catalogue in which some entries were validated and others were not. The reference loader raises `CatalogueLoadError` and returns no catalogue at all when any entry fails validation.
 

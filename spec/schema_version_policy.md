@@ -17,7 +17,7 @@ This document governs how the ActProof Events catalogue entry schema changes ove
 
 ### 1.1 Scope
 
-This policy governs the JSON Schema files under `spec/schemas/` that describe catalogue entries, currently `act_catalogue_entry.v2.json` and `act_catalogue_entry.v3.json`. It does not govern the manifest schema, the receipt envelope, or the on-chain note format, which are specified in `spec/actproof-events.spec.md`.
+This policy governs the JSON Schema files under `spec/schemas/` that describe catalogue entries, currently `act_profile.v2.json` and `act_profile.v3.json`. It does not govern the manifest schema, the receipt envelope, or the on-chain note format, which are specified in `spec/actproof-events.spec.md`.
 
 ### 1.2 Normative language
 
@@ -27,7 +27,7 @@ The key words MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY are used as defined in
 
 Two unrelated things are called a version in this substrate, and they MUST NOT be conflated.
 
-The **entry schema version** is the version of the JSON Schema that describes a catalogue entry. It appears as the `vN` segment of the schema file name (`act_catalogue_entry.v3.json`), as the schema `$id`, and as the discriminator at `properties.schema.const` (`actproof.act_catalogue_entry.v3`). This policy governs the entry schema version.
+The **entry schema version** is the version of the JSON Schema that describes a catalogue entry. It appears as the `vN` segment of the schema file name (`act_profile.v3.json`), as the schema `$id`, and as the discriminator at `properties.schema.const` (`actproof.act_profile.v3`). This policy governs the entry schema version.
 
 The **catalogue entry version** is the integer `version` field on an individual entry, also encoded as the `.vN` suffix of its `act_type_id`, for example `op:eu.dora.ict_incident_notification_initial.v1`. It is the version of one act type's definition and is incremented when that act type's content changes. It is governed by `CONTRIBUTING_ACTS.md`, not by this policy.
 
@@ -77,7 +77,7 @@ Breaking changes include:
 - Changing the type of a property.
 - Changing the meaning of an existing field while leaving its shape unchanged.
 
-A new version is published as a new schema file, `act_catalogue_entry.v<N+1>.json`, with a new `$id` and a new discriminator, `actproof.act_catalogue_entry.v<N+1>`. The prior schema file is retained in `spec/schemas/` unchanged. The loader continues to accept the prior version, exactly as it accepts v2 entries today alongside v3. Entries migrate to the new version one at a time, by changing their discriminator and conforming to the new schema. There is no flag day and no bulk rewrite.
+A new version is published as a new schema file, `act_profile.v<N+1>.json`, with a new `$id` and a new discriminator, `actproof.act_profile.v<N+1>`. The prior schema file is retained in `spec/schemas/` unchanged. The loader continues to accept the prior version, exactly as it accepts v2 entries today alongside v3. Entries migrate to the new version one at a time, by changing their discriminator and conforming to the new schema. There is no flag day and no bulk rewrite.
 
 Because a new version is a new file and leaves the prior file's bytes untouched, it does not by itself trigger the archival described in Section 5. The prior schema file remains live.
 
@@ -91,7 +91,7 @@ Superseded byte-states of a schema file are kept under `spec/schemas/archive/`. 
 
 ### 5.2 Revision tags and file names
 
-Every published byte-state of a schema file is assigned a sequential revision tag `rN`, starting at `r1` for the first published state. The live `spec/schemas/<name>.json` always holds the highest revision. Each superseded state is stored as `spec/schemas/archive/<name>.r<N>.json`, for example `spec/schemas/archive/act_catalogue_entry.v3.r1.json`.
+Every published byte-state of a schema file is assigned a sequential revision tag `rN`, starting at `r1` for the first published state. The live `spec/schemas/<name>.json` always holds the highest revision. Each superseded state is stored as `spec/schemas/archive/<name>.r<N>.json`, for example `spec/schemas/archive/act_profile.v3.r1.json`.
 
 An archived copy MUST be byte-exact. It MUST NOT be reformatted, re-indented, or re-serialised. The hash of the archived file MUST equal the schema hash recorded by receipts issued under that state.
 
@@ -101,8 +101,8 @@ An archived copy MUST be byte-exact. It MUST NOT be reformatted, re-indented, or
 
 | Discriminator | Revision | SHA-256 | Effective | Superseded | Change |
 | --- | --- | --- | --- | --- | --- |
-| actproof.act_catalogue_entry.v3 | r1 | sha256:... | YYYY-MM-DD | YYYY-MM-DD | first published v3 schema |
-| actproof.act_catalogue_entry.v3 | r2 | sha256:... | YYYY-MM-DD |  | v1.5-rc1 reconciliation, added regulatory_filing and others |
+| actproof.act_profile.v3 | r1 | sha256:... | YYYY-MM-DD | YYYY-MM-DD | first published v3 schema |
+| actproof.act_profile.v3 | r2 | sha256:... | YYYY-MM-DD |  | v1.5-rc1 reconciliation, added regulatory_filing and others |
 
 ### 5.4 Resolving a historical schema hash
 
@@ -126,7 +126,7 @@ A verifier holding a schema hash from a receipt's catalogue binding finds the ma
 ### 6.2 A new-version change
 
 1. Leave every existing schema file unchanged.
-2. Add `spec/schemas/act_catalogue_entry.v<N+1>.json` with the new `$id` and discriminator.
+2. Add `spec/schemas/act_profile.v<N+1>.json` with the new `$id` and discriminator.
 3. Add the new discriminator to the loader's accepted set. In actproof-py this is `SCHEMA_DISCRIMINATORS` in `actproof/catalogue.py`.
 4. Update `CATALOGUE_LOADER_CONTRACT.md` to cover the new version.
 5. Record the new schema file's first byte-state in the archive index as `r1` for that schema.

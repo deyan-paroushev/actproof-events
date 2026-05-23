@@ -9,7 +9,7 @@
 
 ## Abstract
 
-This document is the vocabulary reference for the ActProof Events catalogue. It governs the controlled vocabularies used by catalogue entry fields defined in `spec/schemas/act_catalogue_entry.v3.json`.
+This document is the vocabulary reference for the ActProof Events catalogue. It governs the controlled vocabularies used by catalogue entry fields defined in `spec/schemas/act_profile.v3.json`.
 
 Two kinds of vocabulary appear in the catalogue. Closed vocabularies are enumerated directly in the JSON Schema. The schema file is the authoritative enumeration for these, and Section 2 explains what each value means. The `non_claims` vocabulary is open. The schema constrains only its shape, and this document is the governing authority for its naming rules and its recommended identifiers. Section 3 specifies that vocabulary.
 
@@ -35,7 +35,7 @@ An open vocabulary is constrained only by shape. The schema fixes a string patte
 
 ## 2. Closed vocabularies
 
-The values in this section are enumerated in `spec/schemas/act_catalogue_entry.v3.json`. Where this document and the schema file appear to disagree, the schema file governs the set of permitted values and this document should be corrected.
+The values in this section are enumerated in `spec/schemas/act_profile.v3.json`. Where this document and the schema file appear to disagree, the schema file governs the set of permitted values and this document should be corrected.
 
 ### 2.1 Context types
 
@@ -211,7 +211,7 @@ Where an entry declares both `non_claims` and `reliance_statement`, the two MUST
 
 ### 4.1 Closed vocabularies
 
-A value in any closed vocabulary in Section 2 is added by amending `spec/schemas/act_catalogue_entry.v3.json`. Adding a value to an `enum` is an additive change: entries authored before the addition remain valid. Such a change follows `schema_version_policy.md` and MUST be accompanied by a new row in the relevant table of this document.
+A value in any closed vocabulary in Section 2 is added by amending `spec/schemas/act_profile.v3.json`. Adding a value to an `enum` is an additive change: entries authored before the addition remain valid. Such a change follows `schema_version_policy.md` and MUST be accompanied by a new row in the relevant table of this document.
 
 ### 4.2 The non_claims vocabulary
 

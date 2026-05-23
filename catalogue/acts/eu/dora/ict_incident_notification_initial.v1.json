@@ -1,5 +1,5 @@
 {
-  "schema": "actproof.act_catalogue_entry.v3",
+  "schema": "actproof.act_profile.v3",
   "act_type_id": "op:eu.dora.ict_incident_notification_initial.v1",
   "claim_type": "ict_incident_notification_initial",
   "display_name": "DORA major ICT-related incident initial notification (Article 19(4))",
@@ -12,6 +12,7 @@
   "required_claim_fields": [
     "entity_legal_identifier",
     "entity_legal_name",
+    "financial_entity_type",
     "submission_type",
     "incident_reference_code",
     "detection_datetime_utc",
@@ -20,7 +21,6 @@
     "affected_member_states",
     "incident_discovery_method",
     "business_continuity_plan_activated",
-    "affected_functions_and_services",
     "initial_impact_description",
     "primary_contact_name",
     "primary_contact_email",
@@ -30,8 +30,10 @@
     "secondary_contact_name",
     "secondary_contact_email",
     "first_disruption_datetime_utc",
+    "affected_functions_and_services",
     "preliminary_estimated_clients_affected",
-    "preliminary_estimated_financial_amount_eur",
+    "preliminary_estimated_financial_amount",
+    "reporting_currency",
     "third_party_provider_involved",
     "outsourcing_arrangement_reference",
     "linked_threat_notification_reference",
@@ -69,8 +71,14 @@
   "maintainer": "actproof-events",
   "test_vector_reference": "catalogue/acts/eu/dora/ict_incident_notification_initial.v1.test_vectors.json",
   "regulated_context_profile": {
-    "allowed_context_types": ["regulatory_filing"],
-    "allowed_submission_stages": ["initial_notification", "reclassification_to_non_major", "withdrawn"],
+    "allowed_context_types": [
+      "regulatory_filing"
+    ],
+    "allowed_submission_stages": [
+      "initial_notification",
+      "reclassification_to_non_major",
+      "withdrawn"
+    ],
     "default_context_type": "regulatory_filing"
   },
   "prior_receipts_profile": {
@@ -99,12 +107,13 @@
       "does_not_predetermine_supervisory_findings_or_sanctions",
       "does_not_exhaust_the_intermediate_and_final_reporting_obligations_under_dora_article_19_4"
     ],
-    "reliance_statement": "The named financial entity attests that an ICT-related incident was detected at the stated detection_datetime_utc, classified as major against the criteria of Article 8 of Delegated Regulation (EU) 2024/1772 at the stated classification_datetime_utc, and that the initial notification specified in Article 19(4) of Regulation (EU) 2022/2554 was submitted to the named competent authority through a secure electronic channel within the time limits of Article 5 of Delegated Regulation (EU) 2025/301. Verifiers may rely on the entity's identity (entity_legal_identifier), the timestamps, the classification criteria cited, and the cryptographic integrity of the named evidence files. The receipt does NOT constitute admission of liability, does NOT determine the final legal classification of the incident, does NOT replace separate notification obligations under NIS2 (Directive (EU) 2022/2555) or GDPR (Regulation (EU) 2016/679) Article 33, and does NOT exhaust the entity's continuing obligations to file the intermediate report (within 72 hours of detection) and the final report (within one month) under DORA Article 19(4). The machine-readable non_claims array on this entry is the authoritative enumeration of what the receipt does not prove. Supervisory findings, sanctions, and reclassification decisions are reserved to the competent authority's own published processes."
+    "reliance_statement": "The named financial entity attests that an ICT-related incident was detected at the stated detection_datetime_utc, classified as a major ICT-related incident under Articles 1 to 8 of Delegated Regulation (EU) 2024/1772 at the stated classification_datetime_utc, and that the initial notification specified in Article 19(4) of Regulation (EU) 2022/2554 was submitted to the named competent authority through a secure electronic channel within the time limits of Article 5 of Delegated Regulation (EU) 2025/301. Verifiers may rely on the entity's identity (entity_legal_identifier), the timestamps, the classification criteria cited, and the cryptographic integrity of the named evidence files. The receipt does NOT constitute admission of liability, does NOT determine the final legal classification of the incident, does NOT replace separate notification obligations under NIS2 (Directive (EU) 2022/2555) or GDPR (Regulation (EU) 2016/679) Article 33, and does NOT exhaust the entity's continuing obligations to file the intermediate report (within 72 hours of detection) and the final report (within one month) under DORA Article 19(4). The machine-readable non_claims array on this entry is the authoritative enumeration of what the receipt does not prove. Supervisory findings, sanctions, and reclassification decisions are reserved to the competent authority's own published processes."
   },
   "disclosure_profile": {
     "public_fields": [
       "entity_legal_identifier",
       "entity_legal_name",
+      "financial_entity_type",
       "submission_type",
       "detection_datetime_utc",
       "classification_datetime_utc",
@@ -120,7 +129,7 @@
       "affected_functions_and_services",
       "initial_impact_description",
       "preliminary_estimated_clients_affected",
-      "preliminary_estimated_financial_amount_eur",
+      "preliminary_estimated_financial_amount",
       "third_party_provider_involved"
     ],
     "private_fields": [
@@ -140,11 +149,14 @@
   },
   "submission_evidence_policy": {
     "required": false,
-    "supports": ["secure_electronic_channel_acknowledgement"]
+    "supports": [
+      "secure_electronic_channel_acknowledgement"
+    ]
   },
   "claim_field_types": {
     "entity_legal_identifier": "string",
     "entity_legal_name": "string",
+    "financial_entity_type": "string",
     "submission_type": "string",
     "incident_reference_code": "string",
     "detection_datetime_utc": "datetime",
@@ -153,7 +165,6 @@
     "affected_member_states": "string_list",
     "incident_discovery_method": "string",
     "business_continuity_plan_activated": "boolean",
-    "affected_functions_and_services": "string_list",
     "initial_impact_description": "text",
     "primary_contact_name": "string",
     "primary_contact_email": "email",
@@ -161,12 +172,115 @@
     "secondary_contact_name": "string",
     "secondary_contact_email": "email",
     "first_disruption_datetime_utc": "datetime",
+    "affected_functions_and_services": "string_list",
     "preliminary_estimated_clients_affected": "integer",
-    "preliminary_estimated_financial_amount_eur": "number",
+    "preliminary_estimated_financial_amount": "number",
+    "reporting_currency": "string",
     "third_party_provider_involved": "boolean",
     "outsourcing_arrangement_reference": "string",
     "linked_threat_notification_reference": "string",
     "linked_nis2_notification_reference": "string",
     "linked_gdpr_breach_notification_reference": "string"
-  }
+  },
+  "source_bindings": [
+    {
+      "source_type": "eurlex",
+      "authority": "European Parliament and Council of the European Union",
+      "instrument": "Regulation (EU) 2022/2554 (Digital Operational Resilience Act)",
+      "identifiers": {
+        "celex": "32022R2554",
+        "eli": "http://data.europa.eu/eli/reg/2022/2554/oj"
+      },
+      "provisions": [
+        "Article 19"
+      ],
+      "artifact": {
+        "artifact_type": "oj_pdf",
+        "media_type": "application/pdf",
+        "sha256": "sha256:85307f9e2a0409826dd0f54489645935816d16e929f0db4db3ef15badd11d38c",
+        "retrieved_at": "2026-05-23T15:31:54Z",
+        "retrieved_from": {
+          "url": "https://publications.europa.eu/resource/celex/32022R2554",
+          "method": "cellar-content-negotiation"
+        }
+      }
+    },
+    {
+      "source_type": "eurlex",
+      "authority": "European Commission",
+      "instrument": "Commission Delegated Regulation (EU) 2025/301",
+      "identifiers": {
+        "celex": "32025R0301",
+        "eli": "http://data.europa.eu/eli/reg_del/2025/301/oj"
+      },
+      "provisions": [
+        "Article 1",
+        "Article 2",
+        "Article 5"
+      ],
+      "artifact": {
+        "artifact_type": "oj_pdf",
+        "media_type": "application/pdf",
+        "sha256": "sha256:47a209a9f73e228e85e1dad2934d917d5791629fc98add06fc6fda0acb872dbf",
+        "retrieved_at": "2026-05-23T15:31:55Z",
+        "retrieved_from": {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32025R0301",
+          "method": "eurlex-direct-pdf"
+        }
+      }
+    },
+    {
+      "source_type": "eurlex",
+      "authority": "European Commission",
+      "instrument": "Commission Implementing Regulation (EU) 2025/302",
+      "identifiers": {
+        "celex": "32025R0302",
+        "eli": "http://data.europa.eu/eli/reg_impl/2025/302/oj"
+      },
+      "provisions": [
+        "Annex I",
+        "Annex II"
+      ],
+      "artifact": {
+        "artifact_type": "oj_pdf",
+        "media_type": "application/pdf",
+        "sha256": "sha256:37ec431c7a11b8b30b39d1c1f0d95c39539d1c1e7236301ee3b06bb229ff009c",
+        "retrieved_at": "2026-05-23T15:31:55Z",
+        "retrieved_from": {
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32025R0302",
+          "method": "eurlex-direct-pdf"
+        }
+      }
+    },
+    {
+      "source_type": "eurlex",
+      "authority": "European Commission",
+      "instrument": "Commission Delegated Regulation (EU) 2024/1772",
+      "identifiers": {
+        "celex": "32024R1772",
+        "eli": "http://data.europa.eu/eli/reg_del/2024/1772/oj"
+      },
+      "provisions": [
+        "Articles 1 to 8"
+      ],
+      "artifact": {
+        "artifact_type": "oj_pdf",
+        "media_type": "application/pdf",
+        "sha256": "sha256:416fb104161f8b3eb0aae2601060ab869b1672cfa8452d20798800301538ceab",
+        "retrieved_at": "2026-05-23T15:31:55Z",
+        "retrieved_from": {
+          "url": "https://publications.europa.eu/resource/celex/32024R1772",
+          "method": "cellar-content-negotiation"
+        }
+      }
+    }
+  ],
+  "generation": {
+    "method": "ai_assisted_extraction_from_authoritative_sources",
+    "reconciled": true,
+    "reconciliation_note": "Reconciled in May 2026 against the hashed official sources in source_bindings: the general and initial-notification content of Commission Delegated Regulation (EU) 2025/301 Articles 1 and 2, the official major-incident report template in Annex I of Commission Implementing Regulation (EU) 2025/302, and the classification regime of Commission Delegated Regulation (EU) 2024/1772 Articles 1 to 8. Claim-schema corrections were applied where the profile diverged from the official initial-notification template.",
+    "authoring_process": "actproof-events authoring process, eight-stage",
+    "generated_at": "2026-05-23T16:00:00Z"
+  },
+  "transparency_note_reference": "catalogue/acts/eu/dora/ict_incident_notification_initial.v1.transparency.md"
 }

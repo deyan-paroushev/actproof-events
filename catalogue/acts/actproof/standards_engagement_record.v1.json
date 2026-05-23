@@ -1,5 +1,5 @@
 {
-  "schema": "actproof.act_catalogue_entry.v3",
+  "schema": "actproof.act_profile.v3",
   "act_type_id": "op:actproof.standards_engagement_record.v1",
   "claim_type": "standards_engagement_record",
   "display_name": "Open-source maintainer standards engagement record",

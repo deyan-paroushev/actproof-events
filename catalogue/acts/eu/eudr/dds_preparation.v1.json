@@ -1,5 +1,5 @@
 {
-  "schema": "actproof.act_catalogue_entry.v3",
+  "schema": "actproof.act_profile.v3",
   "act_type_id": "op:eu.eudr.dds_preparation.v1",
   "claim_type": "due_diligence_statement_preparation",
   "display_name": "EUDR Due Diligence Statement preparation",

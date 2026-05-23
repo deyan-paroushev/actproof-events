@@ -1,5 +1,5 @@
 {
-  "schema": "actproof.act_catalogue_entry.v3",
+  "schema": "actproof.act_profile.v3",
   "act_type_id": "op:democracy.civil_society_mandate.settlement.v1",
   "claim_type": "civil_society_mandate_settlement",
   "display_name": "Civil society organisation mandate settlement",
