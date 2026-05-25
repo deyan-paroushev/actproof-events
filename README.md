@@ -2,6 +2,8 @@
 
 ActProof Events is an open standard for turning a regulated act into a receipt that a third party can verify without trusting the issuer or any intermediary.
 
+**Project site: [actproof.org](https://actproof.org).** The site explains the full ActProof stack and the reasoning behind it. ActProof Events is the standard layer, the companion `actproof` library is the receipt substrate, and applications consume both. Start there for the architecture and the why. This README is the reference for the catalogue itself.
+
 When an organization reports a regulated act, the report is a claim. A DORA incident notification, an EUDR due diligence statement, a NIS2 management body approval are all such reports. Whoever relies on one of them today trusts the issuer who wrote it, and the platform that carried it. ActProof Events removes both points of trust. The act becomes a receipt that is cryptographically anchored to a public ledger and bound to the official text of the regulation it claims to satisfy. Correctness becomes something you check, not something you are asked to believe.
 
 This repository holds the standard, the schemas, the catalogue of act profiles, and the conformance test vectors. The companion package `actproof` holds the substrate that mints, anchors, and verifies the receipts themselves.
