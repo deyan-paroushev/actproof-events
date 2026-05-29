@@ -1,0 +1,112 @@
+{
+  "generated_at": "2026-05-23T15:31:55Z",
+  "generator": "actproof-events cellar_fetch.py v1.3",
+  "note": "Build-time source bindings. Each entry pins the SHA-256 of the Official Journal PDF retrieved for its CELEX. Verification checks a receipt against these pinned hashes, with no live EU call. source_type 'eurlex' is the EU adapter; the binding shape is source-agnostic.",
+  "source_bindings": [
+    {
+      "source_type": "eurlex",
+      "celex": "32022R2554",
+      "eli_uri": "http://data.europa.eu/eli/reg/2022/2554/oj",
+      "authority": "European Parliament and Council of the European Union",
+      "artifact_type": "oj_pdf",
+      "format": "application/pdf",
+      "retrieved_at": "2026-05-23T15:31:54Z",
+      "retrieved_from": {
+        "url": "https://publications.europa.eu/resource/celex/32022R2554",
+        "method": "cellar-content-negotiation"
+      },
+      "sha256": "sha256:85307f9e2a0409826dd0f54489645935816d16e929f0db4db3ef15badd11d38c",
+      "article": "19"
+    },
+    {
+      "source_type": "eurlex",
+      "celex": "32025R0301",
+      "eli_uri": "http://data.europa.eu/eli/reg_del/2025/301/oj",
+      "authority": "European Commission",
+      "artifact_type": "oj_pdf",
+      "format": "application/pdf",
+      "retrieved_at": "2026-05-23T15:31:55Z",
+      "retrieved_from": {
+        "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32025R0301",
+        "method": "eurlex-direct-pdf"
+      },
+      "sha256": "sha256:47a209a9f73e228e85e1dad2934d917d5791629fc98add06fc6fda0acb872dbf",
+      "article": "1"
+    },
+    {
+      "source_type": "eurlex",
+      "celex": "32025R0301",
+      "eli_uri": "http://data.europa.eu/eli/reg_del/2025/301/oj",
+      "authority": "European Commission",
+      "artifact_type": "oj_pdf",
+      "format": "application/pdf",
+      "retrieved_at": "2026-05-23T15:31:55Z",
+      "retrieved_from": {
+        "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32025R0301",
+        "method": "eurlex-direct-pdf"
+      },
+      "sha256": "sha256:47a209a9f73e228e85e1dad2934d917d5791629fc98add06fc6fda0acb872dbf",
+      "article": "2"
+    },
+    {
+      "source_type": "eurlex",
+      "celex": "32025R0301",
+      "eli_uri": "http://data.europa.eu/eli/reg_del/2025/301/oj",
+      "authority": "European Commission",
+      "artifact_type": "oj_pdf",
+      "format": "application/pdf",
+      "retrieved_at": "2026-05-23T15:31:55Z",
+      "retrieved_from": {
+        "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32025R0301",
+        "method": "eurlex-direct-pdf"
+      },
+      "sha256": "sha256:47a209a9f73e228e85e1dad2934d917d5791629fc98add06fc6fda0acb872dbf",
+      "article": "5"
+    },
+    {
+      "source_type": "eurlex",
+      "celex": "32025R0302",
+      "eli_uri": "http://data.europa.eu/eli/reg_impl/2025/302/oj",
+      "authority": "European Commission",
+      "artifact_type": "oj_pdf",
+      "format": "application/pdf",
+      "retrieved_at": "2026-05-23T15:31:55Z",
+      "retrieved_from": {
+        "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32025R0302",
+        "method": "eurlex-direct-pdf"
+      },
+      "sha256": "sha256:37ec431c7a11b8b30b39d1c1f0d95c39539d1c1e7236301ee3b06bb229ff009c",
+      "annex": "I"
+    },
+    {
+      "source_type": "eurlex",
+      "celex": "32025R0302",
+      "eli_uri": "http://data.europa.eu/eli/reg_impl/2025/302/oj",
+      "authority": "European Commission",
+      "artifact_type": "oj_pdf",
+      "format": "application/pdf",
+      "retrieved_at": "2026-05-23T15:31:55Z",
+      "retrieved_from": {
+        "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32025R0302",
+        "method": "eurlex-direct-pdf"
+      },
+      "sha256": "sha256:37ec431c7a11b8b30b39d1c1f0d95c39539d1c1e7236301ee3b06bb229ff009c",
+      "annex": "II"
+    },
+    {
+      "source_type": "eurlex",
+      "celex": "32024R1772",
+      "eli_uri": "http://data.europa.eu/eli/reg_del/2024/1772/oj",
+      "authority": "European Commission",
+      "artifact_type": "oj_pdf",
+      "format": "application/pdf",
+      "retrieved_at": "2026-05-23T15:31:55Z",
+      "retrieved_from": {
+        "url": "https://publications.europa.eu/resource/celex/32024R1772",
+        "method": "cellar-content-negotiation"
+      },
+      "sha256": "sha256:416fb104161f8b3eb0aae2601060ab869b1672cfa8452d20798800301538ceab",
+      "article": "8"
+    }
+  ]
+}
