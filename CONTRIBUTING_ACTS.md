@@ -1,8 +1,8 @@
 # Contributing to the ActProof Events Act Catalogue
 
-This document describes the contribution flow for proposing new entries to the ActProof Events federated act-type catalogue. It is distinct from general code contributions to the reference implementation, the specification text, or the test infrastructure, each of which follows the standard GitHub pull-request flow.
+This document describes the contribution flow for proposing new entries to the ActProof Events federated act-type catalogue. It is distinct from general code contributions to the reference implementation, the specification text, or the test infrastructure, each of which follows the standard GitHub pull-request flow. For the policy this process serves, the profile status model, the legal-review boundary, and how a profile is challenged or corrected, see `GOVERNANCE.md`.
 
-The catalogue is how ActProof Events types an act. Each catalogue entry codifies a recognized regulatory or organizational act (a DORA major ICT-related incident notification, an EUDR Due Diligence Statement preparation, a NIS2 Article 20 management-body approval, an open-source software release attestation) as a structured profile that a verifier can apply to a receipt. The catalogue grows by accretion, not by central planning. Contributions are welcome from regulators, industry associations, standards bodies, downstream implementers, and individual experts.
+The catalogue is how ActProof Events types an act. Each catalogue entry codifies a recognized regulatory or organizational act (a DORA major ICT-related incident notification, an EUDR Due Diligence Statement preparation, a NIS2 Article 20 management-body approval, an open-source software release attestation) as a structured, source-bound profile that anyone can verify against the official sources it cites. The catalogue grows by accretion, not by central planning. Contributions are welcome from regulators, industry associations, standards bodies, downstream implementers, and individual experts.
 
 ## The two namespaces
 
@@ -10,7 +10,7 @@ ActProof Events uses two parallel catalogue namespaces.
 
 The canonical namespace `op:` is maintained by the ActProof Events project. Entries in this namespace represent acts with sufficient regulatory weight, structural clarity, and likely broad adoption to justify central curation. The canonical namespace is a quality bar. Submissions go through the review process described in this document.
 
-The third-party namespace `x.<reverse-dns>:` is permissionless. Any organization with control of a DNS domain may publish entries under that domain by serving JSON files at `.well-known/actproof-events/acts/`. No coordination with this project is required. No pull request is needed. Verifiers resolve third-party identifiers at receipt verification time by fetching the JSON from the authoritative DNS path.
+The third-party namespace `x.<reverse-dns>:` is permissionless. Any organization with control of a DNS domain may publish entries under that domain by serving JSON files at `.well-known/actproof-events/acts/`. No coordination with this project is required. No pull request is needed. Verifiers and tools resolve third-party profile identifiers at profile-resolution time by fetching the JSON from the authoritative DNS path.
 
 Choosing between namespaces is usually straightforward. If the act is recognized across multiple organizations and jurisdictions, and if formal canonical curation would add value, propose it for the canonical namespace through the process below. If the act is specific to a single organization, a specific industry sub-segment, an internal corporate procedure, or a regulatory regime that has not yet stabilized, publish it under your own DNS domain in the third-party namespace. Both produce equivalent verifier behaviour for cryptographic conformance. The difference is only in how the act-type identifier resolves.
 
@@ -54,23 +54,23 @@ The `schema` field is the literal constant `"actproof.act_profile.v3"` and is th
 
 The `act_type_id` is a dot-separated lowercase identifier under the `op:` namespace, ending with the entry version. The canonical identifiers follow the shape `op:<jurisdiction>.<instrument>[.<article>].<short_name>.v<n>`, for example `op:eu.dora.ict_incident_notification_initial.v1` or `op:eu.nis2.art20.management_body_approval.v1`. The version segment matches the filename and the integer `version` field.
 
-The `claim_type` field is a short identifier for the kind of claim a receipt under this act type carries, for example `ict_incident_notification_initial`.
+The `claim_type` field is a short identifier for the kind of claim the act under this profile carries, for example `ict_incident_notification_initial`.
 
 The `regulatory_citation` block carries `instrument`, `article`, `jurisdiction`, and `in_force_from`. The `instrument` is the instrument as commonly cited, for example `Regulation (EU) 2022/2554`. The `article` is the bare article number as a string, for example `19(4)`, not `Article 19(4)`. The `jurisdiction` is the issuing authority, `EU` or an ISO 3166-1 alpha-2 code. The `in_force_from` field is the date on which obligated entities first become subject to the requirement, as an RFC 3339 full-date, not the date of enactment or publication. For an organizational act with no regulatory basis, `regulatory_citation` is `null`.
 
-The `required_claim_fields` and `optional_claim_fields` arrays name the claim fields a receipt under this act type carries. The optional `claim_field_types` block records the data type of each named field. The `required_evidence_labels` array names the evidence files a conforming receipt must carry. The field lists should be neither over-inclusive, requiring fields a verifier cannot use, nor under-inclusive, omitting fields a verifier needs. Authoring them well usually means preparing the test vector input in parallel, where gaps surface quickly.
+The `required_claim_fields` and `optional_claim_fields` arrays name the claim fields an act under this profile carries. The optional `claim_field_types` block records the data type of each named field. The `required_evidence_labels` array names the evidence files a conforming act under this profile must carry. The field lists should be neither over-inclusive, requiring fields a verifier cannot use, nor under-inclusive, omitting fields a verifier needs. Authoring them well usually means preparing the test vector input in parallel, where gaps surface quickly.
 
-The `eligible_issuer_roles` and `recommended_witness_roles` arrays name who may issue a receipt under this act type and who is expected to witness it. The `signature_policy` block records the minimum signature form and the forms supported.
+The `eligible_issuer_roles` and `recommended_witness_roles` arrays name who may issue an act under this profile and who is expected to witness it, where a downstream use needs a witness. The `signature_policy` block records the minimum signature form and the forms supported.
 
 The `version` field is the entry's own version as an integer, `1` for a first publication. The `supersedes` field is `null` for a new entry, or the `act_type_id` of the entry this one replaces. The `maintainer` field is the string `"actproof-events"` for canonical entries. The `test_vector_reference` field is the repository path to the companion `*.test_vectors.json` file produced in Step 3.
 
-A v3 entry may also carry optional blocks that strengthen it. The `reliance_context` block states what a receipt asserts and, in its `non_claims` array, what it does not. The `regulated_context_profile`, `prior_receipts_profile`, `disclosure_profile`, and `submission_evidence_policy` blocks refine the act's context further. A canonical entry SHOULD additionally be source-bound: `source_bindings` cites each official source by a stable identifier and pins its SHA-256, `generation` records how the entry was produced and reconciled, and `transparency_note_reference` points to a prose transparency note. The DORA profile carries all of these. Finally, `profile_status` declares the entry's maturity: an entry that is not yet source-bound declares `draft`, and a source-bound, reconciled entry declares `candidate`.
+A v3 entry may also carry optional blocks that strengthen it. The `reliance_context` block states what an act under this profile asserts and, in its `non_claims` array, what it does not. The `regulated_context_profile`, `prior_receipts_profile`, `disclosure_profile`, and `submission_evidence_policy` blocks refine the act's context further. A canonical entry SHOULD additionally be source-bound: `source_bindings` cites each official source by a stable identifier and pins its SHA-256, `generation` records how the entry was produced and reconciled, and `transparency_note_reference` points to a prose transparency note. The DORA profile carries all of these. Finally, `profile_status` declares the entry's maturity on the ladder defined in `GOVERNANCE.md` (draft, candidate, reviewed, deprecated): an entry not yet source-bound and reconciled declares `draft`; a source-bound, reconciled entry declares `candidate`; independent review raises it to `reviewed`. Source-binding is a property, not a status: a profile either pins its sources by hash or it does not.
 
 ### Step 3: Prepare the conformance test vectors
 
 Each canonical catalogue entry ships with one companion conformance test vector file, at the same path with the suffix `.test_vectors.json`. For example, `ict_incident_notification_initial.v1.json` is accompanied by `ict_incident_notification_initial.v1.test_vectors.json`.
 
-A test vector is not written by hand. It is generated by `scripts/compute_test_vectors.py`, a pure and deterministic function of two inputs: the catalogue entry, and a manifest input file that is a concrete example of a receipt manifest for the act type. From those, the script computes the canonical manifest bytes, the manifest hash, the envelope and its hash, the ARC-2 JCS note bytes, the hash of the catalogue entry the vector was computed against, and a verifier checklist. The same two inputs produce a byte-identical file on any machine.
+A test vector is not written by hand. It is generated by `scripts/compute_test_vectors.py`, a pure and deterministic function of two inputs: the catalogue entry, and a manifest input file that is a concrete example of an act manifest for the profile. From those, the script computes the canonical manifest bytes, the manifest hash, the envelope and its hash, the ARC-2 JCS note bytes, the hash of the catalogue entry the vector was computed against, and a verifier checklist. The same two inputs produce a byte-identical file on any machine.
 
 To produce the vector, prepare a representative manifest input that exercises every required claim field, then run:
 
@@ -114,7 +114,7 @@ Test vector freshness. The companion `.test_vectors.json` file must be the unmod
 
 Source binding, where applicable. For an act with a regulatory basis, `source_bindings` should cite each official source by a stable identifier and pin its SHA-256, `generation` should record how the entry was produced and reconciled, and a transparency note should accompany it. An entry without these is accepted, but it declares `profile_status` `draft` rather than `candidate`.
 
-Reliance honesty. Where `reliance_context` is present, its `reliance_statement` and `counterparty_action` must not claim more than a receipt actually proves, and `non_claims` must enumerate the limits as machine-readable identifiers. A receipt evidences an issuer's attestation and the integrity of the committed content; it does not by itself prove that any authority accepted the act.
+Reliance honesty. Where `reliance_context` is present, its `reliance_statement` and `counterparty_action` must not claim more than the profile and its source bindings actually prove, and `non_claims` must enumerate the limits as machine-readable identifiers. A source binding proves which official documents the profile is built against; it does not by itself prove that the mapping is legally complete, nor that any authority accepted the act.
 
 License compatibility. Catalogue entries are Apache-2.0. Test vectors are CC0-1.0. Pull requests proposing other licenses are reformatted before merge.
 
@@ -144,7 +144,7 @@ Third-party catalogue entries are published by the issuing organization at their
 
 The organization owns a DNS domain (for example, `example.com`). The organization decides on an act identifier under the reverse-DNS path (for example, `x.com.example.<segment>`). The organization writes a catalogue entry JSON conforming to the same `actproof.act_profile.v3` schema used for canonical entries. The organization serves the JSON at `https://example.com/.well-known/actproof-events/acts/<segment>.json`.
 
-Verifiers that encounter a third-party identifier in a receipt resolve it by reverse-mapping the identifier to the DNS path and fetching the JSON over HTTPS. The DNS hierarchy is the trust root; if the organization controls the domain, it controls the namespace under it.
+Verifiers and tools that encounter a third-party profile identifier resolve it by reverse-mapping the identifier to the DNS path and fetching the JSON over HTTPS. The DNS hierarchy is the trust root; if the organization controls the domain, it controls the namespace under it.
 
 Third-party entries are not required to publish test vectors, though doing so substantially aids downstream verifiers. Organizations may publish test vectors at `https://example.com/.well-known/actproof-events/test-vectors/<segment>.test_vectors.json` if they wish. The CC0-1.0 license is recommended for test vectors to maximize interoperability.
 
@@ -160,17 +160,17 @@ The maintainer team encourages promotion of mature third-party entries. The thir
 
 ## Versioning and maintenance
 
-Each catalogue entry carries its own version as an integer in the `version` field, starting at `1`. A substantive change to an entry, changing the required claim fields, the evidence labels, the eligible issuer roles, or the reliance context, requires a new entry at an incremented version: a new file whose name and `act_type_id` carry the new version, with the `supersedes` field of the new entry pointing to the `act_type_id` of the one it replaces. The superseded entry remains published at its original path, and receipts issued against it remain verifiable. A non-substantive change, correcting a typo in `display_name` or clarifying inline text, is made in place and does not increment the version.
+Each catalogue entry carries its own version as an integer in the `version` field, starting at `1`. A substantive change to an entry, changing the required claim fields, the evidence labels, the eligible issuer roles, or the reliance context, requires a new entry at an incremented version: a new file whose name and `act_type_id` carry the new version, with the `supersedes` field of the new entry pointing to the `act_type_id` of the one it replaces. The superseded entry remains published at its original path, and anything issued against it remains verifiable. A non-substantive change, correcting a typo in `display_name` or clarifying inline text, is made in place and does not increment the version.
 
 When a canonical entry's underlying regulatory instrument is amended, the maintainer team produces a new version of the entry in the same way.
 
-Deprecation is handled structurally. When an entry is retired, because its instrument was repealed or because it was replaced by an incompatible successor, the entry file is moved into a `_deprecated/` directory beside the active entries. The catalogue loader does not load entries under `_deprecated/`: they cannot be resolved and cannot be issued against, by construction. The predecessor voting-shaped v1 entries are retained this way. Receipts already issued against a now-deprecated entry remain verifiable from the self-contained provenance carried by the receipt itself.
+Deprecation is handled structurally. When an entry is retired, because its instrument was repealed or because it was replaced by an incompatible successor, the entry file is moved into a `_deprecated/` directory beside the active entries. The catalogue loader does not load entries under `_deprecated/`: they cannot be resolved and cannot be issued against, by construction. Predecessor entries are retained this way. Anything already issued against a now-deprecated entry remains verifiable from its own self-contained provenance.
 
 ## Maintainer commitments
 
 The maintainer team is currently small. As of the date of this document, Advisa EOOD (Sofia, Bulgaria) is the sole maintainer organization. The commitments below reflect that operational reality. They may be tightened as additional maintainer organizations join.
 
-Discussions opened on the canonical catalogue typically receive a first response within two weeks. Response times may extend during periods of grant deliverable focus or other project commitments. Where a response time exceeds three weeks, contributors are encouraged to send a polite follow-up.
+Discussions and pull requests are handled in tiers so contributors are not left without signal: acknowledgement within seven days, a triage response (encouragement to proceed, a request for more detail, or redirection to the third-party namespace) within fourteen days, and fuller review on the timelines below. Response times may extend during periods of grant deliverable focus or other project commitments. Where a response exceeds three weeks, contributors are encouraged to send a polite follow-up.
 
 Pull requests for canonical entries typically receive initial maintainer review within four to six weeks of opening. Subsequent review cycles after a contributor's response to feedback typically take two to three weeks. These targets are aspirational rather than guaranteed.
 
@@ -184,13 +184,13 @@ Where solo-maintainer bandwidth becomes a sustained bottleneck, the maintainer t
 
 ## Security disclosures
 
-Security issues affecting catalogue entries (incorrect citation, manifest fields that fail to detect material non-conformance, method constraints that admit improperly-validated decisions) should be reported by email to `deyan@advisa.tech` with the subject prefix `[ActProof Security]`. The maintainer team commits to acknowledging receipt within five business days and coordinating disclosure timelines with the reporter.
+Catalogue issues are routed by class, mirroring the provenance-versus-fidelity split. A source-provenance failure (a pinned SHA-256 that does not match the official artefact it claims) or any privacy or disclosure exposure risk should be reported privately by email to `deyan@advisa.tech` with the subject prefix `[ActProof Security]`; the maintainer team commits to acknowledging receipt within five business days and coordinating disclosure timelines with the reporter. An ordinary fidelity challenge (an argument that a mapping is incomplete, incorrect or misleading, with no exposure risk) belongs in the open as a public GitHub issue, so the reading can be contested in public as `GOVERNANCE.md` describes. When in doubt about whether an issue carries exposure risk, use the private channel first.
 
 Security issues affecting the substrate specification, the reference implementation, or the verification logic follow the security disclosure process documented in the main repository security policy.
 
 ## Code of conduct
 
-Contributions and discussions in this repository are subject to a Code of Conduct that will be formally adopted from the Contributor Covenant once contributor activity warrants it. In the interim, contributors are expected to act with professional courtesy, technical good faith, and respect for the regulatory expertise that informs catalogue entries.
+This project follows the Contributor Covenant Code of Conduct, maintained in `CODE_OF_CONDUCT.md` in the repository. Contributors are expected to act with professional courtesy, technical good faith, and respect for the regulatory expertise that informs catalogue entries.
 
 ## Contact
 
