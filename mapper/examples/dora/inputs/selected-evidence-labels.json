@@ -1,0 +1,72 @@
+{
+  "evidence_labels": [
+    {
+      "basis": "supporting_interpretive",
+      "derivation_reason": "The profile needs a reviewable evidence label for the decision that an ICT-related incident was classified as major and for the classification time that drives the initial-notification clock.",
+      "disclosure": "evidence_only",
+      "evidence_id": "classification_committee_record",
+      "evidence_role": "supports_classification_and_classification_time",
+      "label": "Classification committee / decision record",
+      "legal_actions": [
+        "act.dora.major_incident.classify",
+        "act.dora.initial_notification.submit"
+      ],
+      "mandatory_legal_attachment_claimed": false,
+      "required_for_profile_review": true,
+      "review_note": "This is supporting evidence for auditability. It is not asserted as a mandatory legal attachment in the source instruments.",
+      "source_fragments": [
+        "src.dora.32024R1772.arts1to7",
+        "src.dora.32024R1772.art8",
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0301.art5"
+      ],
+      "supports_fields": [
+        "classification_datetime_utc",
+        "classification_criteria_triggered"
+      ]
+    },
+    {
+      "basis": "supporting_interpretive",
+      "derivation_reason": "The profile needs a reviewable evidence label for the detection timestamp, because detection time supports chronology and the outer reporting limit.",
+      "disclosure": "evidence_only",
+      "evidence_id": "detection_system_log_excerpt",
+      "evidence_role": "supports_detection_time_and_outer_limit",
+      "label": "Detection system log excerpt",
+      "legal_actions": [
+        "act.dora.initial_notification.submit"
+      ],
+      "mandatory_legal_attachment_claimed": false,
+      "required_for_profile_review": true,
+      "review_note": "This is supporting evidence for auditability. It is not asserted as a mandatory legal attachment in the source instruments.",
+      "source_fragments": [
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0301.art5",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ],
+      "supports_fields": [
+        "detection_datetime_utc"
+      ]
+    }
+  ],
+  "non_claims": [
+    "Evidence labels are ActProof review artefacts, not automatic legal attachment requirements.",
+    "The evidence label map does not prove the factual truth of evidence.",
+    "The evidence label map does not prove DORA compliance or authority acceptance.",
+    "Evidence labels remain reviewable and challengeable."
+  ],
+  "profile_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "review_gate": {
+    "author": "Deyan Paroushev",
+    "change_reason": "Initial DORA initial-notification mapping example",
+    "created_at": "2026-06-01",
+    "issue_refs": [],
+    "review_status": "draft",
+    "reviewed_at": null,
+    "reviewed_by": null,
+    "supersedes": null
+  },
+  "schema": "actproof.selected_evidence_labels.v0",
+  "selection_method": "human_authored_from_legal_actions_and_mapped_fields",
+  "status": "draft",
+  "title": "Human-authored DORA evidence labels for initial notification"
+}

@@ -1,0 +1,92 @@
+{
+  "non_claims": [
+    "These bindings identify source artefacts used for mapping; they do not prove legal correctness.",
+    "A matching hash proves byte identity with the pinned file, not the correctness of a legal interpretation."
+  ],
+  "profile_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "retrieved_at_default": "2026-05-23",
+  "review_gate": {
+    "author": "Deyan Paroushev",
+    "change_reason": "Initial DORA initial-notification mapping example",
+    "created_at": "2026-06-01",
+    "issue_refs": [],
+    "review_status": "draft",
+    "reviewed_at": null,
+    "reviewed_by": null,
+    "supersedes": null
+  },
+  "schema": "actproof.source_bindings.v0",
+  "sources": [
+    {
+      "celex": "32022R2554",
+      "eli": "http://data.europa.eu/eli/reg/2022/2554/oj",
+      "filename": "CELEX_32022R2554.pdf",
+      "media_type": "application/pdf",
+      "notes": "Base DORA reporting obligation.",
+      "provisions": [
+        "Article 19"
+      ],
+      "retrieved_at": "2026-05-23",
+      "sha256": "sha256:85307f9e2a0409826dd0f54489645935816d16e929f0db4db3ef15badd11d38c",
+      "source_id": "CELEX:32022R2554",
+      "source_role": "base_reporting_obligation",
+      "source_type": "regulation",
+      "title": "Regulation (EU) 2022/2554 (Digital Operational Resilience Act)",
+      "url": "https://publications.europa.eu/resource/celex/32022R2554"
+    },
+    {
+      "celex": "32025R0301",
+      "eli": "http://data.europa.eu/eli/reg_del/2025/301/oj",
+      "filename": "CELEX_32025R0301.pdf",
+      "media_type": "application/pdf",
+      "notes": "RTS on content and time limits.",
+      "provisions": [
+        "Articles 1, 2 and 5"
+      ],
+      "retrieved_at": "2026-05-23",
+      "sha256": "sha256:47a209a9f73e228e85e1dad2934d917d5791629fc98add06fc6fda0acb872dbf",
+      "source_id": "CELEX:32025R0301",
+      "source_role": "content_and_time_limits",
+      "source_type": "delegated_regulation",
+      "title": "Commission Delegated Regulation (EU) 2025/301",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32025R0301"
+    },
+    {
+      "celex": "32025R0302",
+      "eli": "http://data.europa.eu/eli/reg_impl/2025/302/oj",
+      "filename": "CELEX_32025R0302.pdf",
+      "media_type": "application/pdf",
+      "notes": "ITS with reporting templates and data glossary.",
+      "provisions": [
+        "Annex I",
+        "Annex II"
+      ],
+      "retrieved_at": "2026-05-23",
+      "sha256": "sha256:37ec431c7a11b8b30b39d1c1f0d95c39539d1c1e7236301ee3b06bb229ff009c",
+      "source_id": "CELEX:32025R0302",
+      "source_role": "forms_templates_and_procedures",
+      "source_type": "implementing_regulation",
+      "title": "Commission Implementing Regulation (EU) 2025/302",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32025R0302"
+    },
+    {
+      "celex": "32024R1772",
+      "eli": "http://data.europa.eu/eli/reg_del/2024/1772/oj",
+      "filename": "CELEX_32024R1772.pdf",
+      "media_type": "application/pdf",
+      "notes": "RTS on classification of ICT-related incidents.",
+      "provisions": [
+        "Articles 1 to 8"
+      ],
+      "retrieved_at": "2026-05-23",
+      "sha256": "sha256:416fb104161f8b3eb0aae2601060ab869b1672cfa8452d20798800301538ceab",
+      "source_id": "CELEX:32024R1772",
+      "source_role": "classification_criteria",
+      "source_type": "delegated_regulation",
+      "title": "Commission Delegated Regulation (EU) 2024/1772",
+      "url": "https://publications.europa.eu/resource/celex/32024R1772"
+    }
+  ],
+  "status": "draft",
+  "title": "DORA source bindings for ActProof Events"
+}

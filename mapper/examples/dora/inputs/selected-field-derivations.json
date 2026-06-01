@@ -1,0 +1,381 @@
+{
+  "field_derivations": [
+    {
+      "derivation_reason": "The entity identifier is part of the general information required for the report.",
+      "field_id": "entity_legal_identifier",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Direct field derived from general report information.",
+      "source_fragments": [
+        "src.dora.32025R0301.art1",
+        "src.dora.32025R0302.annexI.general_information"
+      ]
+    },
+    {
+      "derivation_reason": "The entity name is part of the general information required for the report.",
+      "field_id": "entity_legal_name",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Direct field derived from general report information.",
+      "source_fragments": [
+        "src.dora.32025R0301.art1",
+        "src.dora.32025R0302.annexI.general_information"
+      ]
+    },
+    {
+      "derivation_reason": "The type of financial entity is part of general report information and determines reporting context.",
+      "field_id": "financial_entity_type",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Direct field derived from general report information.",
+      "source_fragments": [
+        "src.dora.32025R0301.art1",
+        "src.dora.32025R0302.annexI.general_information"
+      ]
+    },
+    {
+      "derivation_reason": "The reporting template distinguishes submission/report type.",
+      "field_id": "submission_type",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Direct field derived from template/general information.",
+      "source_fragments": [
+        "src.dora.32025R0301.art1",
+        "src.dora.32025R0302.annexI.general_information"
+      ]
+    },
+    {
+      "derivation_reason": "The incident reference identifies the reported incident in the initial notification.",
+      "field_id": "incident_reference_code",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare",
+        "act.dora.initial_notification.submit"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Direct field with commitment disclosure downstream.",
+      "source_fragments": [
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0302.annexI.initial_notification",
+        "src.dora.32025R0302.annexII.glossary"
+      ]
+    },
+    {
+      "derivation_reason": "Detection time supports the outer reporting time limit and incident chronology.",
+      "field_id": "detection_datetime_utc",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare",
+        "act.dora.initial_notification.submit"
+      ],
+      "mapping_status": "derived_from_legal_action",
+      "review_note": "UTC normalisation will be captured as an interpretation decision.",
+      "source_fragments": [
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0301.art5",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ]
+    },
+    {
+      "derivation_reason": "Classification time supports the four-hour initial-notification clock and the major-incident classification workflow.",
+      "field_id": "classification_datetime_utc",
+      "legal_actions": [
+        "act.dora.major_incident.classify",
+        "act.dora.initial_notification.submit"
+      ],
+      "mapping_status": "derived_from_legal_action",
+      "review_note": "UTC normalisation and supporting evidence will be captured later.",
+      "source_fragments": [
+        "src.dora.32022R2554.art19.para4",
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0301.art5",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ]
+    },
+    {
+      "derivation_reason": "The field records the classification criteria on which the major-incident classification relies.",
+      "field_id": "classification_criteria_triggered",
+      "legal_actions": [
+        "act.dora.major_incident.classify",
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "interpretive_mapping",
+      "review_note": "Disclosure and evidence implications require interpretation decisions.",
+      "source_fragments": [
+        "src.dora.32024R1772.arts1to7",
+        "src.dora.32024R1772.art8",
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ]
+    },
+    {
+      "derivation_reason": "Affected Member States are report content for the initial notification.",
+      "field_id": "affected_member_states",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Direct field.",
+      "source_fragments": [
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ]
+    },
+    {
+      "derivation_reason": "How the incident was discovered is report content for the initial notification.",
+      "field_id": "incident_discovery_method",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Direct field.",
+      "source_fragments": [
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ]
+    },
+    {
+      "derivation_reason": "Business-continuity-plan activation is included in the initial-notification content model.",
+      "field_id": "business_continuity_plan_activated",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Direct field; disclosure classification may require privacy/security review.",
+      "source_fragments": [
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ]
+    },
+    {
+      "derivation_reason": "Initial impact description expresses report content about the incident impact.",
+      "field_id": "initial_impact_description",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Disclosure as commitment will be handled in interpretation/disclosure step.",
+      "source_fragments": [
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ]
+    },
+    {
+      "derivation_reason": "Primary contact details are report contact information.",
+      "field_id": "primary_contact_name",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Personal/business contact details require private disclosure downstream.",
+      "source_fragments": [
+        "src.dora.32025R0301.art1",
+        "src.dora.32025R0302.annexI.general_information"
+      ]
+    },
+    {
+      "derivation_reason": "Primary contact email is report contact information.",
+      "field_id": "primary_contact_email",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Personal/business contact details require private disclosure downstream.",
+      "source_fragments": [
+        "src.dora.32025R0301.art1",
+        "src.dora.32025R0302.annexI.general_information"
+      ]
+    },
+    {
+      "derivation_reason": "The competent authority is the recipient of the notification and is included so the directed act is explicit.",
+      "field_id": "competent_authority",
+      "legal_actions": [
+        "act.dora.initial_notification.submit"
+      ],
+      "mapping_status": "operational_support_field",
+      "review_note": "Operational support field, not a pure template-content field.",
+      "source_fragments": [
+        "src.dora.32022R2554.art19",
+        "src.dora.32022R2554.art19.para4"
+      ]
+    },
+    {
+      "derivation_reason": "Secondary contact information is optional support for report contact details.",
+      "field_id": "secondary_contact_name",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Optional field; private disclosure downstream.",
+      "source_fragments": [
+        "src.dora.32025R0301.art1",
+        "src.dora.32025R0302.annexI.general_information"
+      ]
+    },
+    {
+      "derivation_reason": "Secondary contact email is optional support for report contact details.",
+      "field_id": "secondary_contact_email",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Optional field; private disclosure downstream.",
+      "source_fragments": [
+        "src.dora.32025R0301.art1",
+        "src.dora.32025R0302.annexI.general_information"
+      ]
+    },
+    {
+      "derivation_reason": "First disruption time may be known at initial-notification stage but is associated with more detailed or later reporting.",
+      "field_id": "first_disruption_datetime_utc",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "operational_support_field",
+      "review_note": "Optional early information, not required initial-notification content.",
+      "source_fragments": [
+        "src.dora.32025R0302.annexI.intermediate_report",
+        "src.dora.32025R0301.art2"
+      ]
+    },
+    {
+      "derivation_reason": "Affected functions/services may be known early and are relevant to incident impact, but are treated as optional in this profile.",
+      "field_id": "affected_functions_and_services",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "operational_support_field",
+      "review_note": "Optional early information.",
+      "source_fragments": [
+        "src.dora.32025R0302.annexI.intermediate_report",
+        "src.dora.32025R0301.art2"
+      ]
+    },
+    {
+      "derivation_reason": "Preliminary affected-client estimate may be known early but is treated as optional in this profile.",
+      "field_id": "preliminary_estimated_clients_affected",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "operational_support_field",
+      "review_note": "Optional early information.",
+      "source_fragments": [
+        "src.dora.32025R0302.annexI.intermediate_report",
+        "src.dora.32025R0301.art2"
+      ]
+    },
+    {
+      "derivation_reason": "Preliminary financial amount may be known early and needs separate currency handling.",
+      "field_id": "preliminary_estimated_financial_amount",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "operational_support_field",
+      "review_note": "Optional early information; currency separation handled by reporting_currency.",
+      "source_fragments": [
+        "src.dora.32025R0302.annexI.intermediate_report",
+        "src.dora.32025R0302.annexII.glossary"
+      ]
+    },
+    {
+      "derivation_reason": "Reporting currency is modelled separately from amount fields to avoid hard-coded assumptions.",
+      "field_id": "reporting_currency",
+      "legal_actions": [
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "direct_source_mapping",
+      "review_note": "Direct/supporting field, also a modelling correction.",
+      "source_fragments": [
+        "src.dora.32025R0302.annexI.general_information",
+        "src.dora.32025R0302.annexII.glossary"
+      ]
+    },
+    {
+      "derivation_reason": "Third-party involvement can matter to the DORA reporting context and reporting-on-behalf arrangements.",
+      "field_id": "third_party_provider_involved",
+      "legal_actions": [
+        "act.dora.third_party_provider.report_on_behalf",
+        "act.dora.initial_notification.prepare"
+      ],
+      "mapping_status": "interpretive_mapping",
+      "review_note": "Optional, interpretive, and disclosure-sensitive.",
+      "source_fragments": [
+        "src.dora.32022R2554.art19.para5",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ]
+    },
+    {
+      "derivation_reason": "Outsourcing reference supports third-party reporting context where relevant.",
+      "field_id": "outsourcing_arrangement_reference",
+      "legal_actions": [
+        "act.dora.third_party_provider.report_on_behalf"
+      ],
+      "mapping_status": "operational_support_field",
+      "review_note": "Optional operational-support field, not required initial-notification content.",
+      "source_fragments": [
+        "src.dora.32022R2554.art19.para5"
+      ]
+    },
+    {
+      "derivation_reason": "Optional cross-reference to a related threat notification when such record exists.",
+      "field_id": "linked_threat_notification_reference",
+      "legal_actions": [
+        "act.dora.cross_regime.link_related_notifications"
+      ],
+      "mapping_status": "operational_support_field",
+      "review_note": "Cross-regime link only; not DORA-required content.",
+      "source_fragments": [
+        "src.dora.32022R2554.art19"
+      ]
+    },
+    {
+      "derivation_reason": "Optional cross-reference to a related NIS2 notification when such record exists.",
+      "field_id": "linked_nis2_notification_reference",
+      "legal_actions": [
+        "act.dora.cross_regime.link_related_notifications"
+      ],
+      "mapping_status": "operational_support_field",
+      "review_note": "Cross-regime link only; DORA notification does not replace NIS2 obligations.",
+      "source_fragments": [
+        "src.dora.32022R2554.art19"
+      ]
+    },
+    {
+      "derivation_reason": "Optional cross-reference to a related GDPR breach notification when such record exists.",
+      "field_id": "linked_gdpr_breach_notification_reference",
+      "legal_actions": [
+        "act.dora.cross_regime.link_related_notifications"
+      ],
+      "mapping_status": "operational_support_field",
+      "review_note": "Cross-regime link only; DORA notification does not replace GDPR obligations.",
+      "source_fragments": [
+        "src.dora.32022R2554.art19"
+      ]
+    }
+  ],
+  "non_claims": [
+    "These derivations map profile fields to legal actions and source fragments; they do not prove legal correctness.",
+    "Operational support fields are explicit and reviewable, not hidden additions."
+  ],
+  "profile_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "review_gate": {
+    "author": "Deyan Paroushev",
+    "change_reason": "Initial DORA initial-notification mapping example",
+    "created_at": "2026-06-01",
+    "issue_refs": [],
+    "review_status": "draft",
+    "reviewed_at": null,
+    "reviewed_by": null,
+    "supersedes": null
+  },
+  "schema": "actproof.selected_field_derivations.v0",
+  "selection_method": "human_authored_from_legal_actions_and_profile_draft",
+  "status": "draft",
+  "title": "Human-authored DORA field derivations for initial notification"
+}

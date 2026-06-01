@@ -1,0 +1,274 @@
+{
+  "interpretation_decisions": [
+    {
+      "affected_elements": [
+        "detection_datetime_utc",
+        "classification_datetime_utc",
+        "first_disruption_datetime_utc"
+      ],
+      "alternatives_considered": [
+        "Use local time with a separate timezone field",
+        "Accept unconstrained datetime strings"
+      ],
+      "chosen": "Use UTC-normalised datetime fields for machine consistency.",
+      "date": null,
+      "decision_id": "dec.dora.utc_normalisation",
+      "decision_type": "normalisation",
+      "notes": "Later versions may add timezone-specific fields if reviewer feedback requires it.",
+      "question": "Should DORA profile datetime fields be normalised to UTC?",
+      "reason": "UTC normalisation improves machine comparability and avoids ambiguity in reporting clocks. It is an operational modelling decision rather than a direct legal phrase.",
+      "review_status": "draft",
+      "reviewer": null,
+      "source_fragments": [
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0301.art5",
+        "src.dora.32025R0302.annexII.glossary"
+      ],
+      "status": "open_to_challenge"
+    },
+    {
+      "affected_elements": [
+        "classification_criteria_triggered",
+        "classification_committee_record"
+      ],
+      "alternatives_considered": [
+        "public",
+        "private"
+      ],
+      "chosen": "Use commitment disclosure.",
+      "date": null,
+      "decision_id": "dec.dora.criteria_disclosure_commitment",
+      "decision_type": "disclosure_boundary",
+      "notes": "This decision should be reviewed by security/compliance users.",
+      "question": "Should triggered classification criteria be public, private or commitment?",
+      "reason": "Triggered criteria are useful for later review but may reveal sensitive incident context. Commitment preserves integrity without exposing full operational detail.",
+      "review_status": "draft",
+      "reviewer": null,
+      "source_fragments": [
+        "src.dora.32024R1772.arts1to7",
+        "src.dora.32024R1772.art8",
+        "src.dora.32025R0301.art2"
+      ],
+      "status": "open_to_challenge"
+    },
+    {
+      "affected_elements": [
+        "competent_authority"
+      ],
+      "alternatives_considered": [
+        "Infer recipient from filing channel",
+        "Leave recipient outside profile fields"
+      ],
+      "chosen": "Include competent_authority as a required public field.",
+      "date": null,
+      "decision_id": "dec.dora.competent_authority_as_profile_field",
+      "decision_type": "operational_support_field",
+      "notes": "This prevents the profile from describing a report without identifying the receiving authority.",
+      "question": "Should competent authority be a profile field when it is the reporting recipient rather than report content?",
+      "reason": "A source-bound profile for an initial notification should identify the authority to whom the act is directed. This is an operational profile requirement, not a pure template transcription.",
+      "review_status": "draft",
+      "reviewer": null,
+      "source_fragments": [
+        "src.dora.32022R2554.art19",
+        "src.dora.32022R2554.art19.para4"
+      ],
+      "status": "open_to_challenge"
+    },
+    {
+      "affected_elements": [
+        "initial_impact_description"
+      ],
+      "alternatives_considered": [
+        "public",
+        "private"
+      ],
+      "chosen": "Use commitment disclosure.",
+      "date": null,
+      "decision_id": "dec.dora.impact_description_commitment",
+      "decision_type": "disclosure_boundary",
+      "notes": "Disclosure can be revisited if a specific use case needs stronger confidentiality.",
+      "question": "Should initial impact description be public, private or commitment?",
+      "reason": "Incident impact description is report content but may expose sensitive operational, financial or security information. Commitment keeps integrity without default publication.",
+      "review_status": "draft",
+      "reviewer": null,
+      "source_fragments": [
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ],
+      "status": "open_to_challenge"
+    },
+    {
+      "affected_elements": [
+        "first_disruption_datetime_utc",
+        "affected_functions_and_services",
+        "preliminary_estimated_clients_affected",
+        "preliminary_estimated_financial_amount"
+      ],
+      "alternatives_considered": [
+        "Exclude all intermediate-report fields from the initial profile",
+        "Make them required"
+      ],
+      "chosen": "Allow selected fields as optional early information.",
+      "date": null,
+      "decision_id": "dec.dora.optional_intermediate_fields_available_early",
+      "decision_type": "scope_boundary",
+      "notes": "These fields remain operational_support_field, not direct required initial-notification fields.",
+      "question": "Should selected intermediate-report fields be allowed as optional fields in the initial-notification profile?",
+      "reason": "The initial notification content is a floor, and some entities may already know intermediate-report-style information at the initial-notification stage. The fields are optional and are not represented as required initial-notification content.",
+      "review_status": "draft",
+      "reviewer": null,
+      "source_fragments": [
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0302.annexI.intermediate_report"
+      ],
+      "status": "open_to_challenge"
+    },
+    {
+      "affected_elements": [
+        "preliminary_estimated_financial_amount",
+        "reporting_currency"
+      ],
+      "alternatives_considered": [
+        "Embed a currency assumption in the amount field",
+        "Assume euro",
+        "Use a combined amount-and-currency object"
+      ],
+      "chosen": "Model reporting_currency as a separate optional field.",
+      "date": null,
+      "decision_id": "dec.dora.reporting_currency_separate_field",
+      "decision_type": "field_modelling",
+      "notes": "A future schema could use a structured money object.",
+      "question": "Should reporting currency be modelled separately from preliminary financial amount?",
+      "reason": "The profile should not hard-code a currency into the amount field. A separate currency field makes the amount explicit and avoids hidden assumptions.",
+      "review_status": "draft",
+      "reviewer": null,
+      "source_fragments": [
+        "src.dora.32025R0302.annexI.general_information",
+        "src.dora.32025R0302.annexII.glossary"
+      ],
+      "status": "open_to_challenge"
+    },
+    {
+      "affected_elements": [
+        "third_party_provider_involved",
+        "outsourcing_arrangement_reference"
+      ],
+      "alternatives_considered": [
+        "Exclude from initial profile",
+        "Make both public",
+        "Make both private"
+      ],
+      "chosen": "Include third_party_provider_involved as commitment and outsourcing_arrangement_reference as private.",
+      "date": null,
+      "decision_id": "dec.dora.third_party_outsourcing_private_fields",
+      "decision_type": "scope_and_disclosure_boundary",
+      "notes": "This decision must not be read as making outsourcing details mandatory report content.",
+      "question": "Should third-party and outsourcing references be included, and how should they be disclosed?",
+      "reason": "Third-party involvement can be relevant to incident reporting and Article 19(5) reporting-on-behalf context, but outsourcing references may contain sensitive contractual or operational information.",
+      "review_status": "draft",
+      "reviewer": null,
+      "source_fragments": [
+        "src.dora.32022R2554.art19.para5",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ],
+      "status": "open_to_challenge"
+    },
+    {
+      "affected_elements": [
+        "linked_threat_notification_reference",
+        "linked_nis2_notification_reference",
+        "linked_gdpr_breach_notification_reference"
+      ],
+      "alternatives_considered": [
+        "Exclude cross-regime links",
+        "Treat them as DORA-required content"
+      ],
+      "chosen": "Include them as optional operational linkage fields, not as DORA content requirements.",
+      "date": null,
+      "decision_id": "dec.dora.cross_regime_links_operational_only",
+      "decision_type": "scope_boundary",
+      "notes": "This is included for operational traceability, not legal consolidation of regimes.",
+      "question": "Should linked threat, NIS2 and GDPR notification references be included in this DORA profile?",
+      "reason": "DORA incident events may overlap with other notification regimes. The fields are optional references only, and the profile non-claims should state that DORA notification does not replace NIS2 or GDPR obligations.",
+      "review_status": "draft",
+      "reviewer": null,
+      "source_fragments": [
+        "src.dora.32022R2554.art19"
+      ],
+      "status": "open_to_challenge"
+    },
+    {
+      "affected_elements": [
+        "primary_contact_name",
+        "primary_contact_email",
+        "secondary_contact_name",
+        "secondary_contact_email"
+      ],
+      "alternatives_considered": [
+        "public",
+        "commitment"
+      ],
+      "chosen": "Treat contact names and emails as private fields.",
+      "date": null,
+      "decision_id": "dec.dora.contact_details_private",
+      "decision_type": "privacy_boundary",
+      "notes": "If an implementation needs public contact details, that should be an explicit downstream policy choice.",
+      "question": "Should contact-person details be public, private or commitment?",
+      "reason": "Contact details are part of the report context but are personal/business contact data and should not be published by default.",
+      "review_status": "draft",
+      "reviewer": null,
+      "source_fragments": [
+        "src.dora.32025R0301.art1",
+        "src.dora.32025R0302.annexI.general_information"
+      ],
+      "status": "open_to_challenge"
+    },
+    {
+      "affected_elements": [
+        "classification_committee_record",
+        "detection_system_log_excerpt"
+      ],
+      "alternatives_considered": [
+        "Treat them as legal attachments",
+        "Remove evidence labels entirely"
+      ],
+      "chosen": "Treat them as ActProof supporting evidence labels, not as mandatory legal attachments.",
+      "date": null,
+      "decision_id": "dec.dora.evidence_labels_are_supporting_not_required_attachments",
+      "decision_type": "evidence_boundary",
+      "notes": "This is the main guardrail preventing supporting evidence from being misrepresented as legal attachment content.",
+      "question": "Do classification_committee_record and detection_system_log_excerpt represent legal attachment requirements?",
+      "reason": "The profile needs evidence to support classification and detection timestamps for later audit, but the current profile does not claim that the source instruments require these files as attachments.",
+      "review_status": "draft",
+      "reviewer": null,
+      "source_fragments": [
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0301.art5",
+        "src.dora.32024R1772.arts1to7",
+        "src.dora.32024R1772.art8"
+      ],
+      "status": "open_to_challenge"
+    }
+  ],
+  "non_claims": [
+    "Interpretation decisions record modelling choices; they do not prove legal correctness.",
+    "Every decision remains open to challenge, correction or replacement.",
+    "A decision can justify a mapping boundary but cannot make a profile official.",
+    "This register is a review artefact, not legal advice."
+  ],
+  "profile_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "review_gate": {
+    "author": "Deyan Paroushev",
+    "change_reason": "Initial DORA initial-notification mapping example",
+    "created_at": "2026-06-01",
+    "issue_refs": [],
+    "review_status": "draft",
+    "reviewed_at": null,
+    "reviewed_by": null,
+    "supersedes": null
+  },
+  "schema": "actproof.selected_interpretation_decisions.v0",
+  "selection_method": "human_authored_from_non_direct_mappings",
+  "status": "draft",
+  "title": "Human-authored DORA interpretation decisions for initial notification"
+}

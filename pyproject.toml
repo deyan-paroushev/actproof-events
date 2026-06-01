@@ -65,6 +65,15 @@ schema-validation = [
   "jsonschema>=4.21",
 ]
 
+[project.scripts]
+# Experimental, repo-local tooling: the ActProof Mapper pipeline exposed as one
+# console command with subcommands. After `pip install -e .` from the repo, run
+# `actproof-mapper run-all --example dora`. This dispatches to the step scripts
+# under mapper/, which are present in a source checkout or editable install. It
+# is NOT a public packaged SDK; the mapper is experimental and not on PyPI as a
+# standalone package.
+actproof-mapper = "actproof_events.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/deyan-paroushev/actproof-events"
 Repository = "https://github.com/deyan-paroushev/actproof-events"
@@ -102,6 +111,7 @@ include = [
   "/spec",
   "/docs",
   "/scripts",
+  "/mapper",
   "/salt-erasure",
   "/CATALOGUE_LOADER_CONTRACT.md",
   "/CONTRIBUTING_ACTS.md",

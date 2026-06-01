@@ -103,11 +103,35 @@ spec/                        the specification text, schemas, and version policy
 catalogue/acts/              the act-profile catalogue, organized by jurisdiction
 actproof_events/             the installable Python package
 scripts/                     test-vector generation and catalogue validation
+mapper/                      experimental: source-PDF-to-profile mapping pipeline
 salt-erasure/                the salt-erasure module for redactable evidence
 docs/releases/               per-release notes
 CONTRIBUTING_ACTS.md         how to propose a catalogue entry
 CATALOGUE_LOADER_CONTRACT.md the contract a catalogue loader must honor
 ```
+
+## ActProof Mapper (experimental)
+
+`mapper/` contains a controlled, inspectable process that takes the official
+source PDFs and produces a profile, recording every step: source verification,
+fragments, legal actions, mapped fields, evidence labels, interpretation
+decisions, and the traceability matrix that binds them. It is the worked,
+runnable form of the source-to-profile mapping behind the DORA example.
+
+It is experimental, not part of the published package, and not on PyPI. Run the
+worked example with `python mapper/run_all.py --example dora`; Step 1 verifies
+the four official DORA source PDFs against their pinned hashes. See
+`mapper/README.md`.
+
+For a nicer local experience, an editable install exposes the pipeline as a
+console command (repo-local tooling, not a public package):
+
+```
+pip install -e .
+actproof-mapper run-all --example dora
+```
+
+`actproof-mapper --help` lists the per-step subcommands.
 
 ## Specification
 

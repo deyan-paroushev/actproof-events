@@ -1,0 +1,141 @@
+{
+  "legal_actions": [
+    {
+      "action": "classify",
+      "action_id": "act.dora.major_incident.classify",
+      "actor": "financial_entity",
+      "authority": null,
+      "condition": "ict_related_incident_detected",
+      "deadline": null,
+      "exception": null,
+      "modality": "procedure",
+      "notes": "This action supports classification_criteria_triggered and classification_datetime_utc.",
+      "object": "ict_related_incident",
+      "operational_purpose": "Determines whether the incident reaches the major ICT-related incident threshold and triggers the initial-notification workflow.",
+      "outer_limit": null,
+      "recipient": null,
+      "review_note": "Classification is modelled as a procedural precondition, not as a submission duty.",
+      "source_fragments": [
+        "src.dora.32022R2554.art19",
+        "src.dora.32024R1772.arts1to7",
+        "src.dora.32024R1772.art8"
+      ]
+    },
+    {
+      "action": "prepare",
+      "action_id": "act.dora.initial_notification.prepare",
+      "actor": "financial_entity",
+      "authority": "competent_authority",
+      "condition": "incident_classified_as_major",
+      "deadline": null,
+      "exception": null,
+      "modality": "procedure",
+      "notes": "This action supports general information and initial-notification profile fields.",
+      "object": "initial_notification",
+      "operational_purpose": "Collects and structures the information expected for the initial notification.",
+      "outer_limit": null,
+      "recipient": "competent_authority",
+      "review_note": "Preparation is separated from submission so fields can map to content requirements independently from the time-limit duty.",
+      "source_fragments": [
+        "src.dora.32025R0301.art1",
+        "src.dora.32025R0301.art2",
+        "src.dora.32025R0302.annexI.general_information",
+        "src.dora.32025R0302.annexI.initial_notification",
+        "src.dora.32025R0302.annexII.glossary"
+      ]
+    },
+    {
+      "action": "submit",
+      "action_id": "act.dora.initial_notification.submit",
+      "actor": "financial_entity",
+      "authority": "competent_authority",
+      "condition": "incident_classified_as_major",
+      "deadline": {
+        "source_fragments": [
+          "src.dora.32022R2554.art19.para4",
+          "src.dora.32025R0301.art5"
+        ],
+        "trigger": "classification_as_major",
+        "value": "PT4H"
+      },
+      "exception": null,
+      "modality": "obligation",
+      "notes": "This action supports competent_authority, classification/detection timestamps and the submission time window.",
+      "object": "initial_notification",
+      "operational_purpose": "Represents the time-bound initial-notification submission act.",
+      "outer_limit": {
+        "source_fragments": [
+          "src.dora.32025R0301.art5"
+        ],
+        "trigger": "initial_detection",
+        "value": "PT24H"
+      },
+      "recipient": "competent_authority",
+      "review_note": "The profile models the initial notification only; intermediate and final reports are outside this action.",
+      "source_fragments": [
+        "src.dora.32022R2554.art19.para4",
+        "src.dora.32025R0301.art5",
+        "src.dora.32025R0302.annexI.initial_notification"
+      ]
+    },
+    {
+      "action": "submit_on_behalf",
+      "action_id": "act.dora.third_party_provider.report_on_behalf",
+      "actor": "third_party_service_provider",
+      "authority": "competent_authority",
+      "condition": "outsourcing_or_third_party_reporting_arrangement_exists",
+      "deadline": null,
+      "exception": null,
+      "modality": "permission",
+      "notes": "This is not modelled as a required initial-notification content duty.",
+      "object": "initial_notification",
+      "operational_purpose": "Captures the possibility that a third-party provider reports on behalf of the financial entity.",
+      "outer_limit": null,
+      "recipient": "competent_authority",
+      "review_note": "Used only for optional third-party provider and outsourcing-reference fields.",
+      "source_fragments": [
+        "src.dora.32022R2554.art19.para5"
+      ]
+    },
+    {
+      "action": "link",
+      "action_id": "act.dora.cross_regime.link_related_notifications",
+      "actor": "financial_entity",
+      "authority": null,
+      "condition": "related_notification_exists",
+      "deadline": null,
+      "exception": null,
+      "modality": "procedure",
+      "notes": "Downstream non-claims should state that DORA notification does not replace NIS2 or GDPR notification duties.",
+      "object": "related_notifications_or_receipts",
+      "operational_purpose": "Allows the profile to carry optional references to related threat, NIS2 or GDPR notifications.",
+      "outer_limit": null,
+      "recipient": null,
+      "review_note": "This is an operational support action, not a DORA content requirement.",
+      "source_fragments": [
+        "src.dora.32022R2554.art19"
+      ]
+    }
+  ],
+  "non_claims": [
+    "These actions are a lightweight operational decomposition, not LegalRuleML and not legal advice.",
+    "The action model does not decide whether a real incident is major.",
+    "The action model does not prove that a notification was submitted or accepted.",
+    "The action model is reviewable and may be challenged or refined."
+  ],
+  "profile_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "review_gate": {
+    "author": "Deyan Paroushev",
+    "change_reason": "Initial DORA initial-notification mapping example",
+    "created_at": "2026-06-01",
+    "issue_refs": [],
+    "review_status": "draft",
+    "reviewed_at": null,
+    "reviewed_by": null,
+    "supersedes": null
+  },
+  "schema": "actproof.selected_legal_actions.v0",
+  "selection_method": "human_authored_from_source_fragments",
+  "status": "draft",
+  "title": "Human-authored DORA legal actions for initial notification"
+}

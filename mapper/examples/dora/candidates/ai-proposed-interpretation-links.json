@@ -1,0 +1,277 @@
+{
+  "candidate_links": [
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "detection_datetime_utc",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.utc_normalisation"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "Detection time supports the outer reporting time limit and incident chronology."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "classification_datetime_utc",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.utc_normalisation"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "Classification time supports the four-hour initial-notification clock and the major-incident classification workflow."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "classification_criteria_triggered",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.criteria_disclosure_commitment"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "The field records the classification criteria on which the major-incident classification relies."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "competent_authority",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.competent_authority_as_profile_field"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "The competent authority is the recipient of the notification and is included so the directed act is explicit."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "first_disruption_datetime_utc",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.utc_normalisation",
+            "dec.dora.optional_intermediate_fields_available_early"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "First disruption time may be known at initial-notification stage but is associated with more detailed or later reporting."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "affected_functions_and_services",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.optional_intermediate_fields_available_early"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "Affected functions/services may be known early and are relevant to incident impact, but are treated as optional in this profile."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "preliminary_estimated_clients_affected",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.optional_intermediate_fields_available_early"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "Preliminary affected-client estimate may be known early but is treated as optional in this profile."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "preliminary_estimated_financial_amount",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.optional_intermediate_fields_available_early",
+            "dec.dora.reporting_currency_separate_field"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "Preliminary financial amount may be known early and needs separate currency handling."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "third_party_provider_involved",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.third_party_outsourcing_private_fields"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "Third-party involvement can matter to the DORA reporting context and reporting-on-behalf arrangements."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "outsourcing_arrangement_reference",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.third_party_outsourcing_private_fields"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "Outsourcing reference supports third-party reporting context where relevant."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "linked_threat_notification_reference",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.cross_regime_links_operational_only"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "Optional cross-reference to a related threat notification when such record exists."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "linked_nis2_notification_reference",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.cross_regime_links_operational_only"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "Optional cross-reference to a related NIS2 notification when such record exists."
+        }
+      ]
+    },
+    {
+      "affirmation": {
+        "affirmed_at": null,
+        "affirmed_by": null,
+        "chosen_proposal": null,
+        "note": null,
+        "status": "proposed"
+      },
+      "field_id": "linked_gdpr_breach_notification_reference",
+      "proposals": [
+        {
+          "chosen_decisions": [
+            "dec.dora.cross_regime_links_operational_only"
+          ],
+          "proposed_at": "2026-06-01",
+          "proposed_by": "GPT-5.5",
+          "rationale": "Optional cross-reference to a related GDPR breach notification when such record exists."
+        }
+      ]
+    }
+  ],
+  "non_claims": [
+    "These links are AI proposals, not human-affirmed interpretations.",
+    "An affirmed interpretation requires a human maintainer to take the final call.",
+    "Different AIs or maintainers may propose different readings; that disagreement is expected and resolved by humans in the open.",
+    "Until affirmed, the corresponding fields in the mapping show as pending (warnings), which is the truthful state."
+  ],
+  "note": "These links were PROPOSED by an AI (GPT-5.5) and have NOT been affirmed by a human maintainer. They are preserved here as candidates so a maintainer - possibly using a different model to cross-check - can affirm, overrule or adjust each one. Nothing here is active in the profile until a human affirms it. This file is the honest record of an AI proposal, kept on the record per the commons principle: proposals are preserved, not deleted, whether affirmed or overruled.",
+  "profile_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "schema": "actproof.candidate_interpretation_links.v0",
+  "status": "proposed",
+  "title": "Candidate interpretation links - AI-proposed, awaiting human affirmation"
+}

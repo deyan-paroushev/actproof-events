@@ -1,0 +1,156 @@
+{
+  "non_claims": [
+    "This register records human-selected source fragments; it does not prove legal completeness.",
+    "Fragment selection is a reviewable modelling step and remains open to challenge.",
+    "Provision-level fragments may need later refinement to paragraph, point, table-row or template-field level."
+  ],
+  "profile_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "provisions": [
+    {
+      "fragment_id": "src.dora.32022R2554.art19",
+      "fragment_type": "article",
+      "label": "DORA Article 19 — reporting of major ICT-related incidents",
+      "notes": "Broad base article. Later refinements may split more paragraph-level fragments.",
+      "provision_reference": "Article 19",
+      "role": "base_reporting_obligation",
+      "selection_reason": "Base legal obligation for reporting major ICT-related incidents.",
+      "source_id": "CELEX:32022R2554",
+      "text_excerpt": ""
+    },
+    {
+      "fragment_id": "src.dora.32022R2554.art19.para4",
+      "fragment_type": "article_paragraph",
+      "label": "DORA Article 19(4) — initial, intermediate and final reports",
+      "notes": "Used by initial-notification timing and submission legal action.",
+      "provision_reference": "Article 19(4)",
+      "role": "reporting_sequence",
+      "selection_reason": "Anchors the sequence of initial notification, intermediate report and final report.",
+      "source_id": "CELEX:32022R2554",
+      "text_excerpt": ""
+    },
+    {
+      "fragment_id": "src.dora.32022R2554.art19.para5",
+      "fragment_type": "article_paragraph",
+      "label": "DORA Article 19(5) — third-party reporting provider possibility",
+      "notes": "Used only for optional support fields; not treated as required initial notification content.",
+      "provision_reference": "Article 19(5)",
+      "role": "third_party_reporting_provider",
+      "selection_reason": "Supports optional third-party provider and reporting-on-behalf context.",
+      "source_id": "CELEX:32022R2554",
+      "text_excerpt": ""
+    },
+    {
+      "fragment_id": "src.dora.32025R0301.art1",
+      "fragment_type": "article",
+      "label": "General information common to reports",
+      "notes": "Provision-level reference. Later exact paragraphs may be added.",
+      "provision_reference": "Article 1",
+      "role": "general_report_information",
+      "selection_reason": "Supports entity and contact information in the report.",
+      "source_id": "CELEX:32025R0301",
+      "text_excerpt": ""
+    },
+    {
+      "fragment_id": "src.dora.32025R0301.art2",
+      "fragment_type": "article",
+      "label": "Initial notification content",
+      "notes": "Used by initial content, detection/classification timestamps and impact details.",
+      "provision_reference": "Article 2",
+      "role": "initial_notification_content",
+      "selection_reason": "Supports required initial-notification content fields.",
+      "source_id": "CELEX:32025R0301",
+      "text_excerpt": ""
+    },
+    {
+      "fragment_id": "src.dora.32025R0301.art5",
+      "fragment_type": "article",
+      "label": "Time limits for initial notification",
+      "notes": "Used by detection/classification datetime trace rows.",
+      "provision_reference": "Article 5",
+      "role": "time_limits",
+      "selection_reason": "Supports the reporting time window and timing model.",
+      "source_id": "CELEX:32025R0301",
+      "text_excerpt": ""
+    },
+    {
+      "fragment_id": "src.dora.32025R0302.annexI.general_information",
+      "fragment_type": "template_section",
+      "label": "Annex I — general information block",
+      "notes": "Template-section-level reference.",
+      "provision_reference": "Annex I, general information fields",
+      "role": "template_general_information",
+      "selection_reason": "Supports general entity, submission, currency and contact fields.",
+      "source_id": "CELEX:32025R0302",
+      "text_excerpt": ""
+    },
+    {
+      "fragment_id": "src.dora.32025R0302.annexI.initial_notification",
+      "fragment_type": "template_section",
+      "label": "Annex I — content of the initial notification",
+      "notes": "Template-section-level reference. Later row-level template fragments may be added.",
+      "provision_reference": "Annex I, initial notification fields 2.1 to 2.10",
+      "role": "template_initial_notification_content",
+      "selection_reason": "Supports profile fields that mirror the initial notification template.",
+      "source_id": "CELEX:32025R0302",
+      "text_excerpt": ""
+    },
+    {
+      "fragment_id": "src.dora.32025R0302.annexI.intermediate_report",
+      "fragment_type": "template_section",
+      "label": "Annex I — intermediate report content",
+      "notes": "Mapped as optional operational support, not required initial notification content.",
+      "provision_reference": "Annex I, intermediate report fields",
+      "role": "template_intermediate_report_content",
+      "selection_reason": "Supports optional early information fields that may be known at initial-notification stage.",
+      "source_id": "CELEX:32025R0302",
+      "text_excerpt": ""
+    },
+    {
+      "fragment_id": "src.dora.32025R0302.annexII.glossary",
+      "fragment_type": "annex",
+      "label": "Annex II — data glossary",
+      "notes": "Used as field-definition and glossary support.",
+      "provision_reference": "Annex II",
+      "role": "data_glossary",
+      "selection_reason": "Supports field meaning, currency modelling and template terminology.",
+      "source_id": "CELEX:32025R0302",
+      "text_excerpt": ""
+    },
+    {
+      "fragment_id": "src.dora.32024R1772.arts1to7",
+      "fragment_type": "delegated_rule",
+      "label": "Classification criteria",
+      "notes": "Broad criteria group. Later can be split by criterion article.",
+      "provision_reference": "Articles 1 to 7",
+      "role": "classification_criteria",
+      "selection_reason": "Supports classification criteria triggered and major-incident classification.",
+      "source_id": "CELEX:32024R1772",
+      "text_excerpt": ""
+    },
+    {
+      "fragment_id": "src.dora.32024R1772.art8",
+      "fragment_type": "delegated_rule",
+      "label": "Major incident determination rule",
+      "notes": "Used by classification legal action.",
+      "provision_reference": "Article 8",
+      "role": "major_incident_determination",
+      "selection_reason": "Supports the rule deciding when classification criteria make an incident major.",
+      "source_id": "CELEX:32024R1772",
+      "text_excerpt": ""
+    }
+  ],
+  "review_gate": {
+    "author": "Deyan Paroushev",
+    "change_reason": "Initial DORA initial-notification mapping example",
+    "created_at": "2026-06-01",
+    "issue_refs": [],
+    "review_status": "draft",
+    "reviewed_at": null,
+    "reviewed_by": null,
+    "supersedes": null
+  },
+  "schema": "actproof.selected_provisions.v0",
+  "selection_method": "human_selected_provisions",
+  "status": "draft",
+  "title": "Human-selected DORA provisions for source fragment register"
+}

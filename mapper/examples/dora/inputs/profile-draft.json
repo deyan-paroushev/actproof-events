@@ -1,0 +1,242 @@
+{
+  "fields": [
+    {
+      "disclosure": "public",
+      "field_id": "entity_legal_identifier",
+      "label": "Entity Legal Identifier",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "disclosure": "public",
+      "field_id": "entity_legal_name",
+      "label": "Entity Legal Name",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "disclosure": "public",
+      "field_id": "financial_entity_type",
+      "label": "Financial Entity Type",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "disclosure": "public",
+      "field_id": "submission_type",
+      "label": "Submission Type",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "disclosure": "commitment",
+      "field_id": "incident_reference_code",
+      "label": "Incident Reference Code",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "disclosure": "public",
+      "field_id": "detection_datetime_utc",
+      "label": "Detection Datetime UTC",
+      "required": true,
+      "type": "datetime"
+    },
+    {
+      "disclosure": "public",
+      "field_id": "classification_datetime_utc",
+      "label": "Classification Datetime UTC",
+      "required": true,
+      "type": "datetime"
+    },
+    {
+      "disclosure": "commitment",
+      "field_id": "classification_criteria_triggered",
+      "label": "Classification Criteria Triggered",
+      "required": true,
+      "type": "string_list"
+    },
+    {
+      "disclosure": "commitment",
+      "field_id": "affected_member_states",
+      "label": "Affected Member States",
+      "required": true,
+      "type": "string_list"
+    },
+    {
+      "disclosure": "commitment",
+      "field_id": "incident_discovery_method",
+      "label": "Incident Discovery Method",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "disclosure": "private",
+      "field_id": "business_continuity_plan_activated",
+      "label": "Business Continuity Plan Activated",
+      "required": true,
+      "type": "boolean"
+    },
+    {
+      "disclosure": "commitment",
+      "field_id": "initial_impact_description",
+      "label": "Initial Impact Description",
+      "required": true,
+      "type": "text"
+    },
+    {
+      "disclosure": "private",
+      "field_id": "primary_contact_name",
+      "label": "Primary Contact Name",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "disclosure": "private",
+      "field_id": "primary_contact_email",
+      "label": "Primary Contact Email",
+      "required": true,
+      "type": "email"
+    },
+    {
+      "disclosure": "public",
+      "field_id": "competent_authority",
+      "label": "Competent Authority",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "disclosure": "private",
+      "field_id": "secondary_contact_name",
+      "label": "Secondary Contact Name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "disclosure": "private",
+      "field_id": "secondary_contact_email",
+      "label": "Secondary Contact Email",
+      "required": false,
+      "type": "email"
+    },
+    {
+      "disclosure": "public",
+      "field_id": "first_disruption_datetime_utc",
+      "label": "First Disruption Datetime UTC",
+      "required": false,
+      "type": "datetime"
+    },
+    {
+      "disclosure": "commitment",
+      "field_id": "affected_functions_and_services",
+      "label": "Affected Functions and Services",
+      "required": false,
+      "type": "string_list"
+    },
+    {
+      "disclosure": "commitment",
+      "field_id": "preliminary_estimated_clients_affected",
+      "label": "Preliminary Estimated Clients Affected",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "disclosure": "commitment",
+      "field_id": "preliminary_estimated_financial_amount",
+      "label": "Preliminary Estimated Financial Amount",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "disclosure": "public",
+      "field_id": "reporting_currency",
+      "label": "Reporting Currency",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "disclosure": "commitment",
+      "field_id": "third_party_provider_involved",
+      "label": "Third Party Provider Involved",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "disclosure": "private",
+      "field_id": "outsourcing_arrangement_reference",
+      "label": "Outsourcing Arrangement Reference",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "disclosure": "private",
+      "field_id": "linked_threat_notification_reference",
+      "label": "Linked Threat Notification Reference",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "disclosure": "commitment",
+      "field_id": "linked_nis2_notification_reference",
+      "label": "Linked NIS2 Notification Reference",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "disclosure": "commitment",
+      "field_id": "linked_gdpr_breach_notification_reference",
+      "label": "Linked GDPR Breach Notification Reference",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "non_claims": [
+    "This profile draft is not legal advice.",
+    "This profile draft is a mapping input and not yet a complete ActProof profile."
+  ],
+  "optional_fields": [
+    "secondary_contact_name",
+    "secondary_contact_email",
+    "first_disruption_datetime_utc",
+    "affected_functions_and_services",
+    "preliminary_estimated_clients_affected",
+    "preliminary_estimated_financial_amount",
+    "reporting_currency",
+    "third_party_provider_involved",
+    "outsourcing_arrangement_reference",
+    "linked_threat_notification_reference",
+    "linked_nis2_notification_reference",
+    "linked_gdpr_breach_notification_reference"
+  ],
+  "profile_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "required_fields": [
+    "entity_legal_identifier",
+    "entity_legal_name",
+    "financial_entity_type",
+    "submission_type",
+    "incident_reference_code",
+    "detection_datetime_utc",
+    "classification_datetime_utc",
+    "classification_criteria_triggered",
+    "affected_member_states",
+    "incident_discovery_method",
+    "business_continuity_plan_activated",
+    "initial_impact_description",
+    "primary_contact_name",
+    "primary_contact_email",
+    "competent_authority"
+  ],
+  "review_gate": {
+    "author": "Deyan Paroushev",
+    "change_reason": "Initial DORA initial-notification mapping example",
+    "created_at": "2026-06-01",
+    "issue_refs": [],
+    "review_status": "draft",
+    "reviewed_at": null,
+    "reviewed_by": null,
+    "supersedes": null
+  },
+  "schema": "actproof.profile_draft.v0",
+  "status": "draft",
+  "title": "DORA ICT incident initial notification profile draft"
+}
