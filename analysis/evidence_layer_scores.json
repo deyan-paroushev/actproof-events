@@ -1,0 +1,296 @@
+{
+  "results": [
+    {
+      "act_type_id": "op:eu.dora.ict_incident_notification_initial.v1",
+      "display_name": "DORA major ICT-related incident initial notification (Article 19(4))",
+      "source_instruments": [
+        "32022R2554",
+        "32024R1772",
+        "32025R0301",
+        "32025R0302"
+      ],
+      "rows": [
+        {
+          "field": "entity_legal_identifier",
+          "interpretive_load": 0,
+          "evidence_burden": 0,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 0,
+          "rationale": "Direct. Stable institutional identifier (LEI).",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "entity_legal_name",
+          "interpretive_load": 0,
+          "evidence_burden": 0,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 0,
+          "rationale": "Direct. Stable institutional identity.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "financial_entity_type",
+          "interpretive_load": 2,
+          "evidence_burden": 0,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 1,
+          "rationale": "Transformed. Category selection against the regulated-entity typology.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "submission_type",
+          "interpretive_load": 0,
+          "evidence_burden": 0,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 0,
+          "rationale": "Direct. Phase or template metadata.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "incident_reference_code",
+          "interpretive_load": 1,
+          "evidence_burden": 1,
+          "disclosure_complexity": 1,
+          "reconstruction_burden": 1,
+          "rationale": "Normalised. Internal reference; log-backed; commitment-only disclosure.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "detection_datetime_utc",
+          "interpretive_load": 1,
+          "evidence_burden": 1,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 1,
+          "rationale": "Normalised. Timestamp normalisation; log-backed.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "classification_datetime_utc",
+          "interpretive_load": 3,
+          "evidence_burden": 1,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 2,
+          "rationale": "Reconciled. Depends on when the institution classified the incident.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "classification_criteria_triggered",
+          "interpretive_load": 4,
+          "evidence_burden": 2,
+          "disclosure_complexity": 1,
+          "reconstruction_burden": 2,
+          "rationale": "Modelled. High-judgement classification requiring committee evidence.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "affected_member_states",
+          "interpretive_load": 3,
+          "evidence_burden": 1,
+          "disclosure_complexity": 1,
+          "reconstruction_burden": 2,
+          "rationale": "Reconciled. Depends on affected services, users, branches, jurisdictions.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "incident_discovery_method",
+          "interpretive_load": 2,
+          "evidence_burden": 1,
+          "disclosure_complexity": 1,
+          "reconstruction_burden": 1,
+          "rationale": "Transformed. Operational categorisation from the detection process.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "business_continuity_plan_activated",
+          "interpretive_load": 1,
+          "evidence_burden": 1,
+          "disclosure_complexity": null,
+          "reconstruction_burden": 1,
+          "rationale": "Normalised, evidence-backed. Factual yes/no but evidence-backed.",
+          "disclosure_untiered": true
+        },
+        {
+          "field": "initial_impact_description",
+          "interpretive_load": 4,
+          "evidence_burden": 2,
+          "disclosure_complexity": 1,
+          "reconstruction_burden": 2,
+          "rationale": "Modelled. Narrative, provisional, judgement-heavy.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "primary_contact_name",
+          "interpretive_load": 0,
+          "evidence_burden": 0,
+          "disclosure_complexity": 2,
+          "reconstruction_burden": 0,
+          "rationale": "Direct. Personal/contact data.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "primary_contact_email",
+          "interpretive_load": 0,
+          "evidence_burden": 0,
+          "disclosure_complexity": 2,
+          "reconstruction_burden": 0,
+          "rationale": "Direct. Personal/contact data.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "competent_authority",
+          "interpretive_load": 2,
+          "evidence_burden": 0,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 1,
+          "rationale": "Transformed. Depends on jurisdiction, channel, supervisory allocation.",
+          "disclosure_untiered": false
+        }
+      ],
+      "aggregates": {
+        "required_fields": 15,
+        "direct_field_count": 5,
+        "direct_field_ratio_pct": 33.3,
+        "avg_interpretive_load": 1.53,
+        "il_ge_2_count": 7,
+        "il_ge_2_ratio_pct": 46.7,
+        "high_load_ge_3_count": 4,
+        "high_load_ge_3_ratio_pct": 26.7,
+        "evidence_bearing_count": 8,
+        "evidence_bearing_ratio_pct": 53.3,
+        "reconstruction_heavy_count": 4,
+        "reconstruction_heavy_ratio_pct": 26.7,
+        "disclosure_tiered_fields": 14,
+        "disclosure_untiered_fields": 1,
+        "private_or_restricted_count": 7,
+        "private_or_restricted_ratio_pct": 50.0
+      }
+    },
+    {
+      "act_type_id": "op:eu.nis2.significant_incident_early_warning.v1",
+      "display_name": "NIS2 significant incident early warning (Article 23(4)(a))",
+      "source_instruments": [
+        "32022L2555",
+        "32024R2690"
+      ],
+      "rows": [
+        {
+          "field": "entity_legal_identifier",
+          "interpretive_load": 0,
+          "evidence_burden": 0,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 0,
+          "rationale": "Direct. Stable institutional identifier.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "entity_legal_name",
+          "interpretive_load": 0,
+          "evidence_burden": 0,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 0,
+          "rationale": "Direct. Stable institutional identity.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "entity_type",
+          "interpretive_load": 2,
+          "evidence_burden": 0,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 1,
+          "rationale": "Transformed. Essential/important entity category selection; gates which Art 5-14 significance cases apply.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "submission_type",
+          "interpretive_load": 0,
+          "evidence_burden": 0,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 0,
+          "rationale": "Direct. Phase or stage metadata (early warning).",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "incident_reference_code",
+          "interpretive_load": 1,
+          "evidence_burden": 1,
+          "disclosure_complexity": 1,
+          "reconstruction_burden": 1,
+          "rationale": "Normalised. Internal reference; commitment-only disclosure.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "awareness_datetime_utc",
+          "interpretive_load": 3,
+          "evidence_burden": 1,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 2,
+          "rationale": "Reconciled. 'Becoming aware' starts the 24h clock; depends on reconciling detection, triage and significance determination.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "suspected_unlawful_or_malicious",
+          "interpretive_load": 4,
+          "evidence_burden": 1,
+          "disclosure_complexity": 1,
+          "reconstruction_burden": 2,
+          "rationale": "Modelled. Article 23(4)(a) judgement flag under stress, pre-assessment, with limited early information.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "possible_cross_border_impact",
+          "interpretive_load": 4,
+          "evidence_burden": 1,
+          "disclosure_complexity": 1,
+          "reconstruction_burden": 2,
+          "rationale": "Modelled. Article 23(4)(a) judgement flag; forward-looking impact assessment across Member States.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "primary_contact_name",
+          "interpretive_load": 0,
+          "evidence_burden": 0,
+          "disclosure_complexity": 2,
+          "reconstruction_burden": 0,
+          "rationale": "Direct. Personal/contact data.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "primary_contact_email",
+          "interpretive_load": 0,
+          "evidence_burden": 0,
+          "disclosure_complexity": 2,
+          "reconstruction_burden": 0,
+          "rationale": "Direct. Personal/contact data.",
+          "disclosure_untiered": false
+        },
+        {
+          "field": "recipient_csirt_or_competent_authority",
+          "interpretive_load": 2,
+          "evidence_burden": 0,
+          "disclosure_complexity": 0,
+          "reconstruction_burden": 1,
+          "rationale": "Transformed. Depends on Member State of establishment and the national CSIRT/CA allocation; no EU-level routing table.",
+          "disclosure_untiered": false
+        }
+      ],
+      "aggregates": {
+        "required_fields": 11,
+        "direct_field_count": 5,
+        "direct_field_ratio_pct": 45.5,
+        "avg_interpretive_load": 1.45,
+        "il_ge_2_count": 5,
+        "il_ge_2_ratio_pct": 45.5,
+        "high_load_ge_3_count": 3,
+        "high_load_ge_3_ratio_pct": 27.3,
+        "evidence_bearing_count": 4,
+        "evidence_bearing_ratio_pct": 36.4,
+        "reconstruction_heavy_count": 3,
+        "reconstruction_heavy_ratio_pct": 27.3,
+        "disclosure_tiered_fields": 11,
+        "disclosure_untiered_fields": 0,
+        "private_or_restricted_count": 5,
+        "private_or_restricted_ratio_pct": 45.5
+      }
+    }
+  ]
+}
