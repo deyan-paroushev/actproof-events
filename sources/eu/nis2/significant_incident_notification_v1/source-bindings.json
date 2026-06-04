@@ -1,0 +1,52 @@
+{
+  "generated_at": "2026-06-04T10:24:00Z",
+  "generator": "actproof-events cellar_fetch_nis2.py v1.3-nis2",
+  "note": "Build-time source bindings. Each entry pins the SHA-256 of the Official Journal PDF retrieved for its CELEX. Verification checks a receipt against these pinned hashes, with no live EU call. source_type 'eurlex' is the EU adapter; the binding shape is source-agnostic.",
+  "source_bindings": [
+    {
+      "source_type": "eurlex",
+      "celex": "32022L2555",
+      "eli_uri": "http://data.europa.eu/eli/dir/2022/2555/oj",
+      "authority": "European Parliament and Council of the European Union",
+      "artifact_type": "oj_pdf",
+      "format": "application/pdf",
+      "retrieved_at": "2026-06-04T10:24:00Z",
+      "retrieved_from": {
+        "url": "https://publications.europa.eu/resource/celex/32022L2555",
+        "method": "cellar-content-negotiation"
+      },
+      "sha256": "sha256:20d29e9c5300ae1095530996f04731311bf82bb7d4d6a7a0102cd0f075755cf3",
+      "article": "23"
+    },
+    {
+      "source_type": "eurlex",
+      "celex": "32024R2690",
+      "eli_uri": "http://data.europa.eu/eli/reg_impl/2024/2690/oj",
+      "authority": "European Commission",
+      "artifact_type": "oj_pdf",
+      "format": "application/pdf",
+      "retrieved_at": "2026-06-04T10:24:00Z",
+      "retrieved_from": {
+        "url": "https://publications.europa.eu/resource/celex/32024R2690",
+        "method": "cellar-content-negotiation"
+      },
+      "sha256": "sha256:8799b1a7c352060c4f155ddc56241b0b2679e2204645361b134bbda3199d7199",
+      "article": "3"
+    },
+    {
+      "source_type": "eurlex",
+      "celex": "32024R2690",
+      "eli_uri": "http://data.europa.eu/eli/reg_impl/2024/2690/oj",
+      "authority": "European Commission",
+      "artifact_type": "oj_pdf",
+      "format": "application/pdf",
+      "retrieved_at": "2026-06-04T10:24:00Z",
+      "retrieved_from": {
+        "url": "https://publications.europa.eu/resource/celex/32024R2690",
+        "method": "cellar-content-negotiation"
+      },
+      "sha256": "sha256:8799b1a7c352060c4f155ddc56241b0b2679e2204645361b134bbda3199d7199",
+      "article": "4"
+    }
+  ]
+}

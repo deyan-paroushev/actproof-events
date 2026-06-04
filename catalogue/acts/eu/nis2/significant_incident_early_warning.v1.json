@@ -1,0 +1,235 @@
+{
+  "schema": "actproof.act_profile.v3",
+  "act_type_id": "op:eu.nis2.significant_incident_early_warning.v1",
+  "claim_type": "significant_incident_early_warning",
+  "display_name": "NIS2 significant incident early warning (Article 23(4)(a))",
+  "regulatory_citation": {
+    "instrument": "Directive (EU) 2022/2555",
+    "article": "23(4)(a)",
+    "jurisdiction": "EU",
+    "in_force_from": "2024-10-18"
+  },
+  "required_claim_fields": [
+    "entity_legal_identifier",
+    "entity_legal_name",
+    "entity_type",
+    "submission_type",
+    "incident_reference_code",
+    "awareness_datetime_utc",
+    "suspected_unlawful_or_malicious",
+    "possible_cross_border_impact",
+    "primary_contact_name",
+    "primary_contact_email",
+    "recipient_csirt_or_competent_authority"
+  ],
+  "optional_claim_fields": [
+    "secondary_contact_name",
+    "secondary_contact_email",
+    "member_state_of_main_establishment",
+    "preliminary_incident_description",
+    "significance_criteria_provisionally_triggered",
+    "affected_services",
+    "other_affected_member_states",
+    "linked_dora_major_incident_reference",
+    "linked_gdpr_breach_notification_reference",
+    "linked_trust_service_incident_flag"
+  ],
+  "required_evidence_labels": [
+    "awareness_determination_record"
+  ],
+  "eligible_issuer_roles": [
+    "essential_entity",
+    "important_entity",
+    "trust_service_provider",
+    "managed_service_provider",
+    "managed_security_service_provider",
+    "third_party_reporting_provider"
+  ],
+  "recommended_witness_roles": [
+    "csirt",
+    "competent_authority",
+    "internal_compliance_officer",
+    "internal_chief_information_security_officer",
+    "internal_legal_counsel",
+    "external_auditor"
+  ],
+  "signature_policy": {
+    "minimum": "issuer_record",
+    "supports": [
+      "external_qes_artifact",
+      "internal_attestation_record"
+    ]
+  },
+  "version": 1,
+  "supersedes": null,
+  "maintainer": "actproof-events",
+  "test_vector_reference": "catalogue/acts/eu/nis2/significant_incident_early_warning.v1.test_vectors.json",
+  "regulated_context_profile": {
+    "allowed_context_types": [
+      "regulatory_filing"
+    ],
+    "allowed_submission_stages": [
+      "early_warning",
+      "superseded",
+      "withdrawn"
+    ],
+    "default_context_type": "regulatory_filing"
+  },
+  "prior_receipts_profile": {
+    "required_roles": [],
+    "optional_roles": [
+      "linked_72h_incident_notification",
+      "linked_intermediate_or_final_report"
+    ]
+  },
+  "reliance_context": {
+    "issuer_role": "essential or important entity within the scope of Directive (EU) 2022/2555 (or a third party acting on its behalf) preparing an early warning of a significant incident for submission to its national CSIRT or competent authority within the time limit set out in Article 23(4)(a) (without undue delay and in any event within 24 hours of becoming aware of the significant incident). Financial entities within the scope of Regulation (EU) 2022/2554 are outside this profile's issuer scope: by the lex specialis rule recognised in recital 28 and Article 4 of Directive (EU) 2022/2555, DORA major ICT-related incident reporting applies to those entities instead of NIS2 Article 23. This profile therefore applies to essential and important entities other than financial entities, including non-financial-entity members of a banking group and shared service providers whose incident may also bear on a financial-entity group member's separate DORA obligation",
+    "counterparty_action": "the national CSIRT or competent authority, on receiving the early warning through its own national reporting channel, records its receipt and, where possible within 24 hours under Article 23(5), provides initial feedback and, on request, guidance on mitigation; the entity retains the receipt as cryptographic evidence that it prepared and attested the early warning, with the stated awareness time and judgement flags, at the stated time; downstream verifiers (auditors, supervisors in subsequent inspections, the entity itself in audit defence) use the receipt to confirm the entity's identity, the awareness timestamp, the two early-warning judgement flags, and the integrity of any named evidence, and, where channel-acknowledgement evidence is included, to confirm transmission to the CSIRT or competent authority",
+    "later_verifiers": [
+      "csirt",
+      "competent_authority",
+      "single_point_of_contact",
+      "enisa",
+      "external_auditor",
+      "internal_audit",
+      "supervisory_inspector"
+    ],
+    "non_claims": [
+      "does_not_constitute_an_admission_of_liability_by_the_entity",
+      "the_mere_act_of_notification_does_not_subject_the_notifying_entity_to_increased_liability_article_23_1",
+      "does_not_imply_a_breach_of_contract_with_recipients_of_services",
+      "does_not_replace_the_72_hour_incident_notification_under_article_23_4_b",
+      "does_not_replace_the_one_month_final_report_under_article_23_4_d",
+      "does_not_replace_a_personal_data_breach_notification_under_regulation_eu_2016_679_gdpr_article_33",
+      "does_not_replace_a_dora_major_ict_related_incident_notification_under_regulation_eu_2022_2554_where_a_group_member_is_a_financial_entity",
+      "does_not_constitute_the_final_significance_determination_or_legal_classification_of_the_incident",
+      "does_not_predetermine_supervisory_findings_or_sanctions",
+      "does_not_prove_the_early_warning_was_transmitted_to_or_received_by_the_csirt_or_competent_authority"
+    ],
+    "reliance_statement": "The named essential or important entity attests that it became aware of a significant incident at the stated awareness_datetime_utc, that the incident meets one or more of the exhaustive significance criteria in Article 3 of Commission Implementing Regulation (EU) 2024/2690 read with Article 23(3) of Directive (EU) 2022/2555, and that it has prepared the early warning specified in Article 23(4)(a) of Directive (EU) 2022/2555 (indicating, where applicable, whether the incident is suspected of being caused by unlawful or malicious acts and whether it could have a cross-border impact) for submission to the named national CSIRT or competent authority within 24 hours of awareness. Verifiers may rely on the entity's identity (entity_legal_identifier), the awareness timestamp, the two early-warning judgement flags, and the cryptographic integrity of any named evidence. The baseline receipt evidences the entity's attestation and the integrity of that content as of the receipt time; it does not by itself prove that the early warning was transmitted to or received by the CSIRT or competent authority. Where channel-acknowledgement evidence is attached under the submission_evidence_policy, that evidence additionally attests transmission. The early warning is a first-stage filing under operational stress and is deliberately thin: Article 23(4)(a) requires only the two judgement flags on top of the entity identity, the awareness time, and a reference, with the fuller initial assessment, severity, impact, and indicators of compromise reserved to the 72-hour incident notification under Article 23(4)(b). The receipt does NOT constitute admission of liability (Article 23(1) provides that the mere act of notification does not subject the entity to increased liability), does NOT determine the final significance or legal classification of the incident, does NOT replace separate obligations under GDPR Article 33 or, where a group member is a financial entity, under DORA, and does NOT exhaust the entity's continuing obligations to file the 72-hour incident notification and the one-month final report under Article 23(4). NIS2 is a Directive: the operative early-warning form is the national transposition and the national CSIRT portal of the Member State of establishment, not an EU-level template. Where the operative national form adds, renames, or retypes fields relative to this source-bound profile, that difference is operative divergence in the sense defined by the framework and is to be recorded as such. The machine-readable non_claims array on this entry is the authoritative enumeration of what the receipt does not prove. Significance determinations, supervisory findings, and sanctions are reserved to the competent authority's own published processes."
+  },
+  "disclosure_profile": {
+    "public_fields": [
+      "entity_legal_identifier",
+      "entity_legal_name",
+      "entity_type",
+      "submission_type",
+      "awareness_datetime_utc",
+      "recipient_csirt_or_competent_authority",
+      "manifest.title",
+      "manifest.issuer.legal_name"
+    ],
+    "commitment_fields": [
+      "incident_reference_code",
+      "suspected_unlawful_or_malicious",
+      "possible_cross_border_impact",
+      "preliminary_incident_description",
+      "significance_criteria_provisionally_triggered",
+      "affected_services",
+      "other_affected_member_states"
+    ],
+    "private_fields": [
+      "primary_contact_name",
+      "primary_contact_email",
+      "secondary_contact_name",
+      "secondary_contact_email",
+      "linked_dora_major_incident_reference",
+      "linked_gdpr_breach_notification_reference"
+    ],
+    "back_propagation_scope": {
+      "linked_72h_incident_notification": [
+        "manifest.claim.entity_legal_identifier",
+        "manifest.claim.incident_reference_code"
+      ]
+    }
+  },
+  "submission_evidence_policy": {
+    "required": false,
+    "supports": [
+      "secure_electronic_channel_acknowledgement"
+    ]
+  },
+  "claim_field_types": {
+    "entity_legal_identifier": "string",
+    "entity_legal_name": "string",
+    "entity_type": "string",
+    "submission_type": "string",
+    "incident_reference_code": "string",
+    "awareness_datetime_utc": "datetime",
+    "suspected_unlawful_or_malicious": "boolean",
+    "possible_cross_border_impact": "boolean",
+    "primary_contact_name": "string",
+    "primary_contact_email": "email",
+    "recipient_csirt_or_competent_authority": "string",
+    "secondary_contact_name": "string",
+    "secondary_contact_email": "email",
+    "member_state_of_main_establishment": "string",
+    "preliminary_incident_description": "text",
+    "significance_criteria_provisionally_triggered": "string_list",
+    "affected_services": "string_list",
+    "other_affected_member_states": "string_list",
+    "linked_dora_major_incident_reference": "string",
+    "linked_gdpr_breach_notification_reference": "string",
+    "linked_trust_service_incident_flag": "boolean"
+  },
+  "source_bindings": [
+    {
+      "source_type": "eurlex",
+      "authority": "European Parliament and Council of the European Union",
+      "instrument": "Directive (EU) 2022/2555 (NIS 2 Directive)",
+      "identifiers": {
+        "celex": "32022L2555",
+        "eli": "http://data.europa.eu/eli/dir/2022/2555/oj"
+      },
+      "provisions": [
+        "Article 23"
+      ],
+      "artifact": {
+        "artifact_type": "oj_pdf",
+        "media_type": "application/pdf",
+        "sha256": "sha256:20d29e9c5300ae1095530996f04731311bf82bb7d4d6a7a0102cd0f075755cf3",
+        "retrieved_at": "2026-06-04T10:24:00Z",
+        "retrieved_from": {
+          "url": "https://publications.europa.eu/resource/celex/32022L2555",
+          "method": "cellar-content-negotiation"
+        }
+      }
+    },
+    {
+      "source_type": "eurlex",
+      "authority": "European Commission",
+      "instrument": "Commission Implementing Regulation (EU) 2024/2690",
+      "identifiers": {
+        "celex": "32024R2690",
+        "eli": "http://data.europa.eu/eli/reg_impl/2024/2690/oj"
+      },
+      "provisions": [
+        "Article 3",
+        "Article 4"
+      ],
+      "artifact": {
+        "artifact_type": "oj_pdf",
+        "media_type": "application/pdf",
+        "sha256": "sha256:8799b1a7c352060c4f155ddc56241b0b2679e2204645361b134bbda3199d7199",
+        "retrieved_at": "2026-06-04T10:24:00Z",
+        "retrieved_from": {
+          "url": "https://publications.europa.eu/resource/celex/32024R2690",
+          "method": "cellar-content-negotiation"
+        }
+      }
+    }
+  ],
+  "generation": {
+    "method": "ai_assisted_extraction_from_authoritative_sources",
+    "reconciled": true,
+    "reconciliation_note": "Source-bound on 2026-06-04: the SHA-256 of each Official Journal PDF was pinned by cellar_fetch_nis2.py (Directive (EU) 2022/2555 retrieved at 1,326,245 bytes; CIR (EU) 2024/2690 at 959,920 bytes, both via cellar content-negotiation). Field surface drawn from Article 23(4)(a) of Directive (EU) 2022/2555 (early-warning content: the two judgement flags on top of entity identity, awareness time, and a reference) and the exhaustive horizontal significance criteria of Article 3 of CIR (EU) 2024/2690 read with Article 23(3), with the per-sector cases in Articles 5 to 14 treated as conditional source dispersion applying only to the digital-infrastructure entity types the Regulation enumerates. NIS2 has no harmonised EU early-warning field template equivalent to DORA's ITS 2025/302 Annex; the operative form is the national CSIRT portal, recorded in reliance_context as the site of operative divergence. The field-surface reading against the pinned PDF text has been performed from the published Article 23 and Article 3 text and is subject to a final human review pass before the profile is promoted from draft.",
+    "authoring_process": "actproof-events authoring process, eight-stage",
+    "generated_at": "2026-06-04T10:24:00Z"
+  },
+  "transparency_note_reference": "catalogue/acts/eu/nis2/significant_incident_early_warning.v1.transparency.md",
+  "profile_status": {
+    "maturity": "draft",
+    "since": "1.6-rc1",
+    "summary": "Source-bound against Article 23(4)(a) of Directive (EU) 2022/2555 and Article 3 of CIR (EU) 2024/2690, with both OJ PDF hashes pinned. Built as the comparative second case against the DORA initial-notification profile. Held at draft pending a conformance vector set and final review. NIS2 is a Directive with no EU-level early-warning template; the operative national reporting form is recorded as the locus of operative divergence rather than itself source-bound."
+  }
+}
