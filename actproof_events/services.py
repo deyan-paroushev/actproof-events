@@ -597,34 +597,53 @@ def _dig(obj: Any, *names: str) -> Any:
     return None
 
 
-# Ordered locations for a supplied catalogue entry hash. Production first
-# (manifest.catalogue.catalogue_entry_hash, or raw_manifest.catalogue as the
-# vectors key the canonical manifest), then a bare catalogue block, then the
-# transitional profile.catalogue_entry_hash, then a top-level value. The field
-# name is frozen as catalogue_entry_hash; the generic entry_hash is not accepted.
-_ENTRY_HASH_LOCATIONS: tuple[tuple[tuple[str, ...], str], ...] = (
-    (("manifest", "catalogue"), "manifest.catalogue.catalogue_entry_hash"),
-    (("raw_manifest", "catalogue"), "raw_manifest.catalogue.catalogue_entry_hash"),
-    (("catalogue",), "catalogue.catalogue_entry_hash"),
-    (("profile",), "profile.catalogue_entry_hash"),
-    ((), "catalogue_entry_hash"),
+# Ordered locations for a supplied catalogue entry hash, with the key to read at
+# each. The universal rule: inside a `catalogue` object the field is `entry_hash`
+# / `entry_version` (the parent already qualifies it; this is what the substrate
+# mints and what consumers read), and the prefixed `catalogue_entry_hash` is used
+# only in flat contexts that have no `catalogue.` parent (the profile block, a
+# bare top level). The canonical, manifest-covered location is the first match;
+# flat locations sit outside the manifest and are transitional. Inside catalogue
+# objects the prefixed name is tolerated as an alias so an early adopter who
+# emitted the stutter name still binds, but `entry_hash` is canonical.
+# Each row: (container_path, hash_keys, version_keys, label, transitional).
+_ENTRY_HASH_LOCATIONS: tuple[tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...], str, bool], ...] = (
+    (("manifest", "catalogue"), ("entry_hash", "catalogue_entry_hash"),
+     ("entry_version", "catalogue_entry_version"), "manifest.catalogue.entry_hash", False),
+    (("raw_manifest", "catalogue"), ("entry_hash", "catalogue_entry_hash"),
+     ("entry_version", "catalogue_entry_version"), "raw_manifest.catalogue.entry_hash", False),
+    (("catalogue",), ("entry_hash", "catalogue_entry_hash"),
+     ("entry_version", "catalogue_entry_version"), "catalogue.entry_hash", False),
+    (("profile",), ("catalogue_entry_hash",), ("catalogue_entry_version",),
+     "profile.catalogue_entry_hash", True),
+    ((), ("catalogue_entry_hash",), ("catalogue_entry_version",),
+     "catalogue_entry_hash", True),
 )
-_TRANSITIONAL_LOCATION = "profile.catalogue_entry_hash"
 
 
-def _find_entry_hash(receipt: Any) -> tuple[Any, str | None]:
-    """Return (value, location_label) for the supplied catalogue entry hash,
-    checking the production location before the transitional one. (None, None)
+def _first(container: dict[str, Any], keys: tuple[str, ...]) -> Any:
+    for k in keys:
+        if container.get(k) not in (None, ""):
+            return container[k]
+    return None
+
+
+def _find_entry_hash(receipt: Any) -> tuple[Any, Any, str | None, bool]:
+    """Return (hash, version, location_label, transitional) for the supplied
+    catalogue entry hash, canonical (manifest-covered) location first. Flat
+    locations outside the manifest are transitional. (None, None, None, False)
     if absent."""
     if not isinstance(receipt, dict):
-        return None, None
-    for path, label in _ENTRY_HASH_LOCATIONS:
+        return None, None, None, False
+    for path, hash_keys, version_keys, label, transitional in _ENTRY_HASH_LOCATIONS:
         container: Any = receipt
         for key in path:
             container = container.get(key) if isinstance(container, dict) else None
-        if isinstance(container, dict) and container.get("catalogue_entry_hash") not in (None, ""):
-            return container["catalogue_entry_hash"], label
-    return None, None
+        if isinstance(container, dict):
+            value = _first(container, hash_keys)
+            if value is not None:
+                return value, _first(container, version_keys), label, transitional
+    return None, None, None, False
 
 
 def check_profile_binding(receipt: dict[str, Any], catalogue_root: Path | None = None) -> dict[str, Any]:
@@ -667,8 +686,7 @@ def check_profile_binding(receipt: dict[str, Any], catalogue_root: Path | None =
 
     entry_path = profiles[act_id].get("_catalogue_path")
     local_hash = catalogue_entry_hash(entry_path) if entry_path else None
-    supplied_hash, supplied_hash_location = _find_entry_hash(receipt)
-    supplied_version = _dig(receipt, "catalogue_entry_version")
+    supplied_hash, supplied_version, supplied_hash_location, supplied_transitional = _find_entry_hash(receipt)
 
     # No entry hash supplied: recognised, but not bound. Never true.
     if supplied_hash is None:
@@ -696,7 +714,7 @@ def check_profile_binding(receipt: dict[str, Any], catalogue_root: Path | None =
         "supplied_entry_hash": supplied_hash,
         "local_entry_hash": local_hash,
         "supplied_entry_hash_location": supplied_hash_location,
-        "transitional_descriptor": supplied_hash_location == _TRANSITIONAL_LOCATION,
+        "transitional_descriptor": supplied_transitional,
         "catalogue_entry_hash_basis": CATALOGUE_ENTRY_HASH_BASIS,
         "supplied_entry_version": supplied_version,
         "checks_performed": ["act_type_id_known", "catalogue_entry_hash_match"],
