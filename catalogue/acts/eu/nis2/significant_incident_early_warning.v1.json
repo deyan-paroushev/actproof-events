@@ -61,7 +61,7 @@
     ]
   },
   "version": 2,
-  "supersedes": 1,
+  "supersedes": null,
   "maintainer": "actproof-events",
   "test_vector_reference": "catalogue/acts/eu/nis2/significant_incident_early_warning.v1.test_vectors.json",
   "regulated_context_profile": {

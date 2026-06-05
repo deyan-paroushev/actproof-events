@@ -429,6 +429,12 @@
         "additionalProperties": false,
         "required": ["source_type", "authority", "instrument", "identifiers", "provisions", "artifact"],
         "properties": {
+          "source_binding_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "minLength": 1,
+            "description": "Stable identifier for this source binding, unique within the entry. Lets profiles, interpretation links, and field derivations reference a specific binding by a name that does not change when the binding list is reordered. Optional so entries authored before stable ids remain valid. Example: 'sb_dora_reg_2022_2554'."
+          },
           "source_type": {
             "type": "string",
             "pattern": "^[a-z0-9_]+$",

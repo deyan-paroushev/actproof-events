@@ -6,7 +6,7 @@
   "profile": {
     "act_type_id": "op:eu.dora.ict_incident_notification_initial.v1",
     "catalogue_entry_version": 2,
-    "catalogue_entry_hash": "sha256:d7d955d2eccdbd76cd611dfdc70f71ba2391e767acc50e2ba382ce7b6973c369",
+    "catalogue_entry_hash": "sha256:11d7f8ed9b896f73a1e82bc17133626200758ecb3764f0f5e2bb66744cd5c337",
     "catalogue_entry_hash_basis": "SHA-256 of the catalogue entry JSON file bytes as written to disk in the actproof-events repository at the named version."
   },
   "raw_manifest": {

@@ -67,7 +67,7 @@
     ]
   },
   "version": 2,
-  "supersedes": 1,
+  "supersedes": null,
   "maintainer": "actproof-events",
   "test_vector_reference": "catalogue/acts/eu/dora/ict_incident_notification_initial.v1.test_vectors.json",
   "regulated_context_profile": {
