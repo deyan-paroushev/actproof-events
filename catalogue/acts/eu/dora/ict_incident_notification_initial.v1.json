@@ -66,8 +66,8 @@
       "internal_attestation_record"
     ]
   },
-  "version": 1,
-  "supersedes": null,
+  "version": 2,
+  "supersedes": 1,
   "maintainer": "actproof-events",
   "test_vector_reference": "catalogue/acts/eu/dora/ict_incident_notification_initial.v1.test_vectors.json",
   "regulated_context_profile": {
@@ -185,6 +185,7 @@
   },
   "source_bindings": [
     {
+      "source_binding_id": "sb_dora_reg_2022_2554",
       "source_type": "eurlex",
       "authority": "European Parliament and Council of the European Union",
       "instrument": "Regulation (EU) 2022/2554 (Digital Operational Resilience Act)",
@@ -207,6 +208,7 @@
       }
     },
     {
+      "source_binding_id": "sb_dora_reg_2025_0301",
       "source_type": "eurlex",
       "authority": "European Commission",
       "instrument": "Commission Delegated Regulation (EU) 2025/301",
@@ -231,6 +233,7 @@
       }
     },
     {
+      "source_binding_id": "sb_dora_reg_2025_0302",
       "source_type": "eurlex",
       "authority": "European Commission",
       "instrument": "Commission Implementing Regulation (EU) 2025/302",
@@ -254,6 +257,7 @@
       }
     },
     {
+      "source_binding_id": "sb_dora_reg_2024_1772",
       "source_type": "eurlex",
       "authority": "European Commission",
       "instrument": "Commission Delegated Regulation (EU) 2024/1772",

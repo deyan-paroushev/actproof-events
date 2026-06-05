@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "actproof-events"
-version = "1.5.0rc1"
+version = "1.6.0"
 description = "Open catalogue, JSON schemas, source-bound act profiles, and CC0 conformance vectors for machine-readable organisational acts."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -65,6 +65,24 @@ schema-validation = [
   "jsonschema>=4.21",
 ]
 
+# The optional REST API (developer face): pip install "actproof-events[api]"
+api = [
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.27",
+]
+
+# The optional MCP server (agent face): pip install "actproof-events[mcp]"
+mcp = [
+  "mcp>=1.2",
+]
+
+# Everything needed to run both servers locally.
+serve = [
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.27",
+  "mcp>=1.2",
+]
+
 [project.scripts]
 # Experimental, repo-local tooling: the ActProof Mapper pipeline exposed as one
 # console command with subcommands. After `pip install -e .` from the repo, run
@@ -73,6 +91,11 @@ schema-validation = [
 # is NOT a public packaged SDK; the mapper is experimental and not on PyPI as a
 # standalone package.
 actproof-mapper = "actproof_events.cli:main"
+
+# The optional servers, available when the matching extra is installed.
+# actproof-api needs [api]; actproof-mcp needs [mcp].
+actproof-api = "actproof_events.api:main"
+actproof-mcp = "actproof_events.mcp_server:main"
 
 [project.urls]
 Homepage = "https://github.com/deyan-paroushev/actproof-events"
@@ -103,12 +126,19 @@ packages = ["actproof_events"]
 "spec/vocabularies.md" = "actproof_events/data/spec/vocabularies.md"
 "spec/schema_version_policy.md" = "actproof_events/data/spec/schema_version_policy.md"
 "CATALOGUE_LOADER_CONTRACT.md" = "actproof_events/data/CATALOGUE_LOADER_CONTRACT.md"
+# Evidence-layer scores power the per-field origin (direct/derived/interpretive).
+# They must ship in the wheel or origin silently degrades to "unscored".
+"analysis/evidence_layer_scores.json" = "actproof_events/data/analysis/evidence_layer_scores.json"
+# Field-level source-basis derivations from the Mapper. Empty until populated;
+# every field falls back to the act-level source basis while it is empty.
+"analysis/field_derivations.json" = "actproof_events/data/analysis/field_derivations.json"
 
 [tool.hatch.build.targets.sdist]
 include = [
   "/actproof_events",
   "/catalogue",
   "/spec",
+  "/analysis",
   "/docs",
   "/scripts",
   "/mapper",
