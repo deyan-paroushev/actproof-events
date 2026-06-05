@@ -2,7 +2,7 @@
   "schema": "actproof.attestation_manifest.v1",
   "manifest_version": 1,
   "act_type_id": "op:eu.dora.ict_incident_notification_initial.v1",
-  "catalogue_entry_version": 1,
+  "catalogue_entry_version": 2,
   "tenant_id": "test-tenant-eu-dora-001",
   "issuer_org_name": "Example Financial Entity S.A.",
   "authority_label": "financial_entity",
