@@ -1,0 +1,380 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actproof.org/schemas/profile_view.v1.schema.json",
+  "title": "ActProof profile view v1",
+  "description": "A public, renderable projection generated from an ActProof Events catalogue entry. The catalogue entry remains the canonical object.",
+  "type": "object",
+  "required": [
+    "profile_view_schema",
+    "profile_view_type",
+    "profile_view_semantics",
+    "act_id",
+    "generated_from",
+    "canonical_object",
+    "profile",
+    "coverage",
+    "profile_view_hash",
+    "profile_view_hash_basis",
+    "profile_semantic_hash",
+    "profile_semantic_hash_basis",
+    "profile_artifact_hash",
+    "profile_artifact_hash_basis"
+  ],
+  "properties": {
+    "profile_view_schema": {
+      "const": "actproof.profile_view.v1"
+    },
+    "profile_view_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile_view_semantics": {
+      "type": "string",
+      "minLength": 1
+    },
+    "act_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assessment_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "generated_from": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile_view_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "Backward-compatible alias for profile_semantic_hash."
+    },
+    "profile_view_hash_basis": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Backward-compatible alias for profile_semantic_hash_basis."
+    },
+    "canonical_object": {
+      "type": "object",
+      "required": [
+        "kind",
+        "act_id",
+        "catalogue_entry_hash",
+        "catalogue_entry_hash_basis"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "act_id": {
+          "type": "string"
+        },
+        "catalogue_entry_hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "catalogue_entry_hash_basis": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "profile": {
+      "type": "object",
+      "required": [
+        "display_name",
+        "claim_type",
+        "version",
+        "catalogue_entry_hash",
+        "boundary",
+        "boundary_id",
+        "non_claims",
+        "required_evidence_labels",
+        "interpretive_summary"
+      ],
+      "properties": {
+        "display_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "claim_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "type": [
+            "string",
+            "integer",
+            "number",
+            "null"
+          ]
+        },
+        "maturity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "regulatory_citation": {
+          "type": "object"
+        },
+        "catalogue_entry_hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "catalogue_entry_hash_basis": {
+          "type": "string"
+        },
+        "compatible_with_receipts": {
+          "type": "boolean"
+        },
+        "boundary": {
+          "type": "string"
+        },
+        "boundary_id": {
+          "type": "string"
+        },
+        "claim_flags": {
+          "type": "object"
+        },
+        "non_claims": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "required_evidence_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "interpretive_summary": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "source_basis": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string"
+        },
+        "instruments": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "required_evidence_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_scope": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "coverage": {
+      "type": "object",
+      "required": [
+        "field_counts",
+        "field_source_basis",
+        "evidence_scope",
+        "assessment",
+        "disclosure"
+      ],
+      "properties": {
+        "field_counts": {
+          "type": "object",
+          "required": [
+            "total",
+            "required",
+            "optional"
+          ],
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "required": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "optional": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": true
+        },
+        "field_source_basis": {
+          "type": "object"
+        },
+        "evidence_scope": {
+          "type": "object"
+        },
+        "assessment": {
+          "type": "object"
+        },
+        "disclosure": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "field_id",
+          "required",
+          "type",
+          "disclosure_tier",
+          "interpretive_status",
+          "evidence_labels",
+          "evidence_scope"
+        ],
+        "properties": {
+          "field_id": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string"
+          },
+          "disclosure_tier": {
+            "type": "string"
+          },
+          "interpretive_status": {
+            "type": "string",
+            "enum": [
+              "direct",
+              "derived",
+              "interpretive",
+              "unscored"
+            ]
+          },
+          "mapping_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "interpretive_load": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "rubric_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "interpretive": {
+            "type": "boolean"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "evidence_burden": {
+            "type": [
+              "string",
+              "integer",
+              "number",
+              "null"
+            ]
+          },
+          "evidence_labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_scope": {
+            "type": "string"
+          },
+          "source_basis": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "source_basis_scope": {
+            "type": "string",
+            "enum": [
+              "act",
+              "field"
+            ]
+          },
+          "fallback_used": {
+            "type": "boolean"
+          },
+          "non_claims": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "boundary": {
+            "type": "string"
+          },
+          "boundary_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "non_claims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "boundary": {
+      "type": "object"
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "profile_semantic_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "profile_artifact_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "profile_semantic_hash_basis": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile_artifact_hash_basis": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": true
+}

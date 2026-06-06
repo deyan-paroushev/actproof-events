@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "actproof-events"
-version = "1.6.1"
+version = "1.7.0"
 description = "Open catalogue, JSON schemas, source-bound act profiles, and CC0 conformance vectors for machine-readable organisational acts."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -91,6 +91,7 @@ serve = [
 # is NOT a public packaged SDK; the mapper is experimental and not on PyPI as a
 # standalone package.
 actproof-mapper = "actproof_events.cli:main"
+actproof-events = "actproof_events.exports:main"
 
 # The optional servers, available when the matching extra is installed.
 # actproof-api needs [api]; actproof-mcp needs [mcp].

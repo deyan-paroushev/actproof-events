@@ -8,6 +8,30 @@ When an organization reports a regulated act, the report is a claim. A DORA inci
 
 This repository holds the standard, the schemas, the catalogue of act profiles, and the conformance test vectors. The companion package `actproof` holds the substrate that mints, anchors, and verifies the receipts themselves.
 
+
+## Profile-view export
+
+`actproof-events` can export a rich public JSON projection from a canonical catalogue entry. The catalogue entry remains the canonical object; the exported profile view is the renderable projection used by websites, APIs, MCP servers, audit packs and compliance interfaces.
+
+CLI:
+
+```bash
+actproof-events export-profile-view \
+  op:eu.dora.ict_incident_notification_initial.v1 \
+  --out dora.profile-view.json \
+  --validate
+```
+
+Python:
+
+```python
+from actproof_events.exports import build_profile_view
+
+view = build_profile_view("op:eu.dora.ict_incident_notification_initial.v1")
+```
+
+The projection declares `profile_view_schema: actproof.profile_view.v1`, carries package-version provenance, includes coverage metrics, and contains two explicit hashes: `profile_semantic_hash` for version-independent profile reproducibility and `profile_artifact_hash` for release-specific artifact traceability. `profile_view_hash` remains as a backward-compatible alias for the semantic hash. See `docs/PROFILE_VIEW_EXPORT.md`.
+
 ## How verification works
 
 A regulated act has three things a relying party needs to be sure of. ActProof Events answers each one separately.
@@ -35,6 +59,7 @@ The package exposes a small, typed API for locating this data:
 from actproof_events import (
     get_catalogue_path,
     get_schema_path,
+    get_profile_view_schema_path,
     get_spec_path,
     list_catalogue_entries,
     __version__,
@@ -48,6 +73,9 @@ for entry_path in list_catalogue_entries():
 
 # The bundled JSON Schema for catalogue entries.
 schema_path = get_schema_path("act_profile.v3")
+
+# The bundled JSON Schema for exported profile views.
+profile_view_schema_path = get_profile_view_schema_path()
 
 # The bundled specification text.
 spec_path = get_spec_path()
