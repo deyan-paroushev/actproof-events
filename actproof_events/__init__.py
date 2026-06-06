@@ -27,7 +27,7 @@ Typical usage from a consuming application::
             ...
 
 The package version tracks the actproof-events specification version. A
-package version of ``1.6.1`` ships the v1.5-rc1 specification and the
+package version of ``1.7.0`` ships the v1.5-rc1 specification and the
 catalogue state at that release tag.
 
 References:
@@ -49,6 +49,7 @@ __all__ = [
     "get_data_root",
     "get_catalogue_path",
     "get_schema_path",
+    "get_profile_view_schema_path",
     "get_spec_path",
     "get_vocabularies_path",
     "get_schema_version_policy_path",
@@ -64,7 +65,7 @@ __all__ = [
 # downstream artefact records "issued against actproof-events specification
 # v1.5-rc1").
 
-__version__: Final[str] = "1.6.1"
+__version__: Final[str] = "1.7.0"
 __spec_version__: Final[str] = "1.5-rc1"
 
 
@@ -152,6 +153,28 @@ def get_schema_path(name: str) -> Path:
     if not name.endswith(".json"):
         name = f"{name}.json"
     return _DATA_ROOT / "schemas" / name
+
+
+
+
+def get_profile_view_schema_path() -> Path:
+    """Return the path to the bundled profile-view JSON Schema.
+
+    The profile-view schema defines the public projection produced by
+    ``actproof_events.exports.build_profile_view`` and the
+    ``actproof-events export-profile-view`` CLI. In wheels the schema is
+    located under ``actproof_events/data/schemas/``. In source checkouts,
+    where build-time data materialisation may not have happened yet, this
+    accessor falls back to ``spec/schemas/``.
+
+    Returns:
+        Path: The path to ``profile_view.v1.schema.json``.
+    """
+    installed = get_schema_path("profile_view.v1.schema")
+    if installed.exists():
+        return installed
+    source_tree = Path(__file__).resolve().parents[1] / "spec" / "schemas" / "profile_view.v1.schema.json"
+    return source_tree
 
 
 def get_spec_path() -> Path:
