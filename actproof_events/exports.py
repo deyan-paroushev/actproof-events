@@ -243,6 +243,14 @@ def compute_profile_coverage(act_id: str, *, fields: list[dict[str, Any]] | None
     except Exception:
         pass
 
+    # Atom-side coverage: the missingness signal (which recorded atoms feed no
+    # field). Computed, not stored. Lets a reviewer/agent see disclosed gaps.
+    try:
+        from actproof_events.source_binding import compute_source_atom_coverage
+        coverage["source_atom_coverage"] = compute_source_atom_coverage(act_id)
+    except Exception:
+        pass
+
     return coverage
 
 
@@ -342,6 +350,14 @@ def build_profile_view(
             "text": profile.get("boundary") or BOUNDARY,
         },
     }
+
+    # Completeness / known-scope declaration: never imply "if it is not here it
+    # does not matter". Computed from the derivations doc's completeness block.
+    try:
+        from actproof_events.source_binding import get_profile_completeness
+        projection["completeness"] = get_profile_completeness(act_id)
+    except Exception:
+        pass
 
     if include_fields:
         projection["fields"] = field_rows
@@ -707,6 +723,20 @@ def main(argv: list[str] | None = None) -> int:
     coverage_cmd.add_argument("act_id", help="ActProof act_type_id")
     coverage_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
 
+    atom_cov_cmd = sub.add_parser(
+        "source-atom-coverage",
+        help="Show which recorded source atoms are (un)used by fields \u2014 a missingness signal",
+    )
+    atom_cov_cmd.add_argument("act_id", help="ActProof act_type_id")
+    atom_cov_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    completeness_cmd = sub.add_parser(
+        "profile-completeness",
+        help="Print the profile's explicit known-scope / not-exhaustive-of declaration",
+    )
+    completeness_cmd.add_argument("act_id", help="ActProof act_type_id")
+    completeness_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
     lint = sub.add_parser(
         "lint-report",
         help="Lint an incident-report JSON payload against a profile",
@@ -804,6 +834,44 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  required (template-cell) : {req.get('template_cell_bound')}/{req['required_total']} ({req['coverage_ratio']}%)")
         print(f"  optional (experimental)  : {opt['field_level']}/{opt['optional_total']} contextual; {opt['template_cell_bound']} template-cell")
         print(f"  precision tiers          : " + ", ".join(f"{k}={v}" for k, v in prec.items() if v))
+        return 0
+
+    if args.command == "source-atom-coverage":
+        from actproof_events.source_binding import compute_source_atom_coverage as _acov
+        cov = _acov(args.act_id)
+        if args.json:
+            print(json.dumps(cov, ensure_ascii=False, indent=2))
+            return 0
+        print(f"source-atom coverage for {args.act_id}")
+        print(f"  total source atoms          : {cov['total_source_atoms']}")
+        print(f"  used by at least one field  : {cov['atoms_used_by_fields']}")
+        print(f"  with required-field binding : {cov['atoms_with_required_field_bindings']}")
+        print(f"  only in contextual bindings : {cov['atoms_only_in_contextual_bindings']}")
+        print(f"  unused (gap signal)         : {cov['unused_source_atoms']}")
+        for a in cov["unused_source_atom_ids"]:
+            print(f"      - {a}")
+        if cov["dangling_atom_references"]:
+            print(f"  DANGLING refs (integrity!)  : {cov['dangling_atom_references']}")
+            for a in cov["dangling_atom_reference_ids"]:
+                print(f"      - {a}")
+        return 0
+
+    if args.command == "profile-completeness":
+        from actproof_events.source_binding import get_profile_completeness as _comp
+        comp = _comp(args.act_id)
+        if args.json:
+            print(json.dumps(comp, ensure_ascii=False, indent=2))
+            return 0
+        print(f"profile completeness for {args.act_id}")
+        print(f"  status        : {comp.get('completeness_status')} (review: {comp.get('review_status')})")
+        print(f"  known scope   : {comp.get('known_scope')}")
+        print(f"  field IDs universal? : {comp.get('field_id_policy', {}).get('universal_claim')}")
+        print(f"  NOT exhaustive of:")
+        for x in comp.get("not_exhaustive_of", []):
+            print(f"      - {x}")
+        print(f"  challenges    : {', '.join(comp.get('challenge_types', []))}")
+        if comp.get("challenge_channel"):
+            print(f"  raise one at  : {comp['challenge_channel']}")
         return 0
 
     if args.command == "lint-report":

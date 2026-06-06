@@ -87,3 +87,54 @@ def test_profile_view_exports_required_field_level_coverage():
     # so they no longer use act-level fallback. The release claim still gates on required.
     optional_rows = [f for f in view["fields"] if not f["required"]]
     assert all(f["fallback_used"] is False for f in optional_rows)
+
+
+# --- 1.8.1 trust-release additions -------------------------------------------
+
+from actproof_events.source_binding import (
+    compute_source_atom_coverage,
+    get_profile_completeness,
+)
+
+
+def test_source_atom_coverage_is_internally_consistent():
+    cov = compute_source_atom_coverage(ACT_ID)
+    atoms = list_source_atoms(ACT_ID)
+    # Totals match the actual atom set, and arithmetic is consistent.
+    assert cov["total_source_atoms"] == len(atoms)
+    assert cov["atoms_used_by_fields"] + cov["unused_source_atoms"] == cov["total_source_atoms"]
+    # Required-bound atoms are a subset of used atoms.
+    assert cov["atoms_with_required_field_bindings"] <= cov["atoms_used_by_fields"]
+    # Integrity: no field references an atom that does not exist.
+    assert cov["dangling_atom_references"] == 0
+    assert cov["dangling_atom_reference_ids"] == []
+    # The unused list length matches the reported count (honest gap signal).
+    assert len(cov["unused_source_atom_ids"]) == cov["unused_source_atoms"]
+
+
+def test_source_atom_coverage_unused_ids_are_real_atoms_not_invented():
+    cov = compute_source_atom_coverage(ACT_ID)
+    atom_ids = {a["source_atom_id"] for a in list_source_atoms(ACT_ID)}
+    # Every "unused" id is a genuine recorded atom, not a fabricated one.
+    for aid in cov["unused_source_atom_ids"]:
+        assert aid in atom_ids
+
+
+def test_profile_completeness_declares_non_universality_and_scope():
+    comp = get_profile_completeness(ACT_ID)
+    # The release's central honesty claim: field IDs are NOT universal.
+    assert comp["field_id_policy"]["universal_claim"] is False
+    # It must name what it does not cover (never imply exhaustiveness).
+    assert comp["not_exhaustive_of"]
+    assert comp["challenge_allowed"] is True
+    assert "missing_field" in comp["challenge_types"]
+
+
+def test_profile_view_includes_completeness_and_atom_coverage():
+    view = build_profile_view(ACT_ID, generated_at="2026-01-01T00:00:00Z")
+    assert "completeness" in view
+    assert view["completeness"]["field_id_policy"]["universal_claim"] is False
+    assert "source_atom_coverage" in view["coverage"]
+    sac = view["coverage"]["source_atom_coverage"]
+    assert sac["total_source_atoms"] == len(list_source_atoms(ACT_ID))
+    assert sac["dangling_atom_references"] == 0

@@ -364,6 +364,99 @@ def compute_field_source_coverage(act_id: str) -> dict[str, Any]:
     }
 
 
+def compute_source_atom_coverage(act_id: str) -> dict[str, Any]:
+    """Compute coverage from the SOURCE side: which atoms feed a field.
+
+    The field-side coverage (``compute_field_source_coverage``) answers
+    "how many fields are bound?". This answers the inverse and more honest
+    question for missingness: "is there a source provision we recorded as an
+    atom that NO field yet represents?". An unused atom is not a bug — it is a
+    signal that a provision is captured but not yet surfaced as a field, which
+    is exactly what a reviewer checking for gaps wants to see.
+
+    Everything here is derived from the stored ``source_atoms`` references on
+    each derivation; nothing is stored per-atom.
+    """
+    atoms = list_source_atoms(act_id)
+    atom_ids = {a["source_atom_id"] for a in atoms}
+    derivations = list_field_derivations(act_id)
+
+    used: set[str] = set()
+    required_used: set[str] = set()
+    for d in derivations:
+        refs = set(d.get("source_atoms", []))
+        used |= refs
+        if d.get("required"):
+            required_used |= refs
+
+    used_existing = used & atom_ids
+    unused = sorted(atom_ids - used)
+    only_contextual = sorted((used_existing - required_used))
+    dangling = sorted(used - atom_ids)  # refs to atoms that do not exist
+
+    return {
+        "total_source_atoms": len(atom_ids),
+        "atoms_used_by_fields": len(used_existing),
+        "unused_source_atoms": len(unused),
+        "unused_source_atom_ids": unused,
+        "atoms_with_required_field_bindings": len(required_used & atom_ids),
+        "atoms_only_in_contextual_bindings": len(only_contextual),
+        "atoms_only_in_contextual_binding_ids": only_contextual,
+        "dangling_atom_references": len(dangling),
+        "dangling_atom_reference_ids": dangling,
+        "coverage_basis": "atoms_referenced_by_at_least_one_field_derivation",
+        "interpretation_note": (
+            "An unused source atom means a recorded provision is not yet "
+            "represented by any field. It is a gap signal for review, not a "
+            "defect. This coverage does not prove the atom set itself is "
+            "exhaustive of the underlying instruments."
+        ),
+    }
+
+
+def get_profile_completeness(act_id: str) -> dict[str, Any]:
+    """Return the profile's explicit completeness / known-scope declaration.
+
+    Read from the field-derivations document's ``completeness`` block when
+    present; otherwise a conservative default that does NOT claim exhaustiveness.
+    This exists so the profile never implies "if it is not here, it does not
+    matter": it names what the profile models and what it does not.
+    """
+    doc = _field_derivation_document(act_id)
+    declared = doc.get("completeness")
+    if declared:
+        return declared
+    return {
+        "completeness_status": "candidate",
+        "review_status": doc.get("review_status", "draft"),
+        "known_scope": "Fields modelled in this profile only.",
+        "not_exhaustive_of": [
+            "provisions of the underlying instruments not yet recorded as atoms",
+            "report stages or portals outside this profile's scope",
+            "future supervisory guidance or Q&A",
+        ],
+        "field_id_policy": {
+            "universal_claim": False,
+            "note": (
+                "Field IDs are stable identifiers within this ActProof profile, "
+                "not universal market field names. Align external systems by "
+                "source atom, template locator, required status, data type and "
+                "evidence expectation \u2014 not by field name alone."
+            ),
+        },
+        "challenge_allowed": True,
+        "challenge_types": [
+            "missing_field",
+            "wrong_source_atom",
+            "weak_derivation",
+            "incorrect_required_status",
+            "outdated_source",
+            "ambiguous_mapping",
+        ],
+        "challenge_channel": "https://github.com/deyan-paroushev/actproof-events/issues",
+    }
+
+
 def validate_field_source_bindings(act_id: str) -> list[str]:
     """Validate the field-level source-binding contract for a profile.
 

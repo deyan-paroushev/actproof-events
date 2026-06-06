@@ -477,5 +477,49 @@
     "classification_rule",
     "threshold_rule"
   ],
-  "coverage_semantics_note": "Required fields are template-field bound (each maps to a specific ITS Annex template cell). Optional fields carry experimental contextual derivations at template-section or obligation-context granularity and are NOT counted toward the 1.8.0 required-field release gate. A template-field binding is never counted as equivalent to a section or obligation binding."
+  "coverage_semantics_note": "Required fields are template-field bound (each maps to a specific ITS Annex template cell). Optional fields carry experimental contextual derivations at template-section or obligation-context granularity and are NOT counted toward the 1.8.0 required-field release gate. A template-field binding is never counted as equivalent to a section or obligation binding.",
+  "completeness": {
+    "completeness_status": "candidate",
+    "review_status": "draft",
+    "known_scope": "DORA major ICT-related incident INITIAL notification: the 15 required template-field obligations and 12 contextual optional fields, bound to the pinned DORA stack (Reg 2022/2554, Delegated 2025/301 RTS, Implementing 2025/302 ITS, Delegated 2024/1772 classification).",
+    "not_exhaustive_of": [
+      "DORA intermediate report",
+      "DORA final report",
+      "national competent authority portal-specific requirements",
+      "institution-specific internal escalation requirements",
+      "provisions of the underlying instruments not yet recorded as source atoms",
+      "future supervisory Q&A or guidance"
+    ],
+    "field_id_policy": {
+      "universal_claim": false,
+      "note": "Field IDs are stable identifiers within this ActProof profile, not universal market field names. A bank, GRC vendor, auditor or agent may use different names for the same concept and still align by source atom, template locator, required status, data type and evidence expectation. The field name is not the authority; the source binding is.",
+      "align_by": [
+        "source_atom_overlap",
+        "template_locator",
+        "semantic_meaning",
+        "required_status",
+        "data_type",
+        "evidence_expectation",
+        "interpretive_load",
+        "disclosure_tier"
+      ],
+      "do_not_align_by": [
+        "field_name_alone",
+        "vendor_label_alone",
+        "form_position_alone",
+        "assumption_that_unmapped_means_irrelevant"
+      ]
+    },
+    "challenge_allowed": true,
+    "challenge_types": [
+      "missing_field",
+      "wrong_source_atom",
+      "weak_derivation",
+      "incorrect_required_status",
+      "outdated_source",
+      "ambiguous_mapping"
+    ],
+    "challenge_channel": "https://github.com/deyan-paroushev/actproof-events/issues",
+    "self_reported_gaps_note": "Run `actproof-events source-atom-coverage` to see which recorded source atoms are not yet represented by any field. As of this release, 1 of 26 atoms is unused (src.eu.dora.32025R0301.art1.content_rules) — a known, disclosed gap, not a hidden one."
+  }
 }
