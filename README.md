@@ -9,6 +9,29 @@ When an organization reports a regulated act, the report is a claim. A DORA inci
 This repository holds the standard, the schemas, the catalogue of act profiles, and the conformance test vectors. The companion package `actproof` holds the substrate that mints, anchors, and verifies the receipts themselves.
 
 
+## Field-level source binding in 1.8.0
+
+`actproof-events` 1.8.0 adds field-level source binding for the required fields in the DORA initial-notification profile. The package now ships reviewable source atoms and field derivations so consumers can inspect where a required field came from, which official-source units it depends on, and where interpretation entered.
+
+```bash
+actproof-events validate-source-bindings \
+  op:eu.dora.ict_incident_notification_initial.v1
+
+actproof-events explain-field \
+  op:eu.dora.ict_incident_notification_initial.v1 \
+  classification_criteria_triggered
+```
+
+Expected 1.8.0 coverage for the DORA profile:
+
+```text
+required template-field coverage: 15/15 = 100.0%; release-gated field coverage: 15/27 = 55.6%
+total field-level coverage:    15/27 = 55.6%
+```
+
+Field-level source binding does not certify legal compliance and is not legal advice. It makes the profile source basis inspectable, reproducible and challengeable.
+
+
 ## Profile-view export
 
 `actproof-events` can export a rich public JSON projection from a canonical catalogue entry. The catalogue entry remains the canonical object; the exported profile view is the renderable projection used by websites, APIs, MCP servers, audit packs and compliance interfaces.

@@ -1,0 +1,481 @@
+{
+  "schema": "actproof.field_derivations.v1",
+  "profile_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "field_derivations": [
+    {
+      "field_id": "entity_legal_identifier",
+      "required": true,
+      "derivation_type": "direct_template_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.entity_lei",
+        "src.eu.dora.32025R0302.annexII.data_glossary"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 0,
+      "derivation_note": "The field is a direct institutional identifier in the reporting template and glossary instructions.",
+      "non_claims": [],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "entity_legal_name",
+      "required": true,
+      "derivation_type": "direct_template_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.entity_name",
+        "src.eu.dora.32025R0302.annexII.data_glossary"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 0,
+      "derivation_note": "The field is a direct institutional identity field in the reporting template.",
+      "non_claims": [],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "financial_entity_type",
+      "required": true,
+      "derivation_type": "transformed_template_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.financial_entity_type",
+        "src.eu.dora.32025R0302.annexII.data_glossary",
+        "src.eu.dora.32022R2554.art19.reporting_obligation"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 2,
+      "derivation_note": "The field records the regulated-entity category using the template and glossary context; selection depends on the entity taxonomy.",
+      "non_claims": [],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "submission_type",
+      "required": true,
+      "derivation_type": "direct_template_metadata",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.submission_type",
+        "src.eu.dora.32022R2554.art19.p4.initial_intermediate_final"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 0,
+      "derivation_note": "The field identifies the reporting stage in the DORA incident-reporting sequence.",
+      "non_claims": [],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "incident_reference_code",
+      "required": true,
+      "derivation_type": "normalised_template_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.incident_reference_code",
+        "src.eu.dora.32025R0302.annexII.data_glossary"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 1,
+      "derivation_note": "The field normalises the institution’s incident reference into the reporting-template identifier field.",
+      "non_claims": [],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "detection_datetime_utc",
+      "required": true,
+      "derivation_type": "normalised_time_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.detection_datetime",
+        "src.eu.dora.32025R0301.art5.time_limits",
+        "src.eu.dora.32025R0302.annexII.data_glossary"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 1,
+      "derivation_note": "The field normalises the detection timestamp for time-limit and reporting-template purposes.",
+      "non_claims": [],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "classification_datetime_utc",
+      "required": true,
+      "derivation_type": "reconciled_time_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.classification_datetime",
+        "src.eu.dora.32025R0301.art5.time_limits",
+        "src.eu.dora.32022R2554.art19.p4.initial_intermediate_final"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 3,
+      "derivation_note": "The field reconciles the classification timestamp with the reporting sequence and timing rules.",
+      "non_claims": [
+        "does_not_constitute_final_legal_classification"
+      ],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "classification_criteria_triggered",
+      "required": true,
+      "derivation_type": "interpretive_classification_mapping",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.classification_criteria",
+        "src.eu.dora.32024R1772.art1to7.classification_criteria",
+        "src.eu.dora.32024R1772.art8.major_incident_determination",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 4,
+      "derivation_note": "The field records which classification criteria were triggered. The template carries the field; the classification RTS supplies the substantive criteria; the initial-notification RTS supplies the content context.",
+      "non_claims": [
+        "does_not_constitute_final_legal_classification",
+        "does_not_replace_competent_authority_assessment"
+      ],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "affected_member_states",
+      "required": true,
+      "derivation_type": "reconciled_jurisdiction_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.affected_member_states",
+        "src.eu.dora.32025R0302.annexII.data_glossary",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 3,
+      "derivation_note": "The field reconciles template reporting with operational analysis of affected jurisdictions.",
+      "non_claims": [],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "incident_discovery_method",
+      "required": true,
+      "derivation_type": "transformed_operational_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.discovery_method",
+        "src.eu.dora.32025R0302.annexII.data_glossary"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 2,
+      "derivation_note": "The field transforms operational detection context into the reporting-template discovery-method field.",
+      "non_claims": [],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "business_continuity_plan_activated",
+      "required": true,
+      "derivation_type": "normalised_boolean_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.bcp_activated",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 1,
+      "derivation_note": "The field normalises business-continuity activation evidence into a boolean reporting field.",
+      "non_claims": [],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "initial_impact_description",
+      "required": true,
+      "derivation_type": "modelled_narrative_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.initial_impact_description",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 4,
+      "derivation_note": "The field models a provisional narrative impact description from the initial-notification content requirement and reporting template.",
+      "non_claims": [
+        "does_not_constitute_final_impact_assessment"
+      ],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "primary_contact_name",
+      "required": true,
+      "derivation_type": "direct_contact_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.primary_contact_name",
+        "src.eu.dora.32025R0302.annexII.data_glossary"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 0,
+      "derivation_note": "The field is a direct contact-information field in the reporting template.",
+      "non_claims": [],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "primary_contact_email",
+      "required": true,
+      "derivation_type": "direct_contact_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.primary_contact_email",
+        "src.eu.dora.32025R0302.annexII.data_glossary"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 0,
+      "derivation_note": "The field is a direct contact-email field in the reporting template.",
+      "non_claims": [],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "competent_authority",
+      "required": true,
+      "derivation_type": "transformed_reporting_channel_field",
+      "source_atoms": [
+        "src.eu.dora.32022R2554.art19.competent_authority_channel",
+        "src.eu.dora.32025R0302.annexI.competent_authority"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": 2,
+      "derivation_note": "The field links the reporting channel and competent-authority context to the operational recipient field.",
+      "non_claims": [
+        "does_not_determine_national_supervisory_routing"
+      ],
+      "release_scope": "required_release_scope",
+      "binding_granularity": "template_field"
+    },
+    {
+      "field_id": "secondary_contact_name",
+      "required": false,
+      "derivation_type": "direct_source_mapping",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.general_information",
+        "src.eu.dora.32025R0302.annexII.data_glossary"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "Secondary contact information is optional support for report contact details. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Optional field; private disclosure downstream.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "template_section",
+      "binding_granularity_detail": "glossary"
+    },
+    {
+      "field_id": "secondary_contact_email",
+      "required": false,
+      "derivation_type": "direct_source_mapping",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.general_information",
+        "src.eu.dora.32025R0302.annexII.data_glossary"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "Secondary contact email is optional support for report contact details. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Optional field; private disclosure downstream.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "template_section",
+      "binding_granularity_detail": "glossary"
+    },
+    {
+      "field_id": "first_disruption_datetime_utc",
+      "required": false,
+      "derivation_type": "operational_support_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.initial_notification",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "First disruption time may be known at initial-notification stage but is associated with more detailed or later reporting. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Optional early information, not required initial-notification content.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "template_section"
+    },
+    {
+      "field_id": "affected_functions_and_services",
+      "required": false,
+      "derivation_type": "operational_support_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.initial_notification",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "Affected functions/services may be known early and are relevant to incident impact, but are treated as optional in this profile. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Optional early information.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "template_section"
+    },
+    {
+      "field_id": "preliminary_estimated_clients_affected",
+      "required": false,
+      "derivation_type": "operational_support_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.initial_notification",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "Preliminary affected-client estimate may be known early but is treated as optional in this profile. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Optional early information.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "template_section"
+    },
+    {
+      "field_id": "preliminary_estimated_financial_amount",
+      "required": false,
+      "derivation_type": "operational_support_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.initial_notification",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "Preliminary financial amount may be known early and needs separate currency handling. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Optional early information; currency separation handled by reporting_currency.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "template_section"
+    },
+    {
+      "field_id": "reporting_currency",
+      "required": false,
+      "derivation_type": "direct_source_mapping",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.initial_notification",
+        "src.eu.dora.32025R0302.annexII.data_glossary"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "Reporting currency is modelled separately from amount fields to avoid hard-coded assumptions. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Direct/supporting field, also a modelling correction.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "template_section",
+      "binding_granularity_detail": "glossary"
+    },
+    {
+      "field_id": "third_party_provider_involved",
+      "required": false,
+      "derivation_type": "interpretive_mapping",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.initial_notification",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "Third-party involvement can matter to the DORA reporting context and reporting-on-behalf arrangements. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Optional, interpretive, and disclosure-sensitive.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "template_section"
+    },
+    {
+      "field_id": "outsourcing_arrangement_reference",
+      "required": false,
+      "derivation_type": "operational_support_field",
+      "source_atoms": [
+        "src.eu.dora.32025R0302.annexI.initial_notification",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "Outsourcing reference supports third-party reporting context where relevant. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Optional operational-support field, not required initial-notification content.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "template_section"
+    },
+    {
+      "field_id": "linked_threat_notification_reference",
+      "required": false,
+      "derivation_type": "operational_support_field",
+      "source_atoms": [
+        "src.eu.dora.32022R2554.art19.reporting_obligation",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "Optional cross-reference to a related threat notification when such record exists. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Cross-regime link only; not DORA-required content.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "obligation_context"
+    },
+    {
+      "field_id": "linked_nis2_notification_reference",
+      "required": false,
+      "derivation_type": "operational_support_field",
+      "source_atoms": [
+        "src.eu.dora.32022R2554.art19.reporting_obligation",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "Optional cross-reference to a related NIS2 notification when such record exists. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Cross-regime link only; DORA notification does not replace NIS2 obligations.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "obligation_context"
+    },
+    {
+      "field_id": "linked_gdpr_breach_notification_reference",
+      "required": false,
+      "derivation_type": "operational_support_field",
+      "source_atoms": [
+        "src.eu.dora.32022R2554.art19.reporting_obligation",
+        "src.eu.dora.32025R0301.art2.initial_notification_content"
+      ],
+      "mapping_confidence": "draft",
+      "interpretive_load": null,
+      "derivation_note": "Optional cross-reference to a related GDPR breach notification when such record exists. [experimental_optional: bound to existing section/obligation atoms, not a distinct reviewed template cell]",
+      "review_note": "Cross-regime link only; DORA notification does not replace GDPR obligations.",
+      "non_claims": [],
+      "release_scope": "experimental_optional",
+      "binding_granularity": "obligation_context"
+    }
+  ],
+  "status": "draft",
+  "review_status_enum": [
+    "draft",
+    "maintainer_reviewed",
+    "independent_reviewed",
+    "external_legal_reviewed",
+    "deprecated",
+    "superseded"
+  ],
+  "review_gate": {
+    "review_status": "draft",
+    "reviewed_by": null,
+    "reviewed_role": null,
+    "reviewed_at": null,
+    "review_method": null,
+    "review_scope": null,
+    "review_notes": null,
+    "author": "Deyan Paroushev",
+    "source": "selected-field-derivations.json",
+    "planned_review_method": "manual_source_locator_review.v1"
+  },
+  "non_claims": [
+    "These derivations map profile fields to legal actions and source fragments; they do not prove legal correctness.",
+    "Operational support fields are explicit and reviewable, not hidden additions.",
+    "Derivations are human-authored modelling decisions, reviewable and open to challenge.",
+    "mapping_status records how each field relates to source: direct vs derived vs interpretive vs operational-support."
+  ],
+  "release_scope_note": "1.8.0 binds and gates on the 15 required DORA initial-notification fields. The 12 optional fields are bound at field scope but marked release_scope=experimental_optional and do NOT count toward the required coverage metric.",
+  "binding_granularity_vocabulary": [
+    "template_field",
+    "template_section",
+    "obligation_context",
+    "act_fallback"
+  ],
+  "binding_granularity_detail_vocabulary": [
+    "glossary",
+    "classification_rule",
+    "threshold_rule"
+  ],
+  "coverage_semantics_note": "Required fields are template-field bound (each maps to a specific ITS Annex template cell). Optional fields carry experimental contextual derivations at template-section or obligation-context granularity and are NOT counted toward the 1.8.0 required-field release gate. A template-field binding is never counted as equivalent to a section or obligation binding."
+}

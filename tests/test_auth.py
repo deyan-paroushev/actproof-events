@@ -26,11 +26,12 @@ from actproof_events.auth import (  # noqa: E402
     scope_for_tool,
 )
 
-# The nine MCP tools the map must cover.
+# The MCP tools the map must cover.
 MCP_TOOLS = {
     "list_profiles", "search_profiles", "get_profile", "list_fields", "get_field",
     "get_source_basis", "generate_evidence_checklist", "compare_schema_to_profile",
-    "check_profile_binding",
+    "check_profile_binding", "explain_field_source", "source_coverage",
+    "lint_report", "prevalidate_report",
 }
 
 

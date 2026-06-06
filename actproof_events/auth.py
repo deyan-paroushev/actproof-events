@@ -41,6 +41,7 @@ SCOPE_SCHEMA_COMPARE = "actproof:schema:compare"
 # Reserved for the later delegated full receipt verification. Not granted by the
 # default static-token scope set; full verification lives in actproof-py.
 SCOPE_RECEIPTS_VERIFY = "actproof:receipts:verify"
+SCOPE_REPORTS_LINT = "actproof:reports:lint"
 
 ALL_SCOPES = frozenset({
     SCOPE_PROFILES_READ,
@@ -48,6 +49,7 @@ ALL_SCOPES = frozenset({
     SCOPE_BINDINGS_CHECK,
     SCOPE_SCHEMA_COMPARE,
     SCOPE_RECEIPTS_VERIFY,
+    SCOPE_REPORTS_LINT,
 })
 
 # Tool name -> required scope. Read tools read; the binding check is its own
@@ -63,12 +65,17 @@ TOOL_SCOPES: dict[str, str] = {
     "generate_evidence_checklist": SCOPE_FIELDS_READ,
     "compare_schema_to_profile": SCOPE_SCHEMA_COMPARE,
     "check_profile_binding": SCOPE_BINDINGS_CHECK,
+    "explain_field_source": SCOPE_FIELDS_READ,
+    "source_coverage": SCOPE_PROFILES_READ,
+    "lint_report": SCOPE_REPORTS_LINT,
+    "prevalidate_report": SCOPE_REPORTS_LINT,
 }
 
 # The scopes a valid static token grants by default: everything except the
 # reserved full-verification scope.
 _DEFAULT_TOKEN_SCOPES = frozenset({
     SCOPE_PROFILES_READ, SCOPE_FIELDS_READ, SCOPE_BINDINGS_CHECK, SCOPE_SCHEMA_COMPARE,
+    SCOPE_REPORTS_LINT,
 })
 
 # -- header and env names ---------------------------------------------------

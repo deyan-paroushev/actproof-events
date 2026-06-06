@@ -33,6 +33,7 @@ from typing import Any
 from . import auth as _auth
 from . import services as svc
 from .services import BOUNDARY, BOUNDARY_ID
+from .source_binding import compute_field_source_coverage, explain_field_source as _explain_field_source
 
 DEFAULT_ACT = "op:eu.dora.ict_incident_notification_initial.v1"
 
@@ -252,6 +253,64 @@ if FastMCP is not None:
         """Evidence checklist for a profile: required evidence labels and required fields."""
         try:
             return svc.generate_evidence_checklist(act_id)
+        except KeyError as exc:
+            _raise_not_found(exc)
+
+
+    @mcp.tool()
+    @secured_tool("explain_field_source")
+    def explain_field_source(act_id: str, field_id: str) -> dict[str, Any]:
+        """Explain one profile field's source binding.
+
+        Returns source atoms, binding_granularity, release_scope, review status,
+        field_binding_status and explicit boundary metadata. This grounds an
+        agent's answer in the inspectable ActProof source-binding layer; it does
+        not determine legal compliance.
+        """
+        try:
+            return _explain_field_source(act_id, field_id)
+        except KeyError as exc:
+            _raise_not_found(exc)
+
+    @mcp.tool()
+    @secured_tool("source_coverage")
+    def source_coverage(act_id: str) -> dict[str, Any]:
+        """Return precision-tiered source-binding coverage for one profile.
+
+        The headline 1.8.0 gate is required template-field coverage, not a
+        blanket claim that all optional contextual derivations are equally
+        precise.
+        """
+        try:
+            coverage = compute_field_source_coverage(act_id)
+        except KeyError as exc:
+            _raise_not_found(exc)
+        return {"act_id": act_id, "coverage": coverage, "boundary": BOUNDARY, "boundary_id": BOUNDARY_ID}
+
+    @mcp.tool()
+    @secured_tool("lint_report")
+    def lint_report(act_id: str, report: dict[str, Any]) -> dict[str, Any]:
+        """Lint a DORA incident-report payload before verification.
+
+        Reports missing required fields, unknown fields, high-interpretive-load
+        fields and evidence-readiness signals. It does not verify bytes,
+        signatures, timestamps, anchors or issuer identity.
+        """
+        try:
+            return svc.lint_report(act_id, report)
+        except KeyError as exc:
+            _raise_not_found(exc)
+
+    @mcp.tool()
+    @secured_tool("prevalidate_report")
+    def prevalidate_report(act_id: str, report: dict[str, Any]) -> dict[str, Any]:
+        """Pre-validate a report payload and return ready_for_preverification.
+
+        This is the 1.8.0 pre-validation primitive. It remains outside streaming
+        session management and outside cryptographic receipt verification.
+        """
+        try:
+            return svc.prevalidate_report(act_id, report)
         except KeyError as exc:
             _raise_not_found(exc)
 
