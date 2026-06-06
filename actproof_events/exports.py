@@ -20,6 +20,14 @@ from pathlib import Path
 from typing import Any
 
 from actproof_events import get_profile_view_schema_path
+from actproof_events.source_binding import (
+    compute_field_source_coverage,
+    explain_field_source,
+    field_source_projection,
+    list_field_derivations,
+    list_source_atoms,
+    validate_field_source_bindings,
+)
 from actproof_events.services import (
     BOUNDARY,
     BOUNDARY_ID,
@@ -176,7 +184,10 @@ def compute_profile_coverage(act_id: str, *, fields: list[dict[str, Any]] | None
         by_disclosure_tier[disclosure] = by_disclosure_tier.get(disclosure, 0) + 1
         by_source_scope[source_scope] = by_source_scope.get(source_scope, 0) + 1
 
-    return {
+    required_field_level = sum(1 for f in fields if f.get("required") and f.get("source_basis_scope") == "field")
+    required_fallback = sum(1 for f in fields if f.get("required") and f.get("fallback_used") is True)
+
+    coverage = {
         "field_counts": {
             "total": total,
             "required": required,
@@ -188,6 +199,12 @@ def compute_profile_coverage(act_id: str, *, fields: list[dict[str, Any]] | None
             "fallback_used": fallback,
             "coverage_ratio": _pct(field_level, total),
             "by_scope": dict(sorted(by_source_scope.items())),
+        },
+        "required_field_source_basis": {
+            "required_total": required,
+            "field_level": required_field_level,
+            "fallback_used": required_fallback,
+            "coverage_ratio": _pct(required_field_level, required),
         },
         "evidence_scope": {
             "field_level": evidence_field,
@@ -207,6 +224,26 @@ def compute_profile_coverage(act_id: str, *, fields: list[dict[str, Any]] | None
             "by_tier": dict(sorted(by_disclosure_tier.items())),
         },
     }
+
+    # Enrich with the precision-tiered coverage derived from binding_granularity.
+    # This is computed (never stored per-field), so it cannot drift from the
+    # two stored facts. A template_field binding is not counted the same as a
+    # section or obligation binding.
+    try:
+        precision_cov = compute_field_source_coverage(act_id)
+        # Replace the older binary field/act coverage with the final 1.8.0
+        # market-facing semantics: field_source_basis means release-gated
+        # template-field coverage. Optional contextual derivations stay visible
+        # in optional_field_source_basis and source_binding_precision, but do not
+        # inflate the headline field-level coverage.
+        coverage["field_source_basis"] = precision_cov["field_source_basis"]
+        coverage["required_field_source_basis"] = precision_cov["required_field_source_basis"]
+        coverage["optional_field_source_basis"] = precision_cov["optional_field_source_basis"]
+        coverage["source_binding_precision"] = precision_cov["source_binding_precision"]
+    except Exception:
+        pass
+
+    return coverage
 
 
 def build_profile_view(
@@ -241,6 +278,12 @@ def build_profile_view(
         get_field(act_id, row["field_id"])
         for row in list_fields(act_id, required_only=False)
     ]
+
+    if include_source_basis:
+        for f in field_rows:
+            source_projection = field_source_projection(act_id, f["field_id"])
+            if source_projection:
+                f.update(source_projection)
 
     if not include_source_basis:
         for f in field_rows:
@@ -283,8 +326,10 @@ def build_profile_view(
             "interpretive_summary": profile.get("interpretive_summary") or {},
         },
         "source_basis": {
-            "scope": "act",
+            "scope": "mixed",
             "instruments": source_instruments,
+            "source_atoms": list_source_atoms(act_id) if include_source_basis else [],
+            "field_derivations": list_field_derivations(act_id) if include_source_basis else [],
         },
         "evidence": {
             "required_evidence_labels": required_labels,
@@ -315,6 +360,7 @@ def build_profile_view(
             "profile_view_schema": PROFILE_VIEW_SCHEMA_ID,
             "profile_view_type": DEFAULT_PROFILE_VIEW_TYPE,
             "profile_view_semantics": projection["profile_view_semantics"],
+            "source_binding_release": "field_level_required_fields.v1",
             "generated_at": generated_at or _utc_now(),
         }
 
@@ -428,12 +474,45 @@ def validate_profile_view(view: dict[str, Any]) -> list[str]:
     return messages
 
 
+def _count_provisional_atoms(view: dict[str, Any]) -> int:
+    """Count distinct source atoms whose binding_status is provisional
+    (official_text_sha256 not yet extracted/verified)."""
+    seen: set[str] = set()
+    for f in view.get("fields", []) or []:
+        for e in f.get("source_basis", []) or []:
+            if isinstance(e, dict) and e.get("binding_status") == "provisional":
+                aid = e.get("source_atom_id") or e.get("eli") or str(e)
+                seen.add(aid)
+    return len(seen)
+
+
+def _profile_review_status(view: dict[str, Any]) -> str | None:
+    """Read the field-derivation review status as projected, if present.
+
+    Falls back to inspecting per-field mapping_confidence: if every field
+    derivation is 'draft', the profile review status is 'draft'."""
+    rg = view.get("review_gate") or {}
+    if rg.get("review_status"):
+        return rg["review_status"]
+    confidences = {
+        (f.get("field_derivation") or {}).get("mapping_confidence")
+        for f in view.get("fields", []) or []
+        if f.get("field_derivation")
+    }
+    confidences.discard(None)
+    if confidences == {"draft"}:
+        return "draft"
+    if confidences:
+        return "mixed" if len(confidences) > 1 else next(iter(confidences))
+    return None
+
+
 def verify_profile_view(view: dict[str, Any] | str | Path) -> dict[str, Any]:
     """Verify a profile-view artifact against what this release guarantees.
 
     Accepts either a parsed projection dict or a path to a profile-view JSON
     file. Returns a structured report. This verifier checks only what
-    actproof-events 1.7.0 actually ships:
+    actproof-events 1.8.0 actually ships:
 
       * ``valid_schema``          — conforms to the bundled profile_view.v1 schema.
       * ``semantic_hash_matches`` — recomputed profile_semantic_hash equals the
@@ -442,9 +521,8 @@ def verify_profile_view(view: dict[str, Any] | str | Path) -> dict[str, Any]:
                                      stored one (release-specific identity).
       * ``catalogue_entry_hash_present`` — the canonical catalogue hash is carried.
 
-    Field-level source binding does not exist in 1.7.0, so the report does not
-    claim it is verified. It surfaces the current source-basis coverage as a
-    forward-looking warning, which is the honest signal for the next release.
+    Field-level source binding is required for all required DORA fields in 1.8.0.
+    Optional fields may still use act-level fallback and are reported separately.
 
     ``ok`` is True only when every hard check passes. Warnings describe known,
     disclosed limitations and do not set ``ok`` to False.
@@ -508,19 +586,65 @@ def verify_profile_view(view: dict[str, Any] | str | Path) -> dict[str, Any]:
 
     coverage = view.get("coverage") or {}
     basis = coverage.get("field_source_basis") or {}
+    required_basis = coverage.get("required_field_source_basis") or {}
     fallback_used = basis.get("fallback_used")
-    field_level = basis.get("field_level")
-    if field_level == 0 and fallback_used:
-        report["warnings"].append(
-            f"{fallback_used} fields use act-level source fallback; "
-            f"field-level source binding is not present in this release"
+    required_fallback = required_basis.get("fallback_used")
+    optional_fallback = fallback_used - required_fallback if isinstance(fallback_used, int) and isinstance(required_fallback, int) else None
+    if required_fallback:
+        report["errors"].append(
+            f"{required_fallback} required fields use act-level source fallback; "
+            "1.8.0 requires all required fields to be source-bound"
         )
-    report["field_derivations_complete"] = bool(field_level) and not fallback_used
+    if optional_fallback:
+        report["warnings"].append(
+            f"{optional_fallback} optional fields still use act-level source fallback; "
+            "optional field binding is reserved for a later release"
+        )
+    report["required_field_derivations_complete"] = required_basis.get("coverage_ratio") == 100.0 and not required_fallback
+    report["field_derivations_complete"] = report["required_field_derivations_complete"]
+
+    # Positive disclosure: how many required fields are clause-bound.
+    req_field_level = required_basis.get("field_level")
+    req_total = required_basis.get("required_total")
+    if req_field_level and req_total:
+        req_cell = required_basis.get("template_cell_bound", req_field_level)
+        report["warnings"].append(
+            f"{req_cell}/{req_total} required fields are template-cell bound to source atoms"
+        )
+    report["required_fields_clause_bound"] = req_field_level
+    report["required_fields_template_cell_bound"] = required_basis.get("template_cell_bound")
+
+    # Precision-tier disclosure: the honest binding-quality gradient.
+    precision = coverage.get("source_binding_precision") or {}
+    if precision:
+        report["source_binding_precision"] = precision
+        tiers = ", ".join(f"{k}:{v}" for k, v in precision.items() if v)
+        report["warnings"].append(f"source-binding precision — {tiers}")
+
+    # Honest disclosure: provisional text binding (official_text_sha256 pending).
+    provisional = _count_provisional_atoms(view)
+    if provisional:
+        report["warnings"].append(
+            f"{provisional} source atom(s) carry provisional text binding "
+            f"(official_text_sha256 pending; ELI locator + pinned-PDF hash present)"
+        )
+    report["provisional_atoms"] = provisional
+
+    # Honest disclosure: review status. Field derivations are authored, not yet
+    # independently reviewed — surfaced so 'check us, don't trust us' is visible.
+    review_status = _profile_review_status(view)
+    if review_status and review_status == "draft":
+        report["warnings"].append(
+            "field derivations carry review_status=draft "
+            "(authored, not yet maintainer/independently reviewed)"
+        )
+    report["review_status"] = review_status
 
     hard_checks = [
         report["semantic_hash_matches"],
         report["artifact_hash_matches"],
         report["catalogue_entry_hash_present"],
+        report["required_field_derivations_complete"],
     ]
     if report["valid_schema"] is not None:
         hard_checks.append(report["valid_schema"])
@@ -533,6 +657,8 @@ def _print_usage() -> None:
     print("")
     print("Usage:")
     print("  actproof-events export-profile-view ACT_ID --out profile-view.json [--pretty] [--validate]")
+    print("  actproof-events validate-source-bindings ACT_ID")
+    print("  actproof-events explain-field ACT_ID FIELD_ID")
     print("")
     print("Example:")
     print("  actproof-events export-profile-view op:eu.dora.ict_incident_notification_initial.v1 --out dora.profile-view.json")
@@ -560,6 +686,43 @@ def main(argv: list[str] | None = None) -> int:
     )
     verify.add_argument("path", help="Path to a profile-view JSON file to verify")
 
+    validate_bindings = sub.add_parser(
+        "validate-source-bindings",
+        help="Validate required-field source bindings for a profile",
+    )
+    validate_bindings.add_argument("act_id", help="ActProof act_type_id to validate")
+
+    explain = sub.add_parser(
+        "explain-field",
+        help="Explain the field-level source basis for one profile field",
+    )
+    explain.add_argument("act_id", help="ActProof act_type_id")
+    explain.add_argument("field_id", help="Profile field id")
+    explain.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    coverage_cmd = sub.add_parser(
+        "source-coverage",
+        help="Print precision-tiered source-binding coverage for a profile",
+    )
+    coverage_cmd.add_argument("act_id", help="ActProof act_type_id")
+    coverage_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    lint = sub.add_parser(
+        "lint-report",
+        help="Lint an incident-report JSON payload against a profile",
+    )
+    lint.add_argument("act_id", help="ActProof act_type_id")
+    lint.add_argument("report_path", help="Path to a JSON report payload (field_id -> value)")
+    lint.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    preval = sub.add_parser(
+        "prevalidate-report",
+        help="Pre-validate an incident-report payload before cryptographic verification",
+    )
+    preval.add_argument("act_id", help="ActProof act_type_id")
+    preval.add_argument("report_path", help="Path to a JSON report payload (field_id -> value)")
+    preval.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
     args = parser.parse_args(argv)
     if args.command is None:
         _print_usage()
@@ -584,6 +747,111 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  error  : {e}", file=sys.stderr)
         print(f"  OK                      : {report['ok']}")
         return 0 if report["ok"] else 1
+
+    if args.command == "validate-source-bindings":
+        errors = validate_field_source_bindings(args.act_id)
+        coverage = compute_field_source_coverage(args.act_id)
+        req = coverage["required_field_source_basis"]
+        print(f"validating source bindings for {args.act_id}")
+        field_basis = coverage["field_source_basis"]
+        opt = coverage.get("optional_field_source_basis") or {}
+        print(f"  required template-field coverage : {req.get('template_cell_bound')}/{req['required_total']} ({req['coverage_ratio']}%)")
+        print(f"  release-gated field coverage     : {field_basis['field_level']}/{field_basis['field_level'] + field_basis.get('contextual_field_level', 0) + field_basis['act_level_fallback']} ({field_basis['coverage_ratio']}%)")
+        if opt:
+            print(f"  optional contextual derivations  : {opt.get('field_level')}/{opt.get('optional_total')} (not counted as template-field coverage)")
+        if errors:
+            for e in errors:
+                print(f"  error: {e}", file=sys.stderr)
+            return 1
+        print("  OK                      : True")
+        return 0
+
+    if args.command == "explain-field":
+        try:
+            explanation = explain_field_source(args.act_id, args.field_id)
+        except Exception as exc:
+            print(f"actproof-events: explain-field failed: {exc}", file=sys.stderr)
+            return 1
+        if args.json:
+            print(json.dumps(explanation, ensure_ascii=False, indent=2))
+        else:
+            print(f"field: {explanation['field_id']}")
+            print(f"  source_basis_scope : {explanation['source_basis_scope']}")
+            print(f"  fallback_used      : {explanation['fallback_used']}")
+            print(f"  binding_granularity: {explanation.get('binding_granularity')}")
+            print(f"  field_binding_status: {explanation.get('field_binding_status')}")
+            print(f"  release_scope      : {explanation.get('release_scope')}")
+            print(f"  counts toward gate : {explanation.get('counts_toward_required_release_gate')}")
+            print(f"  source_atoms       : {len(explanation.get('source_atoms') or [])}")
+            derivation = explanation.get("field_derivation") or {}
+            if derivation:
+                print(f"  derivation_type    : {derivation.get('derivation_type')}")
+                print(f"  confidence         : {derivation.get('mapping_confidence')}")
+                print(f"  interpretive_load  : {derivation.get('interpretive_load')}")
+                print(f"  note               : {derivation.get('derivation_note')}")
+        return 0
+
+    if args.command == "source-coverage":
+        from actproof_events.source_binding import compute_field_source_coverage as _cov
+        cov = _cov(args.act_id)
+        if args.json:
+            print(json.dumps(cov, ensure_ascii=False, indent=2))
+            return 0
+        req = cov["required_field_source_basis"]
+        opt = cov["optional_field_source_basis"]
+        prec = cov["source_binding_precision"]
+        print(f"source-binding coverage for {args.act_id}")
+        print(f"  required (template-cell) : {req.get('template_cell_bound')}/{req['required_total']} ({req['coverage_ratio']}%)")
+        print(f"  optional (experimental)  : {opt['field_level']}/{opt['optional_total']} contextual; {opt['template_cell_bound']} template-cell")
+        print(f"  precision tiers          : " + ", ".join(f"{k}={v}" for k, v in prec.items() if v))
+        return 0
+
+    if args.command == "lint-report":
+        from actproof_events.services import lint_report as _lint
+        try:
+            report_payload = json.loads(Path(args.report_path).read_text(encoding="utf-8"))
+        except Exception as exc:
+            print(f"actproof-events: could not read report: {exc}", file=sys.stderr)
+            return 1
+        result = _lint(args.act_id, report_payload)
+        if args.json:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0
+        print(f"lint-report for {args.act_id}")
+        print(f"  status                 : {result['status']}")
+        print(f"  prevalidation status   : {result.get('prevalidation_status')}")
+        print(f"  required present       : {result['required_present']}/{result['required_total']}")
+        if result["missing_required"]:
+            print(f"  missing required       : {', '.join(result['missing_required'])}")
+        if result["unknown_fields"]:
+            print(f"  unknown fields         : {', '.join(result['unknown_fields'])}")
+        att = result["present_fields_needing_attention"]
+        if att["high_interpretive_load"]:
+            print(f"  high interpretive load : {', '.join(att['high_interpretive_load'])}")
+        if att["needs_committee_evidence"]:
+            print(f"  needs committee evidence: {', '.join(att['needs_committee_evidence'])}")
+        return 0 if result["status"] != "incomplete" else 1
+
+    if args.command == "prevalidate-report":
+        from actproof_events.services import prevalidate_report as _prevalidate
+        try:
+            report_payload = json.loads(Path(args.report_path).read_text(encoding="utf-8"))
+        except Exception as exc:
+            print(f"actproof-events: could not read report: {exc}", file=sys.stderr)
+            return 1
+        result = _prevalidate(args.act_id, report_payload)
+        if args.json:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0
+        print(f"prevalidate-report for {args.act_id}")
+        print(f"  prevalidation status   : {result['prevalidation_status']}")
+        print(f"  ready for preverification: {result['ready_for_preverification']}")
+        print(f"  required present       : {result['required_present']}/{result['required_total']}")
+        if result["missing_required"]:
+            print(f"  missing required       : {', '.join(result['missing_required'])}")
+        if result["unknown_fields"]:
+            print(f"  unknown fields         : {', '.join(result['unknown_fields'])}")
+        return 0 if result["prevalidation_status"] != "blocked" else 1
 
     if args.command != "export-profile-view":
         parser.error(f"unknown command: {args.command}")
@@ -627,6 +895,8 @@ __all__ = [
     "get_profile_view_schema",
     "validate_profile_view",
     "verify_profile_view",
+    "validate_field_source_bindings",
+    "explain_field_source",
     "main",
 ]
 

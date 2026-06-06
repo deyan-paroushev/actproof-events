@@ -70,3 +70,18 @@ jobs:
 
       - name: Validate test vectors against their manifests
         run: python scripts/validate_vectors.py
+
+  validate-source-atoms:
+    name: Validate field-level source binding
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install jsonschema
+        run: python -m pip install "jsonschema>=4.21"
+      - name: Validate source atoms and field derivations
+        run: python scripts/validate_source_atoms.py

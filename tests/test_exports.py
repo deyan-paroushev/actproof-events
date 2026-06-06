@@ -84,9 +84,18 @@ def test_verify_profile_view_passes_for_fresh_artifact(tmp_path):
     assert report["semantic_hash_matches"] is True
     assert report["artifact_hash_matches"] is True
     assert report["catalogue_entry_hash_present"] is True
-    # 1.7.0 is act-level fallback, so this is a disclosed warning, not an error.
-    assert any("act-level source fallback" in w for w in report["warnings"])
-    assert report["field_derivations_complete"] is False
+    assert report["required_field_derivations_complete"] is True
+    assert report["field_derivations_complete"] is True
+    # Merged design: optional fields are now field-bound, so no fallback warning.
+    # Instead the verifier discloses required-field binding, provisional text
+    # binding, and the honest draft review status.
+    assert any("required fields are template-cell bound" in w for w in report["warnings"])
+    assert any("source-binding precision" in w for w in report["warnings"])
+    assert report["source_binding_precision"]["template_field"] == 15
+    assert report["required_fields_template_cell_bound"] == 15
+    assert any("provisional text binding" in w for w in report["warnings"])
+    assert any("review_status=draft" in w for w in report["warnings"])
+    assert report["review_status"] == "draft"
 
 
 def test_verify_profile_view_detects_tampering():

@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actproof.org/schemas/field_derivations.v1.schema.json",
+  "title": "ActProof field derivations v1",
+  "description": "Reviewable mapping from profile fields to official-source atoms.",
+  "type": "object",
+  "required": [
+    "schema",
+    "profile_id",
+    "field_derivations"
+  ],
+  "properties": {
+    "schema": {
+      "const": "actproof.field_derivations.v1"
+    },
+    "profile_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "field_derivations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "field_id",
+          "required",
+          "derivation_type",
+          "source_atoms",
+          "mapping_confidence",
+          "interpretive_load",
+          "derivation_note"
+        ],
+        "properties": {
+          "field_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "derivation_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_atoms": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^src\\."
+            }
+          },
+          "mapping_confidence": {
+            "enum": [
+              "draft",
+              "maintainer_reviewed",
+              "independent_reviewed",
+              "external_legal_reviewed",
+              "deprecated",
+              "superseded"
+            ]
+          },
+          "interpretive_load": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "derivation_note": {
+            "type": "string",
+            "minLength": 1
+          },
+          "non_claims": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "release_scope": {
+            "type": "string",
+            "enum": [
+              "required_release_scope",
+              "experimental_optional"
+            ]
+          },
+          "review_note": {
+            "type": "string"
+          },
+          "binding_granularity": {
+            "type": "string",
+            "enum": [
+              "template_field",
+              "template_section",
+              "obligation_context",
+              "act_fallback"
+            ]
+          },
+          "binding_granularity_detail": {
+            "type": "string",
+            "enum": [
+              "glossary",
+              "classification_rule",
+              "threshold_rule"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "review_gate": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "review_status_enum": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "non_claims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "release_scope_note": {
+      "type": "string"
+    },
+    "binding_granularity_vocabulary": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "binding_granularity_detail_vocabulary": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "coverage_semantics_note": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

@@ -27,7 +27,7 @@ Typical usage from a consuming application::
             ...
 
 The package version tracks the actproof-events specification version. A
-package version of ``1.7.0`` ships the v1.5-rc1 specification and the
+package version of ``1.8.0`` ships the v1.5-rc1 specification and the
 catalogue state at that release tag.
 
 References:
@@ -50,6 +50,9 @@ __all__ = [
     "get_catalogue_path",
     "get_schema_path",
     "get_profile_view_schema_path",
+    "get_source_atoms_schema_path",
+    "get_field_derivations_schema_path",
+    "get_source_bindings_path",
     "get_spec_path",
     "get_vocabularies_path",
     "get_schema_version_policy_path",
@@ -65,7 +68,7 @@ __all__ = [
 # downstream artefact records "issued against actproof-events specification
 # v1.5-rc1").
 
-__version__: Final[str] = "1.7.0"
+__version__: Final[str] = "1.8.0"
 __spec_version__: Final[str] = "1.5-rc1"
 
 
@@ -175,6 +178,36 @@ def get_profile_view_schema_path() -> Path:
         return installed
     source_tree = Path(__file__).resolve().parents[1] / "spec" / "schemas" / "profile_view.v1.schema.json"
     return source_tree
+
+
+
+def get_source_atoms_schema_path() -> Path:
+    """Return the path to the bundled source-atoms JSON Schema."""
+    installed = get_schema_path("source_atoms.v1.schema")
+    if installed.exists():
+        return installed
+    return Path(__file__).resolve().parents[1] / "spec" / "schemas" / "source_atoms.v1.schema.json"
+
+
+def get_field_derivations_schema_path() -> Path:
+    """Return the path to the bundled field-derivations JSON Schema."""
+    installed = get_schema_path("field_derivations.v1.schema")
+    if installed.exists():
+        return installed
+    return Path(__file__).resolve().parents[1] / "spec" / "schemas" / "field_derivations.v1.schema.json"
+
+
+def get_source_bindings_path() -> Path:
+    """Return the bundled field-level source-binding data directory.
+
+    In wheels this resolves under ``actproof_events/data/source_bindings``.
+    In source checkouts it falls back to the repository ``source_bindings``
+    directory when the wheel data tree has not been materialised.
+    """
+    installed = _DATA_ROOT / "source_bindings"
+    if installed.exists():
+        return installed
+    return Path(__file__).resolve().parents[1] / "source_bindings"
 
 
 def get_spec_path() -> Path:

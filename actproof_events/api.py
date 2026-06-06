@@ -23,11 +23,14 @@ from __future__ import annotations
 import argparse
 from typing import Any
 
+from . import __version__
 from .services import (
     BOUNDARY,
     BOUNDARY_ID,
     compare_schema_to_profile,
     check_profile_binding,
+    lint_report,
+    prevalidate_report,
 )
 from .store import get_store
 
@@ -49,7 +52,7 @@ except Exception:  # pragma: no cover
 if FastAPI is not None:
     app = FastAPI(
         title="ActProof Events API",
-        version="0.4.0",
+        version=__version__,
         description="Read-only API for source-bound regulatory profiles, field maps, "
                     "per-field interpretive status, divergence checks and profile-binding "
                     "checks. Not full receipt verification (that lives in actproof-py). "
@@ -113,7 +116,7 @@ if FastAPI is not None:
     def root() -> dict[str, Any]:
         return {
             "service": "actproof-events-api",
-            "version": "0.4.0",
+            "version": __version__,
             "boundary": BOUNDARY, "boundary_id": BOUNDARY_ID,
             "endpoints": [
                 "GET /v1/profiles",
@@ -123,6 +126,8 @@ if FastAPI is not None:
                 "GET /v1/profiles/{act_id}/fields/{field_id}/source",
                 "GET /v1/profiles/{act_id}/evidence-checklist",
                 "POST /v1/profiles/{act_id}/compare-schema",
+                "POST /v1/profiles/{act_id}/lint-report",
+                "POST /v1/profiles/{act_id}/prevalidate-report",
                 "POST /v1/profile-bindings/check",
                 "GET /health",
             ],
@@ -191,6 +196,38 @@ if FastAPI is not None:
     def api_compare_schema(act_id: str, request: SchemaCompareRequest) -> dict[str, Any]:
         try:
             return compare_schema_to_profile(act_id, request.fields)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+
+    @app.post("/v1/profiles/{act_id}/lint-report")
+    @app.post("/profiles/{act_id}/lint-report", deprecated=True)
+    def api_lint_report(act_id: str, body: dict[str, Any]) -> dict[str, Any]:
+        """Lint an incident-report payload against a profile.
+
+        Accepts the report as a field_id -> value object (or wrapped as
+        {"report": {...}}) and returns missing/unknown fields plus which present
+        fields still warrant attention (high interpretive load, committee-grade
+        evidence, non-public disclosure tier). This is a readiness check, not a
+        compliance certification.
+        """
+        report = body.get("report", body) if isinstance(body, dict) else {}
+        try:
+            return lint_report(act_id, report)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+
+
+    @app.post("/v1/profiles/{act_id}/prevalidate-report")
+    def api_prevalidate_report(act_id: str, body: dict[str, Any]) -> dict[str, Any]:
+        """Pre-validate an incident-report payload against a profile.
+
+        This is a pre-verification readiness check. It does not verify report
+        bytes, evidence files, timestamps, signatures, ledger anchors or issuer
+        identity.
+        """
+        report = body.get("report", body) if isinstance(body, dict) else {}
+        try:
+            return prevalidate_report(act_id, report)
         except KeyError as exc:
             raise HTTPException(status_code=404, detail=str(exc))
 

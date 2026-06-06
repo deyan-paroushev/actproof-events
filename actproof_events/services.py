@@ -562,6 +562,150 @@ def compare_schema_to_profile(act_id: str, schema_fields: list[str], catalogue_r
     }
 
 
+def lint_report(act_id: str, report: dict[str, Any], catalogue_root: Path | None = None) -> dict[str, Any]:
+    """Lint a submitted incident report against a profile.
+
+    This is the developer-facing tool: given an actual report payload (field_id
+    -> value), it returns what a supervisor or an AI assistant would need to know
+    before the report is trusted or filed — what's missing, what's unexpected,
+    which present fields still carry interpretive risk, which need committee-grade
+    evidence, and which carry non-public disclosure tiers. It does NOT certify
+    compliance; it surfaces where attention and evidence are required.
+    """
+    profile = get_profile(act_id, catalogue_root)
+    rows = {r["field_id"]: r for r in list_fields(act_id, catalogue_root=catalogue_root)}
+    required = set(profile.get("required_claim_fields") or [])
+    optional = set(profile.get("optional_claim_fields") or [])
+    profile_fields = required | optional
+
+    present = {k for k, v in report.items() if v not in (None, "", [], {})}
+    submitted = set(report.keys())
+
+    missing_required = sorted(required - present)
+    unknown_fields = sorted(submitted - profile_fields)
+    empty_required = sorted((required & submitted) - present)
+
+    # Present fields that still warrant attention.
+    present_profile = present & profile_fields
+    high_interpretive = sorted(
+        f for f in present_profile
+        if isinstance(rows.get(f, {}).get("interpretive_load"), int)
+        and rows[f]["interpretive_load"] >= 3
+    )
+    needs_committee_evidence = sorted(
+        f for f in present_profile
+        if "classification_committee_record" in (rows.get(f, {}).get("evidence_labels") or [])
+    )
+    non_public_fields = sorted(
+        f for f in present_profile
+        if rows.get(f, {}).get("disclosure_tier") not in (None, "public")
+    )
+
+    findings: list[dict[str, Any]] = []
+    for field_id in missing_required:
+        findings.append({
+            "code": "missing_required_field",
+            "severity": "error",
+            "field_id": field_id,
+            "message": f"Required field {field_id} is not present in the report payload.",
+        })
+    for field_id in empty_required:
+        findings.append({
+            "code": "empty_required_field",
+            "severity": "error",
+            "field_id": field_id,
+            "message": f"Required field {field_id} is present but empty.",
+        })
+    for field_id in unknown_fields:
+        findings.append({
+            "code": "unknown_field",
+            "severity": "warning",
+            "field_id": field_id,
+            "message": f"Field {field_id} is not part of the ActProof profile.",
+        })
+    for field_id in high_interpretive:
+        findings.append({
+            "code": "high_interpretive_load",
+            "severity": "warning",
+            "field_id": field_id,
+            "message": f"Field {field_id} carries high interpretive load and should be reviewed.",
+        })
+    for field_id in needs_committee_evidence:
+        findings.append({
+            "code": "committee_evidence_expected",
+            "severity": "info",
+            "field_id": field_id,
+            "message": f"Field {field_id} is associated with classification committee evidence expectations.",
+        })
+    for field_id in non_public_fields:
+        findings.append({
+            "code": "non_public_disclosure_tier",
+            "severity": "info",
+            "field_id": field_id,
+            "message": f"Field {field_id} has a non-public disclosure tier.",
+        })
+
+    if missing_required or empty_required:
+        status = "incomplete"
+        prevalidation_status = "blocked"
+    elif high_interpretive or unknown_fields:
+        status = "review_required"
+        prevalidation_status = "attention_required"
+    else:
+        status = "complete_pending_review"
+        prevalidation_status = "ready_for_preverification"
+
+    return {
+        "act_id": act_id,
+        "status": status,
+        "prevalidation_status": prevalidation_status,
+        "ready_for_preverification": prevalidation_status == "ready_for_preverification",
+        "required_total": len(required),
+        "required_present": len(required & present),
+        "missing_required": missing_required,
+        "empty_required": empty_required,
+        "unknown_fields": unknown_fields,
+        "present_fields_needing_attention": {
+            "high_interpretive_load": high_interpretive,
+            "needs_committee_evidence": needs_committee_evidence,
+            "non_public_disclosure_tier": non_public_fields,
+        },
+        "findings": findings,
+        "summary": {
+            "missing_required_count": len(missing_required),
+            "unknown_field_count": len(unknown_fields),
+            "high_interpretive_count": len(high_interpretive),
+            "finding_count": len(findings),
+            "prevalidation_status": prevalidation_status,
+        },
+        "non_claims": real_non_claims(profile) + [
+            "lint_report checks structural and evidence-readiness signals only; "
+            "it does not validate field values or certify regulatory compliance.",
+        ],
+        "boundary": BOUNDARY, "boundary_id": BOUNDARY_ID,
+    }
+
+
+def prevalidate_report(act_id: str, report: dict[str, Any], catalogue_root: Path | None = None) -> dict[str, Any]:
+    """Pre-validate an incident-report payload against an ActProof profile.
+
+    This is a 1.8.0 market-facing alias over the report linter. It deliberately
+    stays pre-validation only: it checks profile completeness, unknown fields,
+    interpretive-load attention points and evidence-readiness signals. It does
+    not verify report bytes, signatures, timestamps, ledger anchors or issuer
+    identity; those belong to the downstream actproof-py verification layer.
+    """
+    result = lint_report(act_id, report, catalogue_root=catalogue_root)
+    result["check_type"] = "prevalidation"
+    result["preverification_boundary"] = (
+        "ready_for_preverification means the report payload clears ActProof Events "
+        "structural and evidence-readiness checks only. Full receipt verification "
+        "is performed by actproof-py after canonicalisation, timestamping, signing "
+        "and anchoring."
+    )
+    return result
+
+
 _BINDING_CHECKS_NOT_PERFORMED = [
     "manifest_hash_reproduced",
     "rfc3161_timestamp",

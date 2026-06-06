@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "actproof-events"
-version = "1.7.0"
+version = "1.8.0"
 description = "Open catalogue, JSON schemas, source-bound act profiles, and CC0 conformance vectors for machine-readable organisational acts."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -123,6 +123,8 @@ packages = ["actproof_events"]
 # accessors in actproof_events/__init__.py resolve files under that root.
 "catalogue/acts" = "actproof_events/data/catalogue/acts"
 "spec/schemas" = "actproof_events/data/schemas"
+# Field-level source binding (1.8.0) ships via the source_bindings mapping below.
+"docs/REVIEW_METHOD.v1.md" = "actproof_events/data/docs/REVIEW_METHOD.v1.md"
 "spec/actproof-events.spec.md" = "actproof_events/data/spec/actproof-events.spec.md"
 "spec/vocabularies.md" = "actproof_events/data/spec/vocabularies.md"
 "spec/schema_version_policy.md" = "actproof_events/data/spec/schema_version_policy.md"
@@ -133,6 +135,8 @@ packages = ["actproof_events"]
 # Field-level source-basis derivations from the Mapper. Empty until populated;
 # every field falls back to the act-level source basis while it is empty.
 "analysis/field_derivations.json" = "actproof_events/data/analysis/field_derivations.json"
+# Field-level source binding data for the 1.8.0 DORA moat release.
+"source_bindings" = "actproof_events/data/source_bindings"
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -142,6 +146,7 @@ include = [
   "/analysis",
   "/docs",
   "/scripts",
+  "/source_bindings",
   "/mapper",
   "/salt-erasure",
   "/CATALOGUE_LOADER_CONTRACT.md",
