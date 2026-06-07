@@ -64,6 +64,26 @@ if FastAPI is not None:
         CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "POST"], allow_headers=["*"],
     )
 
+    # Resource-consumption guard (OWASP API4): reject oversized request bodies
+    # before they are parsed. The local service serves small schema/report
+    # payloads only; 512 KiB is generous for that and caps the blast radius.
+    MAX_BODY_BYTES = 512 * 1024
+
+    @app.middleware("http")
+    async def _limit_body_size(request: "Request", call_next):
+        cl = request.headers.get("content-length")
+        if cl is not None:
+            try:
+                if int(cl) > MAX_BODY_BYTES:
+                    from fastapi.responses import JSONResponse
+                    return JSONResponse(
+                        status_code=413,
+                        content={"error": "request_too_large", "max_bytes": MAX_BODY_BYTES},
+                    )
+            except ValueError:
+                pass
+        return await call_next(request)
+
     class SchemaCompareRequest(BaseModel):
         fields: list[str]
 
@@ -129,6 +149,13 @@ if FastAPI is not None:
                 "POST /v1/profiles/{act_id}/lint-report",
                 "POST /v1/profiles/{act_id}/prevalidate-report",
                 "POST /v1/profile-bindings/check",
+                "GET /v1/service-info",
+                "GET /v1/profiles/{act_id}/governance-status",
+                "GET /v1/profiles/{act_id}/lock",
+                "GET /v1/profiles/{act_id}/source-atom-coverage",
+                "GET /v1/profiles/{act_id}/completeness",
+                "GET /v1/release/sbom",
+                "GET /v1/release/manifest",
                 "GET /health",
             ],
             "note": "Unversioned paths are deprecated development aliases.",
@@ -250,14 +277,134 @@ if FastAPI is not None:
         obj = body.get("receipt", body) if isinstance(body, dict) else body
         return check_profile_binding(obj)
 
+    # --- 2.4.0: read-only views of the 2.x bank-control layer -----------------
+    # These expose the PUBLIC, source-bound assurance facts (governance status of
+    # the published profile, the SBOM, the release manifest) as read-only GETs.
+    # The bank's OWN overlay and its impact report are deliberately NOT exposed
+    # over HTTP: they contain the bank's internal review decisions and reviewer
+    # identities, and stay file-local via the CLI. The API never receives bank
+    # incident data or bank governance data. No route below performs any network
+    # egress; every answer is computed from the local immutable store.
+
+    @app.get("/v1/service-info")
+    def api_service_info() -> dict[str, Any]:
+        """Declare the local-only, no-egress posture verifiably."""
+        return {
+            "service": "actproof-events-api",
+            "version": __version__,
+            "deployment_posture": {
+                "default_bind": "127.0.0.1 (loopback only)",
+                "network_egress": "none — every response is computed from the local immutable store",
+                "receives_bank_incident_data": False,
+                "receives_bank_overlay_or_governance_decisions": False,
+                "read_only": True,
+                "stores_reports": False,
+                "stores_evidence": False,
+                "requires_database": False,
+                "external_network_calls": False,
+                "body_limit_bytes": 512 * 1024,
+            },
+            "bank_private_features_not_exposed_over_http": [
+                "bank overlay (init/validate/status)",
+                "overlay impact report",
+            ],
+            "reason": (
+                "The overlay and its impact carry the bank's own internal review "
+                "decisions and reviewer identities. They stay file-local via the "
+                "CLI by design; the API exposes only public source-bound facts."
+            ),
+            "boundary": BOUNDARY, "boundary_id": BOUNDARY_ID,
+        }
+
+    @app.get("/v1/profiles/{act_id}/governance-status")
+    def api_governance_status(act_id: str) -> dict[str, Any]:
+        """Read-only governance status of the PUBLISHED profile (review tiers,
+        held-at-draft fields, lifecycle state). Source-bound; no bank data."""
+        from .profile_governance import build_governance_status
+        if act_id not in get_store().act_ids():
+            raise HTTPException(status_code=404, detail="unknown_profile")
+        out = build_governance_status(act_id)
+        out["boundary"] = BOUNDARY
+        out["boundary_id"] = BOUNDARY_ID
+        return out
+
+    @app.get("/v1/release/sbom")
+    def api_sbom() -> dict[str, Any]:
+        """Read-only CycloneDX SBOM for the installed package."""
+        from .release_assurance import build_sbom
+        return build_sbom()
+
+    @app.get("/v1/release/manifest")
+    def api_release_manifest(act_id: str = "op:eu.dora.ict_incident_notification_initial.v1") -> dict[str, Any]:
+        """Read-only release-assurance manifest binding artifacts to domain hashes."""
+        from .release_assurance import build_release_assurance_manifest
+        if act_id not in get_store().act_ids():
+            raise HTTPException(status_code=404, detail="unknown_profile")
+        return build_release_assurance_manifest(act_id)
+
+    @app.get("/v1/profiles/{act_id}/lock")
+    def api_profile_lock(act_id: str) -> dict[str, Any]:
+        """Read-only profile lock (component hashes, self-sealing lock hash)."""
+        from .bank_operability import build_profile_lock
+        if act_id not in get_store().act_ids():
+            raise HTTPException(status_code=404, detail="unknown_profile")
+        return build_profile_lock(act_id)
+
+    @app.get("/v1/profiles/{act_id}/source-atom-coverage")
+    def api_source_atom_coverage(act_id: str) -> dict[str, Any]:
+        """Read-only source-atom coverage for the published profile."""
+        from .bank_operability import compute_source_atom_coverage
+        if act_id not in get_store().act_ids():
+            raise HTTPException(status_code=404, detail="unknown_profile")
+        return compute_source_atom_coverage(act_id)
+
+    @app.get("/v1/profiles/{act_id}/completeness")
+    def api_completeness(act_id: str) -> dict[str, Any]:
+        """Read-only profile completeness for the published profile."""
+        from .bank_operability import get_profile_completeness
+        if act_id not in get_store().act_ids():
+            raise HTTPException(status_code=404, detail="unknown_profile")
+        return get_profile_completeness(act_id)
+
+
+def _is_loopback(host: str) -> bool:
+    h = (host or "").strip().lower()
+    if h in {"127.0.0.1", "::1", "localhost"}:
+        return True
+    return h.startswith("127.")
+
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run the optional ActProof Events REST API.")
-    parser.add_argument("--host", default="127.0.0.1")
+    parser = argparse.ArgumentParser(
+        description="Run the optional ActProof Events REST API (read-only, local by default, no egress)."
+    )
+    parser.add_argument("--host", default="127.0.0.1", help="Bind address (default: 127.0.0.1, loopback only)")
     parser.add_argument("--port", default=8787, type=int)
+    parser.add_argument(
+        "--allow-non-loopback", action="store_true",
+        help="Required to bind a non-loopback address. ActProof is local-first; "
+             "exposing this service on a network is the operator's deliberate choice.",
+    )
     args = parser.parse_args()
     if FastAPI is None:
         raise SystemExit('Install optional dependencies: pip install "actproof-events[api]"')
+
+    if not _is_loopback(args.host) and not args.allow_non_loopback:
+        raise SystemExit(
+            f"refusing to bind non-loopback host {args.host!r} without --allow-non-loopback.\n"
+            "ActProof Events is local-first and read-only: it serves source-bound "
+            "profile facts from a local immutable store and performs no network egress.\n"
+            "Binding to a network interface is a deliberate operator decision; "
+            "if you mean it, pass --allow-non-loopback and place it behind your own "
+            "gateway/auth. The default 127.0.0.1 keeps the blast radius local."
+        )
+    if not _is_loopback(args.host):
+        print(
+            f"WARNING: binding non-loopback host {args.host!r}. This read-only service "
+            "has no built-in auth; put it behind your own gateway. No bank incident "
+            "data or overlay/governance decisions are accepted by this API.",
+        )
+
     import uvicorn
     uvicorn.run("actproof_events.api:app", host=args.host, port=args.port, reload=False)
 
