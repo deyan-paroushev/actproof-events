@@ -12,7 +12,8 @@ ACT = "op:eu.dora.ict_incident_notification_initial.v1"
 def test_profile_lock_contains_hashes_and_completeness():
     lock = build_profile_lock(ACT)
     assert lock["schema"] == "actproof.profile_lock.v1"
-    assert lock["package"]["version"] == "1.8.2"
+    from actproof_events import __version__
+    assert lock["package"]["version"] == __version__
     assert lock["profile"]["profile_semantic_hash"].startswith("sha256:")
     assert lock["component_hashes"]["source_atoms_hash"].startswith("sha256:")
     assert lock["coverage"]["source_atom_coverage"]["total_source_atoms"] >= 1

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "actproof-events"
-version = "1.8.2"
+version = "1.9.0"
 description = "Open catalogue, JSON schemas, source-bound act profiles, and CC0 conformance vectors for machine-readable organisational acts."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -146,6 +146,7 @@ include = [
   "/spec",
   "/analysis",
   "/docs",
+  "/examples",
   "/scripts",
   "/source_bindings",
   "/mapper",

@@ -678,6 +678,7 @@ def _print_usage() -> None:
     print("  actproof-events export-profile-lock ACT_ID --out profile-lock.json")
     print("  actproof-events export-prevalidation-report ACT_ID report.json --out prevalidation-report.json")
     print("  actproof-events export-review-checklist ACT_ID --out review-checklist.json")
+    print("  actproof-events compare-schema ACT_ID external-schema.json --out mapping-report.json")
     print("")
     print("Example:")
     print("  actproof-events export-profile-view op:eu.dora.ict_incident_notification_initial.v1 --out dora.profile-view.json")
@@ -770,6 +771,20 @@ def main(argv: list[str] | None = None) -> int:
     preval_report_cmd.add_argument("report_path", help="Path to a JSON report payload (field_id -> value)")
     preval_report_cmd.add_argument("--out", required=True, help="Output JSON path")
     preval_report_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
+
+    compare_cmd = sub.add_parser(
+        "compare-schema",
+        help="Compare an external schema/field list to an ActProof profile; emits candidates for human review only",
+    )
+    compare_cmd.add_argument("act_id", help="ActProof act_type_id")
+    compare_cmd.add_argument("schema_path", help="Path to external JSON Schema, field list, or sample report JSON")
+    compare_cmd.add_argument("--out", help="Optional output JSON path for the mapping report")
+    compare_cmd.add_argument("--external-system", default=None, help="Optional external system/schema label")
+    compare_cmd.add_argument("--max-candidates", type=int, default=3, help="Maximum candidates per external field (default: 3)")
+    compare_cmd.add_argument("--minimum-strength", choices=("weak", "medium", "strong"), default="medium", help="Minimum candidate strength to include (default: medium; use weak only for exploratory review)")
+    compare_cmd.add_argument("--json", action="store_true", help="Emit full mapping report to stdout")
+    compare_cmd.add_argument("--compact", action="store_true", help="Write compact JSON when --out is used")
 
     lint = sub.add_parser(
         "lint-report",
@@ -974,6 +989,43 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  prevalidation_report_hash: {payload.get('prevalidation_report_hash')}")
         print(f"  status: {payload.get('run_summary', {}).get('prevalidation_status')}")
         return 0 if payload.get('run_summary', {}).get('prevalidation_status') != 'blocked' else 1
+
+
+    if args.command == "compare-schema":
+        from actproof_events.schema_mapping import compare_schema_file as _compare_schema_file
+        try:
+            report = _compare_schema_file(
+                args.act_id,
+                args.schema_path,
+                external_system=args.external_system,
+                max_candidates_per_field=args.max_candidates,
+                minimum_strength=args.minimum_strength,
+            )
+        except Exception as exc:
+            print(f"actproof-events: compare-schema failed: {exc}", file=sys.stderr)
+            return 1
+        if args.out:
+            Path(args.out).write_text(
+                json.dumps(report, ensure_ascii=False, sort_keys=False, indent=None if args.compact else 2) + "\n",
+                encoding="utf-8",
+            )
+        if args.json or not args.out:
+            if args.json:
+                print(json.dumps(report, ensure_ascii=False, indent=2))
+            else:
+                summary = report.get("summary") or {}
+                print(f"schema mapping candidates for {args.act_id}")
+                print(f"  external system                  : {report.get('external_system')}")
+                print(f"  external fields                  : {summary.get('external_field_count')}")
+                print(f"  candidate-mapped external fields : {summary.get('candidate_mapped_external_fields')}")
+                print(f"  unmapped external fields         : {summary.get('unmapped_external_field_count')}")
+                print(f"  ambiguous mappings               : {summary.get('ambiguous_mapping_count')}")
+                print(f"  ActProof required without candidate: {summary.get('actproof_required_without_candidate_count')}")
+                print("  mapping_status                  : candidate_review_required")
+                print("  review_required                 : True")
+        if args.out:
+            print(f"wrote candidate schema mapping report: {args.out}")
+        return 0
 
     if args.command == "lint-report":
         from actproof_events.services import lint_report as _lint

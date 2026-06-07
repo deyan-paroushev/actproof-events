@@ -1,0 +1,20 @@
+{
+  "external_system": "example-bank-dora-form",
+  "fields": [
+    {
+      "name": "entityLei",
+      "type": "string",
+      "description": "Legal entity identifier of the reporting financial entity"
+    },
+    {
+      "name": "majorIncidentCriteria",
+      "type": "array",
+      "description": "DORA classification criteria triggered by the incident"
+    },
+    {
+      "name": "internalEscalationOwner",
+      "type": "string",
+      "description": "Internal owner for follow-up actions"
+    }
+  ]
+}
