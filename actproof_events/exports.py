@@ -905,6 +905,49 @@ def main(argv: list[str] | None = None) -> int:
     overlay_impact_cmd.add_argument("--json", action="store_true", help="Emit full impact report to stdout")
     overlay_impact_cmd.add_argument("--compact", action="store_true", help="Write compact JSON when --out is used")
 
+    sbom_cmd = sub.add_parser(
+        "export-sbom",
+        help="Export a minimal CycloneDX SBOM for the package and optional extras",
+    )
+    sbom_cmd.add_argument("--out", required=True, help="Output CycloneDX JSON path")
+    sbom_cmd.add_argument("--root", default=None, help="Repository/source root to inspect (default: current directory)")
+    sbom_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
+    hashes_cmd = sub.add_parser(
+        "export-artifact-hashes",
+        help="Export SHA-256 hashes for package/source artifacts for internal mirror controls",
+    )
+    hashes_cmd.add_argument("--out", required=True, help="Output artifact hash manifest JSON path")
+    hashes_cmd.add_argument("--root", default=None, help="Repository/source root to inspect (default: current directory)")
+    hashes_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
+    verify_hashes_cmd = sub.add_parser(
+        "verify-artifact-hashes",
+        help="Verify files against an artifact-hashes.json manifest",
+    )
+    verify_hashes_cmd.add_argument("manifest_path", help="Path to artifact-hashes.json")
+    verify_hashes_cmd.add_argument("--root", default=None, help="Root directory containing files to verify (default: manifest directory)")
+    verify_hashes_cmd.add_argument("--expected-profile-semantic-hash", default=None, help="Also re-check the installed profile matches this hash (coherent-release check)")
+    verify_hashes_cmd.add_argument("--act-id", default=None, help="Act id for the domain re-check")
+    verify_hashes_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    assurance_cmd = sub.add_parser(
+        "export-release-assurance-pack",
+        help="Export SBOM, artifact hashes, signing-intent and internal mirror guide",
+    )
+    assurance_cmd.add_argument("act_id", help="ActProof act_type_id")
+    assurance_cmd.add_argument("--out", required=True, help="Output directory for the release assurance pack")
+    assurance_cmd.add_argument("--root", default=None, help="Repository/source root to inspect (default: current directory)")
+    assurance_cmd.add_argument("--json", action="store_true", help="Emit machine-readable pack manifest")
+
+    signing_cmd = sub.add_parser(
+        "export-signing-intent",
+        help="Export a signing/attestation intent record for bank/PyPI release controls",
+    )
+    signing_cmd.add_argument("--out", required=True, help="Output signing-intent JSON path")
+    signing_cmd.add_argument("--root", default=None, help="Repository/source root to inspect (default: current directory)")
+    signing_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
     lint = sub.add_parser(
         "lint-report",
         help="Lint an incident-report JSON payload against a profile",
@@ -1366,6 +1409,80 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  blocking_items: {report.get('summary', {}).get('blocking_items')}")
             print(f"  review_items: {report.get('summary', {}).get('review_items')}")
         return 0 if report.get("impact_status") in {"no_profile_change", "no_overlay_impact"} else 1
+
+    if args.command == "export-sbom":
+        from actproof_events.release_assurance import build_sbom as _build_sbom
+        try:
+            payload = _build_sbom(args.root)
+            Path(args.out).write_text(json.dumps(payload, ensure_ascii=False, indent=None if args.compact else 2) + "\n", encoding="utf-8")
+        except Exception as exc:
+            print(f"actproof-events: export-sbom failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote SBOM: {args.out}")
+        print(f"  bom_hash: {payload.get('bom_hash')}")
+        print(f"  components: {len(payload.get('components') or [])}")
+        return 0
+
+    if args.command == "export-artifact-hashes":
+        from actproof_events.release_assurance import build_artifact_hashes as _build_hashes
+        try:
+            payload = _build_hashes(args.root)
+            Path(args.out).write_text(json.dumps(payload, ensure_ascii=False, indent=None if args.compact else 2) + "\n", encoding="utf-8")
+        except Exception as exc:
+            print(f"actproof-events: export-artifact-hashes failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote artifact hashes: {args.out}")
+        print(f"  manifest_hash: {payload.get('manifest_hash')}")
+        print(f"  files: {payload.get('file_count')}")
+        return 0
+
+    if args.command == "verify-artifact-hashes":
+        from actproof_events.release_assurance import verify_artifact_hashes as _verify_hashes
+        try:
+            result = _verify_hashes(args.manifest_path, root=args.root,
+                                    expected_profile_semantic_hash=getattr(args, "expected_profile_semantic_hash", None),
+                                    act_id=getattr(args, "act_id", None))
+        except Exception as exc:
+            print(f"actproof-events: verify-artifact-hashes failed: {exc}", file=sys.stderr)
+            return 1
+        if args.json:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        else:
+            print(f"artifact hash verification: {'PASS' if result.get('ok') else 'FAIL'}")
+            for r in result.get('results') or []:
+                if not r.get('matches'):
+                    print(f"  mismatch: {r.get('path')}")
+            dc = result.get("domain_check")
+            if dc:
+                print(f"  domain check (profile hash): {'PASS' if dc.get('matches') else 'FAIL'}")
+        return 0 if result.get('ok') else 1
+
+    if args.command == "export-release-assurance-pack":
+        from actproof_events.release_assurance import export_release_assurance_pack as _export_pack
+        try:
+            manifest = _export_pack(args.act_id, args.out, root=args.root)
+        except Exception as exc:
+            print(f"actproof-events: export-release-assurance-pack failed: {exc}", file=sys.stderr)
+            return 1
+        if args.json:
+            print(json.dumps(manifest, ensure_ascii=False, indent=2))
+        else:
+            print(f"wrote release assurance pack: {args.out}")
+            print(f"  files: {len(manifest.get('files') or [])}")
+            print(f"  release_assurance_pack_hash: {manifest.get('release_assurance_pack_hash')}")
+        return 0
+
+    if args.command == "export-signing-intent":
+        from actproof_events.release_assurance import build_signing_intent as _signing
+        try:
+            payload = _signing(args.root)
+            Path(args.out).write_text(json.dumps(payload, ensure_ascii=False, indent=None if args.compact else 2) + "\n", encoding="utf-8")
+        except Exception as exc:
+            print(f"actproof-events: export-signing-intent failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote signing intent: {args.out}")
+        print(f"  signing_intent_hash: {payload.get('signing_intent_hash')}")
+        return 0
 
     if args.command == "lint-report":
         from actproof_events.services import lint_report as _lint

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "actproof-events"
-version = "2.2.0"
+version = "2.3.0"
 description = "Open catalogue, JSON schemas, source-bound act profiles, and CC0 conformance vectors for machine-readable organisational acts."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -129,6 +129,9 @@ packages = ["actproof_events"]
 "docs/PROFILE_GOVERNANCE.v1.md" = "actproof_events/data/docs/PROFILE_GOVERNANCE.v1.md"
 "docs/BANK_POC_PACKAGE.v1.md" = "actproof_events/data/docs/BANK_POC_PACKAGE.v1.md"
 "docs/BANK_PROFILE_OVERLAY.v1.md" = "actproof_events/data/docs/BANK_PROFILE_OVERLAY.v1.md"
+"docs/BANK_OVERLAY_IMPACT.v1.md" = "actproof_events/data/docs/BANK_OVERLAY_IMPACT.v1.md"
+"docs/RELEASE_ASSURANCE.v1.md" = "actproof_events/data/docs/RELEASE_ASSURANCE.v1.md"
+"docs/INTERNAL_MIRROR_GUIDE.v1.md" = "actproof_events/data/docs/INTERNAL_MIRROR_GUIDE.v1.md"
 "spec/actproof-events.spec.md" = "actproof_events/data/spec/actproof-events.spec.md"
 "spec/vocabularies.md" = "actproof_events/data/spec/vocabularies.md"
 "spec/schema_version_policy.md" = "actproof_events/data/spec/schema_version_policy.md"
