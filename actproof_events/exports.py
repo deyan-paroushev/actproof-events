@@ -852,6 +852,48 @@ def main(argv: list[str] | None = None) -> int:
     bank_poc_cmd.add_argument("--sample-report", default=None, help="Optional sample draft report JSON path")
     bank_poc_cmd.add_argument("--json", action="store_true", help="Emit machine-readable pack manifest")
 
+    overlay_init_cmd = sub.add_parser(
+        "init-overlay",
+        help="Initialise a bank-owned profile overlay from a candidate mapping report",
+    )
+    overlay_init_cmd.add_argument("act_id", help="ActProof act_type_id")
+    overlay_init_cmd.add_argument("--mapping-report", required=True, help="Candidate mapping report JSON from compare-schema")
+    overlay_init_cmd.add_argument("--institution", default=None, help="Institution name to include in the overlay")
+    overlay_init_cmd.add_argument("--out", required=True, help="Output bank overlay JSON path")
+    overlay_init_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
+    overlay_init_schema_cmd = sub.add_parser(
+        "init-overlay-from-schema",
+        help="Compare an external schema and initialise a draft bank overlay in one step",
+    )
+    overlay_init_schema_cmd.add_argument("act_id", help="ActProof act_type_id")
+    overlay_init_schema_cmd.add_argument("schema_path", help="External JSON Schema, field list, or sample report JSON")
+    overlay_init_schema_cmd.add_argument("--institution", default=None, help="Institution name to include in the overlay")
+    overlay_init_schema_cmd.add_argument("--external-system", default=None, help="Optional external system/schema label")
+    overlay_init_schema_cmd.add_argument("--out", required=True, help="Output bank overlay JSON path")
+    overlay_init_schema_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
+    overlay_validate_cmd = sub.add_parser(
+        "validate-overlay",
+        help="Validate a bank-owned overlay's profile hash, mapping decisions and review controls",
+    )
+    overlay_validate_cmd.add_argument("overlay_path", help="Bank overlay JSON path")
+
+    overlay_status_cmd = sub.add_parser(
+        "overlay-status",
+        help="Show bank-owned overlay status and review readiness",
+    )
+    overlay_status_cmd.add_argument("overlay_path", help="Bank overlay JSON path")
+    overlay_status_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    overlay_report_cmd = sub.add_parser(
+        "export-overlay-report",
+        help="Export an audit-friendly bank overlay report",
+    )
+    overlay_report_cmd.add_argument("overlay_path", help="Bank overlay JSON path")
+    overlay_report_cmd.add_argument("--out", required=True, help="Output overlay report JSON path")
+    overlay_report_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
     lint = sub.add_parser(
         "lint-report",
         help="Lint an incident-report JSON payload against a profile",
@@ -1211,6 +1253,88 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  profile_semantic_hash: {manifest.get('profile_semantic_hash')}")
             print(f"  governance_status_hash: {manifest.get('governance_status_hash')}")
             print(f"  bank_poc_pack_hash: {manifest.get('bank_poc_pack_hash')}")
+        return 0
+
+    if args.command == "init-overlay":
+        from actproof_events.bank_overlay import init_bank_overlay as _init_overlay, write_bank_overlay as _write_overlay
+        try:
+            mapping_report = json.loads(Path(args.mapping_report).read_text(encoding="utf-8"))
+            overlay = _init_overlay(args.act_id, mapping_report, institution=args.institution)
+            _write_overlay(overlay, args.out, compact=args.compact)
+        except Exception as exc:
+            print(f"actproof-events: init-overlay failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote bank overlay: {args.out}")
+        print(f"  overlay_id: {overlay.get('overlay_id')}")
+        print(f"  profile_semantic_hash: {overlay.get('profile_semantic_hash')}")
+        print(f"  mappings: {len(overlay.get('mappings') or [])}")
+        print(f"  missing required decisions: {len(overlay.get('missing_required_field_decisions') or [])}")
+        return 0
+
+    if args.command == "init-overlay-from-schema":
+        from actproof_events.bank_overlay import init_bank_overlay_from_schema as _init_from_schema, write_bank_overlay as _write_overlay
+        try:
+            overlay = _init_from_schema(
+                args.act_id,
+                args.schema_path,
+                institution=args.institution,
+                external_system=args.external_system,
+            )
+            _write_overlay(overlay, args.out, compact=args.compact)
+        except Exception as exc:
+            print(f"actproof-events: init-overlay-from-schema failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote bank overlay: {args.out}")
+        print(f"  overlay_id: {overlay.get('overlay_id')}")
+        print(f"  profile_semantic_hash: {overlay.get('profile_semantic_hash')}")
+        print(f"  mappings: {len(overlay.get('mappings') or [])}")
+        return 0
+
+    if args.command == "validate-overlay":
+        from actproof_events.bank_overlay import load_bank_overlay as _load_overlay, validate_bank_overlay as _validate_overlay
+        try:
+            overlay = _load_overlay(args.overlay_path)
+            errors = _validate_overlay(overlay)
+        except Exception as exc:
+            print(f"actproof-events: validate-overlay failed: {exc}", file=sys.stderr)
+            return 1
+        if errors:
+            print("overlay validation: FAIL")
+            for e in errors:
+                print(f"  error: {e}")
+            return 1
+        print("overlay validation: PASS")
+        return 0
+
+    if args.command == "overlay-status":
+        from actproof_events.bank_overlay import load_bank_overlay as _load_overlay, build_bank_overlay_status as _overlay_status
+        try:
+            status = _overlay_status(_load_overlay(args.overlay_path))
+        except Exception as exc:
+            print(f"actproof-events: overlay-status failed: {exc}", file=sys.stderr)
+            return 1
+        if args.json:
+            print(json.dumps(status, ensure_ascii=False, indent=2))
+        else:
+            print(f"overlay_id: {status.get('overlay_id')}")
+            print(f"  profile_hash_matches: {status.get('profile_semantic_hash_matches')}")
+            print(f"  mappings accepted/rejected/needs_review: {status.get('mapping_counts', {}).get('accepted')}/{status.get('mapping_counts', {}).get('rejected')}/{status.get('mapping_counts', {}).get('needs_review')}")
+            print(f"  missing required without decision: {status.get('missing_required_field_decisions', {}).get('without_decision')}")
+            print(f"  external-only needing review: {status.get('external_only_fields', {}).get('needs_review')}")
+            print(f"  ready_for_internal_poc: {status.get('ready_for_internal_poc')}")
+        return 0
+
+    if args.command == "export-overlay-report":
+        from actproof_events.bank_overlay import load_bank_overlay as _load_overlay, build_bank_overlay_report as _overlay_report
+        try:
+            report = _overlay_report(_load_overlay(args.overlay_path))
+            Path(args.out).write_text(json.dumps(report, ensure_ascii=False, indent=None if args.compact else 2) + "\n", encoding="utf-8")
+        except Exception as exc:
+            print(f"actproof-events: export-overlay-report failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote bank overlay report: {args.out}")
+        print(f"  overlay_report_hash: {report.get('overlay_report_hash')}")
+        print(f"  ready_for_internal_poc: {report.get('status', {}).get('ready_for_internal_poc')}")
         return 0
 
     if args.command == "lint-report":

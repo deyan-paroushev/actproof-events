@@ -1,0 +1,5 @@
+{
+  "schema": "actproof.bank_profile_overlay.v1",
+  "note": "Generate a real overlay with: actproof-events init-overlay op:eu.dora.ict_incident_notification_initial.v1 --mapping-report candidate-mapping-report.json --institution 'Example Bank' --out bank-overlay.json",
+  "boundary": "Example placeholder only. Bank overlays are local control records and must be reviewed internally."
+}
