@@ -27,7 +27,7 @@ Typical usage from a consuming application::
             ...
 
 The package version tracks the actproof-events specification version. A
-package version of ``1.9.0`` ships the v1.5-rc1 specification and the
+package version of ``1.9.1`` ships the v1.5-rc1 specification and the
 catalogue state at that release tag.
 
 References:
@@ -68,7 +68,7 @@ __all__ = [
 # downstream artefact records "issued against actproof-events specification
 # v1.5-rc1").
 
-__version__: Final[str] = "1.9.0"
+__version__: Final[str] = "1.9.1"
 __spec_version__: Final[str] = "1.5-rc1"
 
 

@@ -679,6 +679,7 @@ def _print_usage() -> None:
     print("  actproof-events export-prevalidation-report ACT_ID report.json --out prevalidation-report.json")
     print("  actproof-events export-review-checklist ACT_ID --out review-checklist.json")
     print("  actproof-events compare-schema ACT_ID external-schema.json --out mapping-report.json")
+    print("  actproof-events diff-profile old.profile-view.json new.profile-view.json --out profile-diff.json")
     print("")
     print("Example:")
     print("  actproof-events export-profile-view op:eu.dora.ict_incident_notification_initial.v1 --out dora.profile-view.json")
@@ -785,6 +786,18 @@ def main(argv: list[str] | None = None) -> int:
     compare_cmd.add_argument("--minimum-strength", choices=("weak", "medium", "strong"), default="medium", help="Minimum candidate strength to include (default: medium; use weak only for exploratory review)")
     compare_cmd.add_argument("--json", action="store_true", help="Emit full mapping report to stdout")
     compare_cmd.add_argument("--compact", action="store_true", help="Write compact JSON when --out is used")
+
+    diff_cmd = sub.add_parser(
+        "diff-profile",
+        help="Compare two profile-view JSON exports and emit a change-control report",
+    )
+    diff_cmd.add_argument("old_profile_view", help="Old/baseline profile-view JSON path")
+    diff_cmd.add_argument("new_profile_view", help="New/target profile-view JSON path")
+    diff_cmd.add_argument("--out", help="Optional output JSON path for the diff report")
+    diff_cmd.add_argument("--old-label", default=None, help="Optional label for the old profile-view")
+    diff_cmd.add_argument("--new-label", default=None, help="Optional label for the new profile-view")
+    diff_cmd.add_argument("--json", action="store_true", help="Emit full diff report to stdout")
+    diff_cmd.add_argument("--compact", action="store_true", help="Write compact JSON when --out is used")
 
     lint = sub.add_parser(
         "lint-report",
@@ -1025,6 +1038,46 @@ def main(argv: list[str] | None = None) -> int:
                 print("  review_required                 : True")
         if args.out:
             print(f"wrote candidate schema mapping report: {args.out}")
+        return 0
+
+    if args.command == "diff-profile":
+        from actproof_events.profile_diff import diff_profile_view_files as _diff_profile_view_files
+        try:
+            report = _diff_profile_view_files(
+                args.old_profile_view,
+                args.new_profile_view,
+                old_label=args.old_label,
+                new_label=args.new_label,
+            )
+        except Exception as exc:
+            print(f"actproof-events: diff-profile failed: {exc}", file=sys.stderr)
+            return 1
+        if report.get("error"):
+            print(f"actproof-events: {report['error']}: {report.get('note','')}", file=sys.stderr)
+            return 1
+        if args.out:
+            Path(args.out).write_text(
+                json.dumps(report, ensure_ascii=False, sort_keys=False, indent=None if args.compact else 2) + "\n",
+                encoding="utf-8",
+            )
+        if args.json or not args.out:
+            if args.json:
+                print(json.dumps(report, ensure_ascii=False, indent=2))
+            else:
+                summary = report.get("summary") or {}
+                print("profile diff change-control report")
+                print(f"  old: {report.get('comparison', {}).get('old_label')}")
+                print(f"  new: {report.get('comparison', {}).get('new_label')}")
+                print(f"  semantic hash changed : {summary.get('semantic_hash_changed')}")
+                print(f"  fields added          : {summary.get('fields_added')}")
+                print(f"  fields removed        : {summary.get('fields_removed')}")
+                print(f"  fields changed        : {summary.get('fields_changed')}")
+                print(f"  source atom changes   : {summary.get('source_atom_changes')}")
+                print(f"  review status changes : {summary.get('review_status_changes')}")
+                print(f"  coverage changes      : {summary.get('coverage_changes')}")
+                print(f"  review required       : {summary.get('review_required')}")
+        if args.out:
+            print(f"wrote profile diff report: {args.out}")
         return 0
 
     if args.command == "lint-report":
