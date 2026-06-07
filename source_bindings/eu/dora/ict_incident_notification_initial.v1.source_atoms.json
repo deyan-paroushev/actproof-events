@@ -18,13 +18,39 @@
       "source_role": "base_obligation",
       "normative_weight": "primary",
       "language": "en",
-      "text_excerpt": "",
+      "text_excerpt": "1.   Financial entities shall report major ICT-related incidents to the relevant competent authority as referred to in Article 46 in accordance with paragraph 4 of this Article.\nWhere a financial entity is subject to supervision by more than one national competent authority referred to in Article 46, Member States shall designate a single competent authority as the relevant competent authority responsible for carrying out the functions and duties provided for in this Article.\nCredit institutions classified as significant, in accordance with Article 6(4) of Regulation (EU) No 1024/2013, shall report major ICT-related incidents to the relevant national competent authority designated in accordance with Article 4 of Directive 2013/36/EU, which shall immediately transmit that report to the ECB.\nFor the purpose of the first subparagraph, financial entities shall produce, after collecting and analysing all relevant information, the initial notification and reports referred to in paragraph 4 of this Article using the templates referred to in Article 20 and submit them to the competent authority. In the event that a technical impossibility prevents the submission of the initial notification using the template, financial entities shall notify the competent authority about it via alternative means.\nThe initial notification and reports referred to in paragraph 4 shall include all information necessary for the competent authority to determine the significance of the major ICT-related incident and assess possible cross-border impacts.\nWithout prejudice to the reporting pursuant to the first subparagraph by the financial entity to the relevant competent authority, Member States may additionally determine that some or all financial entities shall also provide the initial notification and each report referred to in paragraph 4 of this Article using the templates referred to in Article 20 to the competent authorities or the computer security incident response teams (CSIRTs) designated or established in accordance with Directive (EU) 2022/2555.",
       "atom_hash_basis": "sha256 over a canonical JSON serialisation (sorted keys) of the atom's identity fields: source_atom_id, celex, eli, atom_type, locator, source_role, normative_weight, source_document_sha256, derivation_note. Reproducible via actproof_events.source_binding.compute_source_atom_identity_hash. This is an identity hash, NOT a hash of official legal text; see official_text_sha256.",
       "derivation_note": "Article 19 is the base DORA incident-reporting obligation for major ICT-related incidents.",
       "review_status": "draft",
       "atom_identity_sha256": "sha256:5523f32eef854c2a1690261bb8e43bcca843bc34c39c378dcd49b1a2dba7335e",
-      "official_text_sha256": null,
-      "binding_status": "provisional"
+      "official_text_sha256": "sha256:72e756f2c6ef29b33f06c0fbb31a0d3908fe921d6d0d7a084a1468af2421c432",
+      "binding_status": "provisional",
+      "official_text_hash_basis": "sha256:utf8:actproof.official_text_normalisation.v1",
+      "official_text_normalisation_basis": "actproof.official_text_normalisation.v1",
+      "text_excerpt_rule_id": "actproof.official_text_excerpt_rule.v1",
+      "excerpt_boundary": {
+        "boundary_rule": "article_paragraph"
+      },
+      "official_text_source": {
+        "system": "EUR-Lex",
+        "celex": "32022R2554",
+        "eli": "http://data.europa.eu/eli/reg/2022/2554/oj",
+        "language": "en",
+        "consolidation_status": "original_oj",
+        "format_basis": "eurlex_html",
+        "retrieval_url": "https://eur-lex.europa.eu/eli/reg/2022/2554/oj/eng",
+        "source_file": "L_2022333EN_01000101_xml.html",
+        "source_file_sha256": "sha256:d4932b44d9b5aed0b02a7fb7270b9c06c9e2adf99166a132e401af6191f84114",
+        "retrieved_at": "2026-06-07"
+      },
+      "text_language": "en",
+      "text_captured_by": "maintainer",
+      "text_locator": {
+        "article": "19",
+        "paragraph": "1"
+      },
+      "text_capture_status": "captured_draft",
+      "text_review_status": "draft"
     },
     {
       "source_atom_id": "src.eu.dora.32022R2554.art19.p4.initial_intermediate_final",
@@ -43,13 +69,39 @@
       "source_role": "reporting_sequence",
       "normative_weight": "primary",
       "language": "en",
-      "text_excerpt": "",
+      "text_excerpt": "4.   Financial entities shall, within the time limits to be laid down in accordance with Article 20, first paragraph, point (a), point (ii), submit the following to the relevant competent authority:\n(a)\nan initial notification;\n(b)\nan intermediate report after the initial notification referred to in point (a), as soon as the status of the original incident has changed significantly or the handling of the major ICT-related incident has changed based on new information available, followed, as appropriate, by updated notifications every time a relevant status update is available, as well as upon a specific request of the competent authority;\n(c)\na final report, when the root cause analysis has been completed, regardless of whether mitigation measures have already been implemented, and when the actual impact figures are available to replace estimates.",
       "atom_hash_basis": "sha256 over a canonical JSON serialisation (sorted keys) of the atom's identity fields: source_atom_id, celex, eli, atom_type, locator, source_role, normative_weight, source_document_sha256, derivation_note. Reproducible via actproof_events.source_binding.compute_source_atom_identity_hash. This is an identity hash, NOT a hash of official legal text; see official_text_sha256.",
       "derivation_note": "Article 19(4) anchors the initial notification, intermediate report and final report sequence.",
       "review_status": "draft",
       "atom_identity_sha256": "sha256:55831936c77680f9d799e35a6c3c73b21120bfa5a011146304a1e4ba46b9042a",
-      "official_text_sha256": null,
-      "binding_status": "provisional"
+      "official_text_sha256": "sha256:84749ea8cbc0bd2dd2a7a9b73745b9f4ea81e84be3b23f91e4ba3aa040fe8588",
+      "binding_status": "provisional",
+      "official_text_hash_basis": "sha256:utf8:actproof.official_text_normalisation.v1",
+      "official_text_normalisation_basis": "actproof.official_text_normalisation.v1",
+      "text_excerpt_rule_id": "actproof.official_text_excerpt_rule.v1",
+      "excerpt_boundary": {
+        "boundary_rule": "article_paragraph"
+      },
+      "official_text_source": {
+        "system": "EUR-Lex",
+        "celex": "32022R2554",
+        "eli": "http://data.europa.eu/eli/reg/2022/2554/oj",
+        "language": "en",
+        "consolidation_status": "original_oj",
+        "format_basis": "eurlex_html",
+        "retrieval_url": "https://eur-lex.europa.eu/eli/reg/2022/2554/oj/eng",
+        "source_file": "L_2022333EN_01000101_xml.html",
+        "source_file_sha256": "sha256:d4932b44d9b5aed0b02a7fb7270b9c06c9e2adf99166a132e401af6191f84114",
+        "retrieved_at": "2026-06-07"
+      },
+      "text_language": "en",
+      "text_captured_by": "maintainer",
+      "text_locator": {
+        "article": "19",
+        "paragraph": "4"
+      },
+      "text_capture_status": "captured_draft",
+      "text_review_status": "draft"
     },
     {
       "source_atom_id": "src.eu.dora.32022R2554.art19.competent_authority_channel",
@@ -67,13 +119,39 @@
       "source_role": "reporting_channel",
       "normative_weight": "primary",
       "language": "en",
-      "text_excerpt": "",
+      "text_excerpt": "6.   Upon receipt of the initial notification and of each report referred to in paragraph 4, the competent authority shall, in a timely manner, provide details of the major ICT-related incident to the following recipients based, as applicable, on their respective competences:\n(a)\nEBA, ESMA or EIOPA;\n(b)\nthe ECB, in the case of financial entities referred to in Article 2(1), points (a), (b) and (d);\n(c)\nthe competent authorities, single points of contact or CSIRTs designated or established in accordance with Directive (EU) 2022/2555;\n(d)\nthe resolution authorities, as referred to in Article 3 of Directive 2014/59/EU, and the Single Resolution Board (SRB) with respect to entities referred to in Article 7(2) of Regulation (EU) No 806/2014 of the European Parliament and of the Council  ( 37 ) , and with respect to entities and groups referred to in Article 7(4)(b) and (5) of Regulation (EU) No 806/2014 if such details concern incidents that pose a risk to ensuring critical functions within the meaning of Article 2(1), point (35), of Directive 2014/59/EU; and\n(e)\nother relevant public authorities under national law.",
       "atom_hash_basis": "sha256 over a canonical JSON serialisation (sorted keys) of the atom's identity fields: source_atom_id, celex, eli, atom_type, locator, source_role, normative_weight, source_document_sha256, derivation_note. Reproducible via actproof_events.source_binding.compute_source_atom_identity_hash. This is an identity hash, NOT a hash of official legal text; see official_text_sha256.",
       "derivation_note": "Article 19 provides the competent-authority reporting context for major ICT-related incident notifications.",
       "review_status": "draft",
       "atom_identity_sha256": "sha256:5a352fa940634dd3bb0dc85211c46d74cead1b245da5ccf29ec4010d305a3179",
-      "official_text_sha256": null,
-      "binding_status": "provisional"
+      "official_text_sha256": "sha256:18c2014a6baa3627a2cea1ca7254d55ec6125060e380b0ece6a2d03af2b942b7",
+      "binding_status": "provisional",
+      "official_text_hash_basis": "sha256:utf8:actproof.official_text_normalisation.v1",
+      "official_text_normalisation_basis": "actproof.official_text_normalisation.v1",
+      "text_excerpt_rule_id": "actproof.official_text_excerpt_rule.v1",
+      "excerpt_boundary": {
+        "boundary_rule": "article_paragraph"
+      },
+      "official_text_source": {
+        "system": "EUR-Lex",
+        "celex": "32022R2554",
+        "eli": "http://data.europa.eu/eli/reg/2022/2554/oj",
+        "language": "en",
+        "consolidation_status": "original_oj",
+        "format_basis": "eurlex_html",
+        "retrieval_url": "https://eur-lex.europa.eu/eli/reg/2022/2554/oj/eng",
+        "source_file": "L_2022333EN_01000101_xml.html",
+        "source_file_sha256": "sha256:d4932b44d9b5aed0b02a7fb7270b9c06c9e2adf99166a132e401af6191f84114",
+        "retrieved_at": "2026-06-07"
+      },
+      "text_language": "en",
+      "text_captured_by": "maintainer",
+      "text_locator": {
+        "article": "19",
+        "paragraph": "6"
+      },
+      "text_capture_status": "captured_draft",
+      "text_review_status": "draft"
     },
     {
       "source_atom_id": "src.eu.dora.32025R0301.art1.content_rules",

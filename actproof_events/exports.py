@@ -751,6 +751,45 @@ def main(argv: list[str] | None = None) -> int:
     atom_cov_cmd.add_argument("act_id", help="ActProof act_type_id")
     atom_cov_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
 
+    atom_text_cov_cmd = sub.add_parser(
+        "atom-text-coverage",
+        help="Show official-text capture coverage for source atoms",
+    )
+    atom_text_cov_cmd.add_argument("act_id", help="ActProof act_type_id")
+    atom_text_cov_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    validate_atom_text_cmd = sub.add_parser(
+        "validate-atom-text",
+        help="Validate captured atom text excerpts and official_text_sha256 recomputation",
+    )
+    validate_atom_text_cmd.add_argument("act_id", help="ActProof act_type_id")
+
+    verify_atom_text_cmd = sub.add_parser(
+        "verify-atom-text",
+        help="Recompute and verify official_text_sha256 for captured atoms (verdict per atom)",
+    )
+    verify_atom_text_cmd.add_argument("act_id", help="ActProof act_type_id")
+    verify_atom_text_cmd.add_argument("--atom-id", default=None, help="Verify a single atom by source_atom_id")
+    verify_atom_text_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    atom_deps_cmd = sub.add_parser(
+        "atom-dependencies",
+        help="Export a dependency report showing which fields rely on each source atom",
+    )
+    atom_deps_cmd.add_argument("act_id", help="ActProof act_type_id")
+    atom_deps_cmd.add_argument("--out", help="Optional output JSON path")
+    atom_deps_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+    atom_deps_cmd.add_argument("--compact", action="store_true", help="Write compact JSON when --out is used")
+
+    atom_inventory_cmd = sub.add_parser(
+        "export-atom-inventory",
+        help="Export source atoms with text maturity, hashes and dependency summaries",
+    )
+    atom_inventory_cmd.add_argument("act_id", help="ActProof act_type_id")
+    atom_inventory_cmd.add_argument("--out", required=True, help="Output JSON path")
+    atom_inventory_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
+
     completeness_cmd = sub.add_parser(
         "profile-completeness",
         help="Print the profile's explicit known-scope / not-exhaustive-of declaration",
@@ -1065,6 +1104,73 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  DANGLING refs (integrity!)  : {cov['dangling_atom_references']}")
             for a in cov["dangling_atom_reference_ids"]:
                 print(f"      - {a}")
+        return 0
+
+    if args.command == "atom-text-coverage":
+        from actproof_events.text_capture import compute_atom_text_coverage
+        coverage = compute_atom_text_coverage(args.act_id)
+        if args.json:
+            print(json.dumps(coverage, ensure_ascii=False, indent=2))
+            return 0
+        print(f"atom-text-coverage for {args.act_id}")
+        print(f"  atoms total              : {coverage['atoms_total']}")
+        print(f"  text captured + hashed   : {coverage['text_captured_and_hashed']}")
+        print(f"  coverage ratio           : {coverage['text_capture_coverage_ratio']}%")
+        print(f"  status                   : {coverage['text_capture_status']}")
+        if coverage.get('pilot_atom_ids'):
+            print("  pilot atoms              :")
+            for atom_id in coverage['pilot_atom_ids']:
+                print(f"    - {atom_id}")
+        return 0
+
+    if args.command == "validate-atom-text":
+        from actproof_events.text_capture import validate_atom_text
+        errors = validate_atom_text(args.act_id)
+        if errors:
+            print(f"atom-text validation failed for {args.act_id}")
+            for err in errors:
+                print(f"  - {err}")
+            return 1
+        print(f"atom-text validation PASS for {args.act_id}")
+        return 0
+
+    if args.command == "verify-atom-text":
+        from actproof_events.source_binding import list_source_atoms as _lsa
+        from actproof_events.text_capture import verify_atom_official_text as _vat
+        atoms = _lsa(args.act_id)
+        if args.atom_id:
+            atoms = [a for a in atoms if a.get("source_atom_id") == args.atom_id]
+            if not atoms:
+                print(f"actproof-events: atom not found: {args.atom_id}", file=sys.stderr)
+                return 1
+        results = [_vat(a) for a in atoms if a.get("text_excerpt")]
+        if args.json:
+            print(json.dumps({"results": results}, ensure_ascii=False, indent=2))
+        else:
+            if not results:
+                print("no atoms with captured official text to verify")
+                return 0
+            for r in results:
+                print(f"  [{'OK' if r['ok'] else 'FAIL'}] {r['atom']}  ({r['reason']})")
+        return 0 if all(r["ok"] for r in results) else 1
+
+    if args.command == "atom-dependencies":
+        from actproof_events.text_capture import build_atom_dependency_report, write_json
+        report = build_atom_dependency_report(args.act_id)
+        if args.out:
+            write_json(report, args.out, compact=args.compact)
+            print(f"wrote {args.out}")
+            return 0
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        return 0
+
+    if args.command == "export-atom-inventory":
+        from actproof_events.text_capture import export_atom_inventory, write_json
+        payload = export_atom_inventory(args.act_id)
+        write_json(payload, args.out, compact=args.compact)
+        print(f"wrote {args.out}")
+        print(f"atoms: {len(payload.get('atoms', []))}")
+        print(f"text_captured_and_hashed: {payload.get('coverage', {}).get('text_captured_and_hashed')}")
         return 0
 
     if args.command == "profile-completeness":
