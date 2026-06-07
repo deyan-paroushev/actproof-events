@@ -894,6 +894,17 @@ def main(argv: list[str] | None = None) -> int:
     overlay_report_cmd.add_argument("--out", required=True, help="Output overlay report JSON path")
     overlay_report_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
 
+    overlay_impact_cmd = sub.add_parser(
+        "diff-overlay-impact",
+        help="Compare an old/new profile-view pair against a bank overlay and emit an overlay impact report",
+    )
+    overlay_impact_cmd.add_argument("overlay_path", help="Bank overlay JSON path")
+    overlay_impact_cmd.add_argument("old_profile_view", help="Old/baseline profile-view JSON path")
+    overlay_impact_cmd.add_argument("new_profile_view", nargs="?", default=None, help="New/target profile-view JSON path (default: current profile)")
+    overlay_impact_cmd.add_argument("--out", help="Optional output overlay impact report JSON path")
+    overlay_impact_cmd.add_argument("--json", action="store_true", help="Emit full impact report to stdout")
+    overlay_impact_cmd.add_argument("--compact", action="store_true", help="Write compact JSON when --out is used")
+
     lint = sub.add_parser(
         "lint-report",
         help="Lint an incident-report JSON payload against a profile",
@@ -1336,6 +1347,25 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  overlay_report_hash: {report.get('overlay_report_hash')}")
         print(f"  ready_for_internal_poc: {report.get('status', {}).get('ready_for_internal_poc')}")
         return 0
+
+    if args.command == "diff-overlay-impact":
+        from actproof_events.overlay_impact import diff_overlay_impact_files as _diff_impact
+        try:
+            report = _diff_impact(args.overlay_path, args.old_profile_view, args.new_profile_view)
+        except Exception as exc:
+            print(f"actproof-events: diff-overlay-impact failed: {exc}", file=sys.stderr)
+            return 1
+        if args.out:
+            Path(args.out).write_text(json.dumps(report, ensure_ascii=False, indent=None if args.compact else 2) + "\n", encoding="utf-8")
+        if args.json or not args.out:
+            print(json.dumps(report, ensure_ascii=False, indent=2))
+        else:
+            print(f"wrote overlay impact report: {args.out}")
+            print(f"  impact_status: {report.get('impact_status')}")
+            print(f"  ready_to_carry_forward: {report.get('ready_to_carry_forward')}")
+            print(f"  blocking_items: {report.get('summary', {}).get('blocking_items')}")
+            print(f"  review_items: {report.get('summary', {}).get('review_items')}")
+        return 0 if report.get("impact_status") in {"no_profile_change", "no_overlay_impact"} else 1
 
     if args.command == "lint-report":
         from actproof_events.services import lint_report as _lint
