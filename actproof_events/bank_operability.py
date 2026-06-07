@@ -54,7 +54,7 @@ def build_profile_lock(act_id: str) -> dict[str, Any]:
     pre-validation run.
     """
     profile = get_profile(act_id)
-    view = build_profile_view(act_id)
+    view = build_profile_view(act_id, include_governance=False)
     source_atoms = list_source_atoms(act_id)
     field_derivations = list_field_derivations(act_id)
     source_atom_coverage = compute_source_atom_coverage(act_id)

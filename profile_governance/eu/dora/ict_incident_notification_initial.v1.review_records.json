@@ -1,0 +1,74 @@
+{
+  "schema": "actproof.review_records.v1",
+  "act_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "lifecycle_state": "candidate",
+  "records": [
+    {
+      "review_id": "review.eu.dora.ict_incident_notification_initial.v1.2_0_0.maintainer_review",
+      "review_status": "maintainer_reviewed",
+      "review_type": "maintainer_source_binding_and_bank_operability_review",
+      "review_scope": [
+        "profile completeness",
+        "source-atom coverage",
+        "required-field source bindings",
+        "field-ID non-universality policy",
+        "candidate schema mapping boundary",
+        "profile lockfile and bank-operability artifacts",
+        "profile diff/change-control surface",
+        "field derivations: 20 low-interpretation template-field bindings reviewed; 7 high-interpretation fields held at draft"
+      ],
+      "reviewer": {
+        "name": "Deyan Paroushev",
+        "role": "maintainer",
+        "organisation": "Advisa EOOD"
+      },
+      "review_method": "manual_source_binding_and_operability_review.v1",
+      "review_limitations": [
+        "maintainer review only",
+        "not external legal review",
+        "not bank SME approval",
+        "not supervisory approval",
+        "not compliance certification",
+        "high-interpretation field derivations NOT maintainer-reviewed: affected_member_states, classification_criteria_triggered, classification_datetime_utc, competent_authority, financial_entity_type, incident_discovery_method, initial_impact_description"
+      ],
+      "reviewed_at": "2026-06-07T00:00:00Z",
+      "notes": "Maintainer review confirms the profile governance surface and bank POC packaging are internally consistent with the shipped ActProof artifacts. It does not assert legal correctness, factual incident accuracy, bank acceptance, or supervisory approval. Field-level scope: the 20 low-interpretation (interpretive_load<=1) template-field bindings are maintainer-reviewed; the 7 high-interpretation fields (affected_member_states, classification_criteria_triggered, classification_datetime_utc, competent_authority, financial_entity_type, incident_discovery_method, initial_impact_description) are deliberately held at draft pending independent/legal review, so the whole-profile lifecycle state remains candidate (weakest link).",
+      "reviewed_field_ids": [
+        "affected_functions_and_services",
+        "business_continuity_plan_activated",
+        "detection_datetime_utc",
+        "entity_legal_identifier",
+        "entity_legal_name",
+        "first_disruption_datetime_utc",
+        "incident_reference_code",
+        "linked_gdpr_breach_notification_reference",
+        "linked_nis2_notification_reference",
+        "linked_threat_notification_reference",
+        "outsourcing_arrangement_reference",
+        "preliminary_estimated_clients_affected",
+        "preliminary_estimated_financial_amount",
+        "primary_contact_email",
+        "primary_contact_name",
+        "reporting_currency",
+        "secondary_contact_email",
+        "secondary_contact_name",
+        "submission_type",
+        "third_party_provider_involved"
+      ],
+      "excluded_field_ids": [
+        "affected_member_states",
+        "classification_criteria_triggered",
+        "classification_datetime_utc",
+        "competent_authority",
+        "financial_entity_type",
+        "incident_discovery_method",
+        "initial_impact_description"
+      ],
+      "reviewed_artifacts": {
+        "profile_semantic_hash": "sha256:08283721f9084cfd006df44b501a7f506e9058049209f5e403b75a188d821f50"
+      },
+      "review_record_hash": "sha256:d61b7ce32676372db52ab85ccc0ea68ac03bf7d60c79fb4e7ff769cc37930fec"
+    }
+  ],
+  "lifecycle_note": "7 high-interpretation field derivations are held at draft; whole-profile state is candidate by weakest-link until those are independently/legally reviewed."
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "actproof.challenge_records.v1",
+  "act_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "challenge_records": [
+    {
+      "challenge_id": "challenge.eu.dora.ict_incident_notification_initial.v1.0001",
+      "challenge_type": "coverage_gap",
+      "status": "open",
+      "field_id": null,
+      "source_atom_id": "src.eu.dora.32025R0301.art1.content_rules",
+      "summary": "Source atom is recorded but currently unused by field derivations.",
+      "source_reference": {
+        "celex": "32025R0301",
+        "locator": "Article 1"
+      },
+      "impact": "gap_signal",
+      "resolution": null,
+      "created_at": "2026-06-07T00:00:00Z",
+      "boundary": "This is a disclosed review signal, not confirmation that a required field is missing."
+    }
+  ]
+}

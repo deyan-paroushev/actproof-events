@@ -262,6 +262,7 @@ def build_profile_view(
     include_source_basis: bool = True,
     include_non_claims: bool = True,
     include_provenance: bool = True,
+    include_governance: bool = True,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
     """Build a rich public projection for one source-bound profile.
@@ -275,6 +276,7 @@ def build_profile_view(
         include_source_basis: Include act-level and field-level source basis.
         include_non_claims: Include machine-readable non-claims.
         include_provenance: Include package/build provenance.
+        include_governance: Include bounded profile governance status when available.
         generated_at: Optional ISO timestamp override for reproducible builds.
 
     Returns:
@@ -358,6 +360,20 @@ def build_profile_view(
         projection["completeness"] = get_profile_completeness(act_id)
     except Exception:
         pass
+
+    # Profile governance status is a bounded review/challenge lifecycle object.
+    # It does not claim legal compliance, bank approval or supervisory approval.
+    if include_governance:
+        try:
+            from actproof_events.profile_governance import build_governance_status
+            governance = build_governance_status(act_id)
+            # Keep the profile-view semantic hash stable across exports: the
+            # standalone governance-status command may include generated_at,
+            # but the profile-view embeds the review state without volatile time.
+            governance.pop("generated_at", None)
+            projection["governance"] = governance
+        except Exception:
+            pass
 
     if include_fields:
         projection["fields"] = field_rows
@@ -799,6 +815,43 @@ def main(argv: list[str] | None = None) -> int:
     diff_cmd.add_argument("--json", action="store_true", help="Emit full diff report to stdout")
     diff_cmd.add_argument("--compact", action="store_true", help="Write compact JSON when --out is used")
 
+    gov_cmd = sub.add_parser(
+        "governance-status",
+        help="Show reviewed profile governance state and open challenge summary",
+    )
+    gov_cmd.add_argument("act_id", help="ActProof act_type_id")
+    gov_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    review_records_cmd = sub.add_parser(
+        "review-records",
+        help="List bounded review records for a profile",
+    )
+    review_records_cmd.add_argument("act_id", help="ActProof act_type_id")
+    review_records_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    challenge_records_cmd = sub.add_parser(
+        "challenge-records",
+        help="List public challenge/gap records for a profile",
+    )
+    challenge_records_cmd.add_argument("act_id", help="ActProof act_type_id")
+    challenge_records_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    validate_gov_cmd = sub.add_parser(
+        "validate-governance",
+        help="Validate profile governance records and hash-bound review state",
+    )
+    validate_gov_cmd.add_argument("act_id", help="ActProof act_type_id")
+
+    bank_poc_cmd = sub.add_parser(
+        "export-bank-poc-pack",
+        help="Export a local bank POC pack for one ActProof profile",
+    )
+    bank_poc_cmd.add_argument("act_id", help="ActProof act_type_id")
+    bank_poc_cmd.add_argument("--out", required=True, help="Output directory for the POC pack")
+    bank_poc_cmd.add_argument("--external-schema", default=None, help="Optional external schema/field-list JSON path")
+    bank_poc_cmd.add_argument("--sample-report", default=None, help="Optional sample draft report JSON path")
+    bank_poc_cmd.add_argument("--json", action="store_true", help="Emit machine-readable pack manifest")
+
     lint = sub.add_parser(
         "lint-report",
         help="Lint an incident-report JSON payload against a profile",
@@ -1078,6 +1131,86 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"  review required       : {summary.get('review_required')}")
         if args.out:
             print(f"wrote profile diff report: {args.out}")
+        return 0
+
+    if args.command == "governance-status":
+        from actproof_events.profile_governance import build_governance_status as _gov_status
+        try:
+            status = _gov_status(args.act_id)
+        except Exception as exc:
+            print(f"actproof-events: governance-status failed: {exc}", file=sys.stderr)
+            return 1
+        if args.json:
+            print(json.dumps(status, ensure_ascii=False, indent=2))
+        else:
+            print(f"governance status for {args.act_id}")
+            print(f"  lifecycle_state          : {status.get('lifecycle_state')}")
+            print(f"  latest_review_status     : {status.get('latest_review_status')}")
+            print(f"  latest_review_record_hash: {status.get('latest_review_record_hash')}")
+            print(f"  open challenges          : {status.get('open_challenges')}")
+            print(f"  blocking challenges      : {status.get('blocking_challenges')}")
+            print(f"  governance_status_hash   : {status.get('governance_status_hash')}")
+            print(f"  boundary                 : {status.get('bank_use_boundary')}")
+        return 0
+
+    if args.command == "review-records":
+        from actproof_events.profile_governance import list_review_records as _reviews
+        records = _reviews(args.act_id)
+        payload = {"schema": "actproof.review_records.v1", "act_id": args.act_id, "records": records}
+        if args.json:
+            print(json.dumps(payload, ensure_ascii=False, indent=2))
+        else:
+            print(f"review records for {args.act_id}")
+            for r in records:
+                print(f"  - {r.get('review_id')} :: {r.get('review_status')} :: {r.get('review_record_hash')}")
+                for lim in r.get('review_limitations') or []:
+                    print(f"      limitation: {lim}")
+        return 0
+
+    if args.command == "challenge-records":
+        from actproof_events.profile_governance import list_challenge_records as _challenges
+        records = _challenges(args.act_id)
+        payload = {"schema": "actproof.challenge_records.v1", "act_id": args.act_id, "challenge_records": records}
+        if args.json:
+            print(json.dumps(payload, ensure_ascii=False, indent=2))
+        else:
+            print(f"challenge records for {args.act_id}")
+            for r in records:
+                print(f"  - {r.get('challenge_id')} :: {r.get('challenge_type')} :: {r.get('status')} :: {r.get('impact')}")
+                print(f"      {r.get('summary')}")
+        return 0
+
+    if args.command == "validate-governance":
+        from actproof_events.profile_governance import validate_profile_governance as _validate_gov
+        errors = _validate_gov(args.act_id)
+        print(f"validating profile governance for {args.act_id}")
+        if errors:
+            for e in errors:
+                print(f"  error: {e}", file=sys.stderr)
+            return 1
+        print("  OK: True")
+        return 0
+
+    if args.command == "export-bank-poc-pack":
+        from actproof_events.profile_governance import build_bank_poc_pack as _build_pack
+        try:
+            manifest = _build_pack(
+                args.act_id,
+                external_schema_path=args.external_schema,
+                sample_report_path=args.sample_report,
+                out_dir=args.out,
+            )
+        except Exception as exc:
+            print(f"actproof-events: export-bank-poc-pack failed: {exc}", file=sys.stderr)
+            return 1
+        if args.json:
+            print(json.dumps(manifest, ensure_ascii=False, indent=2))
+        else:
+            print(f"wrote bank POC pack: {args.out}")
+            print(f"  files: {len(manifest.get('files') or [])}")
+            print(f"  profile_semantic_hash: {manifest.get('profile_semantic_hash')}")
+            print(f"  governance_status_hash: {manifest.get('governance_status_hash')}")
+            print(f"  bank_poc_pack_hash: {manifest.get('bank_poc_pack_hash')}")
         return 0
 
     if args.command == "lint-report":
