@@ -675,6 +675,9 @@ def _print_usage() -> None:
     print("  actproof-events export-profile-view ACT_ID --out profile-view.json [--pretty] [--validate]")
     print("  actproof-events validate-source-bindings ACT_ID")
     print("  actproof-events explain-field ACT_ID FIELD_ID")
+    print("  actproof-events export-profile-lock ACT_ID --out profile-lock.json")
+    print("  actproof-events export-prevalidation-report ACT_ID report.json --out prevalidation-report.json")
+    print("  actproof-events export-review-checklist ACT_ID --out review-checklist.json")
     print("")
     print("Example:")
     print("  actproof-events export-profile-view op:eu.dora.ict_incident_notification_initial.v1 --out dora.profile-view.json")
@@ -736,6 +739,37 @@ def main(argv: list[str] | None = None) -> int:
     )
     completeness_cmd.add_argument("act_id", help="ActProof act_type_id")
     completeness_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
+    lock_cmd = sub.add_parser(
+        "export-profile-lock",
+        help="Export a bank-operable profile lockfile for local implementation",
+    )
+    lock_cmd.add_argument("act_id", help="ActProof act_type_id")
+    lock_cmd.add_argument("--out", required=True, help="Output JSON path")
+    lock_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
+    verify_lock_cmd = sub.add_parser(
+        "verify-profile-lock",
+        help="Verify a stored profile lockfile against the installed package",
+    )
+    verify_lock_cmd.add_argument("path", help="Path to a profile lockfile JSON")
+
+    review_cmd = sub.add_parser(
+        "export-review-checklist",
+        help="Export a bank-facing review checklist template for one profile",
+    )
+    review_cmd.add_argument("act_id", help="ActProof act_type_id")
+    review_cmd.add_argument("--out", required=True, help="Output JSON path")
+    review_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
+    preval_report_cmd = sub.add_parser(
+        "export-prevalidation-report",
+        help="Export an audit-friendly pre-validation run report for a local report payload",
+    )
+    preval_report_cmd.add_argument("act_id", help="ActProof act_type_id")
+    preval_report_cmd.add_argument("report_path", help="Path to a JSON report payload (field_id -> value)")
+    preval_report_cmd.add_argument("--out", required=True, help="Output JSON path")
+    preval_report_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
 
     lint = sub.add_parser(
         "lint-report",
@@ -873,6 +907,73 @@ def main(argv: list[str] | None = None) -> int:
         if comp.get("challenge_channel"):
             print(f"  raise one at  : {comp['challenge_channel']}")
         return 0
+
+    if args.command == "export-profile-lock":
+        from actproof_events.bank_operability import build_profile_lock as _lock
+        try:
+            payload = _lock(args.act_id)
+            Path(args.out).write_text(
+                json.dumps(payload, ensure_ascii=False, sort_keys=False, indent=None if args.compact else 2) + "\n",
+                encoding="utf-8",
+            )
+        except Exception as exc:
+            print(f"actproof-events: export-profile-lock failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote profile lockfile: {args.out}")
+        print(f"  profile_lock_hash: {payload.get('profile_lock_hash')}")
+        print(f"  profile_semantic_hash: {payload.get('profile', {}).get('profile_semantic_hash')}")
+        return 0
+
+    if args.command == "verify-profile-lock":
+        from actproof_events.bank_operability import verify_profile_lock as _verify
+        try:
+            result = _verify(args.path)
+        except Exception as exc:
+            print(f"actproof-events: verify-profile-lock failed: {exc}", file=sys.stderr)
+            return 1
+        for field, ok in result["checks"].items():
+            print(f"  [{'ok' if ok else 'MISMATCH'}] {field}")
+        if result["ok"]:
+            print(f"profile lock OK for {result['act_id']}")
+            return 0
+        print(f"profile lock MISMATCH for {result['act_id']}:")
+        for m in result["mismatches"]:
+            print(f"  {m['field']}: expected {m['expected']!r}, got {m['actual']!r}")
+        print(f"  note: {result['note']}")
+        return 1
+
+    if args.command == "export-review-checklist":
+        from actproof_events.bank_operability import build_bank_review_checklist as _checklist
+        try:
+            payload = _checklist(args.act_id)
+            Path(args.out).write_text(
+                json.dumps(payload, ensure_ascii=False, sort_keys=False, indent=None if args.compact else 2) + "\n",
+                encoding="utf-8",
+            )
+        except Exception as exc:
+            print(f"actproof-events: export-review-checklist failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote review checklist: {args.out}")
+        print(f"  review_checklist_hash: {payload.get('review_checklist_hash')}")
+        print(f"  sections: {len(payload.get('checklist') or [])}")
+        return 0
+
+    if args.command == "export-prevalidation-report":
+        from actproof_events.bank_operability import build_prevalidation_run_report as _run_report
+        try:
+            report_payload = json.loads(Path(args.report_path).read_text(encoding="utf-8"))
+            payload = _run_report(args.act_id, report_payload)
+            Path(args.out).write_text(
+                json.dumps(payload, ensure_ascii=False, sort_keys=False, indent=None if args.compact else 2) + "\n",
+                encoding="utf-8",
+            )
+        except Exception as exc:
+            print(f"actproof-events: export-prevalidation-report failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote pre-validation report: {args.out}")
+        print(f"  prevalidation_report_hash: {payload.get('prevalidation_report_hash')}")
+        print(f"  status: {payload.get('run_summary', {}).get('prevalidation_status')}")
+        return 0 if payload.get('run_summary', {}).get('prevalidation_status') != 'blocked' else 1
 
     if args.command == "lint-report":
         from actproof_events.services import lint_report as _lint

@@ -529,5 +529,7 @@ __all__ = [
     "explain_field_source",
     "field_source_projection",
     "compute_field_source_coverage",
+    "compute_source_atom_coverage",
+    "get_profile_completeness",
     "validate_field_source_bindings",
 ]
