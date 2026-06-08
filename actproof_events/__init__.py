@@ -68,7 +68,7 @@ __all__ = [
 # downstream artefact records "issued against actproof-events specification
 # v1.5-rc1").
 
-__version__: Final[str] = "2.6.0"
+__version__: Final[str] = "2.7.0"
 __spec_version__: Final[str] = "1.5-rc1"
 
 

@@ -1,0 +1,52 @@
+{
+  "schema": "actproof.cose_source_atom_sign1.v1",
+  "statement_type": "actproof/source-atom/v1",
+  "statement_hash": "sha256:47535ef22ea1ba8ead6fc4551a035926e1b46ee2cbcef03912c49ba7cb681c40",
+  "statement_subject": {
+    "subject_type": "source_atom",
+    "act_id": "op:eu.dora.ict_incident_notification_initial.v1",
+    "atom_id": "src.eu.dora.32022R2554.art19.reporting_obligation",
+    "jurisdiction": "EU",
+    "source_system": "EUR-Lex",
+    "source_id": "CELEX:32022R2554",
+    "celex": "32022R2554",
+    "eli": "http://data.europa.eu/eli/reg/2022/2554/oj",
+    "instrument": "Regulation (EU) 2022/2554 (Digital Operational Resilience Act)",
+    "authority": "European Parliament and Council of the European Union",
+    "language": "en",
+    "source_document_sha256": "sha256:85307f9e2a0409826dd0f54489645935816d16e929f0db4db3ef15badd11d38c",
+    "locator": {
+      "article": "19"
+    },
+    "text_locator": {
+      "article": "19",
+      "paragraph": "1"
+    },
+    "atom_type": "article",
+    "source_role": "base_obligation",
+    "normative_weight": "primary"
+  },
+  "cose_status": "signed_local_cose_sign1_prototype",
+  "cose_sign1_tag": 18,
+  "cose_alg": "Ed25519 / COSE EdDSA (-8)",
+  "cose_typ": "actproof/source-atom/v1",
+  "kid": "actproof-dev-ed25519-example",
+  "payload_format": "actproof.statement_hash.utf8.v1",
+  "payload_sha256": "sha256:59c1af4b08e5456891d3bf0b9e5369dd67f2a3571acc626ca665737ccc43f2ae",
+  "signature_sha256": "sha256:0955e19b4f712e4a3d6cb5f9bca659094ae0fce2dd68533ce840c8f71b4b6a03",
+  "cose_sha256": "sha256:91209eb5ad6578dedec780923c0db3ea47659c7576939bcf4d5641d502f66aa4",
+  "cose_base64url": "0oRYHKIBJxB3YWN0cHJvb2Yvc291cmNlLWF0b20vdjGkBFgcYWN0cHJvb2YtZGV2LWVkMjU1MTktZXhhbXBsZW5wYXlsb2FkLWZvcm1hdHgfYWN0cHJvb2Yuc3RhdGVtZW50X2hhc2gudXRmOC52MXBhY3Rwcm9vZi1wcm9maWxleCJhY3Rwcm9vZi5jb3NlX3NvdXJjZV9hdG9tX3NpZ24xLnYxeBlzY2l0dC1yZWdpc3RyYXRpb24tc3RhdHVzbm5vdF9yZWdpc3RlcmVkWEdzaGEyNTY6NDc1MzVlZjIyZWExYmE4ZWFkNmZjNDU1MWEwMzU5MjZlMWI0NmVlMmNiY2VmMDM5MTJjNDliYTdjYjY4MWM0MFhAj52OnfAsxTI7byyVOWquKJqE7QUu5CecQP1bf0UAHwFCw7bHdCwjTU5XPeaJ2rPZ6Wr0dLvgHxZVZ5mVl_UeCA",
+  "scitt_registration_status": "not_registered",
+  "scitt_receipt_status": "no_receipt_in_2_7_0",
+  "package": {
+    "name": "actproof-events",
+    "version": "2.7.0"
+  },
+  "non_claims": [
+    "COSE signature verification proves only that the statement hash was signed by the supplied key.",
+    "The signature does not prove legal correctness, compliance certification, bank approval or supervisory approval.",
+    "The signed statement is not registered with a SCITT Transparency Service in 2.7.0.",
+    "No SCITT receipt is produced or verified in 2.7.0.",
+    "Draft atom statements should not be treated as reviewed public trust artifacts."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schema": "actproof.cose_source_atom_verification.v1",
+  "statement_type": "actproof/source-atom/v1",
+  "statement_hash": "sha256:47535ef22ea1ba8ead6fc4551a035926e1b46ee2cbcef03912c49ba7cb681c40",
+  "cose_typ": "actproof/source-atom/v1",
+  "signature_valid": true,
+  "statement_hash_matches": true,
+  "payload_matches_statement_hash": true,
+  "scitt_registration_status": "not_registered",
+  "receipt_present": false,
+  "trust_boundary": "local COSE_Sign1 signature verification only; no SCITT transparency-service receipt in 2.7.0",
+  "non_claims": [
+    "COSE signature verification proves only that the statement hash was signed by the supplied key.",
+    "The signature does not prove legal correctness, compliance certification, bank approval or supervisory approval.",
+    "The signed statement is not registered with a SCITT Transparency Service in 2.7.0.",
+    "No SCITT receipt is produced or verified in 2.7.0.",
+    "Draft atom statements should not be treated as reviewed public trust artifacts."
+  ],
+  "kid": "actproof-dev-ed25519-example",
+  "payload_sha256": "sha256:59c1af4b08e5456891d3bf0b9e5369dd67f2a3571acc626ca665737ccc43f2ae",
+  "cose_sha256": "sha256:91209eb5ad6578dedec780923c0db3ea47659c7576939bcf4d5641d502f66aa4",
+  "ok": true,
+  "reason": "signature_valid_local_only"
+}

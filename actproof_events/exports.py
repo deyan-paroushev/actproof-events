@@ -826,6 +826,34 @@ def main(argv: list[str] | None = None) -> int:
     scitt_verify_stmt_cmd.add_argument("path", help="Path to source-atom statement JSON")
     scitt_verify_stmt_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
 
+    cose_key_cmd = sub.add_parser(
+        "generate-cose-dev-keypair",
+        help="Generate a development-only Ed25519 keypair for local COSE signing prototypes",
+    )
+    cose_key_cmd.add_argument("--out-dir", required=True, help="Directory for PEM keys and metadata")
+    cose_key_cmd.add_argument("--kid", default="actproof-dev-ed25519-001", help="Development key id to embed in COSE unprotected header")
+
+    cose_sign_cmd = sub.add_parser(
+        "sign-cose-source-atom-statement",
+        help="Sign an actproof/source-atom/v1 statement into a local COSE_Sign1 prototype",
+    )
+    cose_sign_cmd.add_argument("statement", help="Path to source-atom statement JSON")
+    cose_sign_cmd.add_argument("--key", required=True, help="Ed25519 private key PEM")
+    cose_sign_cmd.add_argument("--kid", default="actproof-dev-ed25519-001", help="Key id to place in COSE unprotected header")
+    cose_sign_cmd.add_argument("--out", required=True, help="Output COSE_Sign1 CBOR path")
+    cose_sign_cmd.add_argument("--metadata-out", help="Optional JSON metadata output path")
+    cose_sign_cmd.add_argument("--compact", action="store_true", help="Write compact JSON metadata")
+
+    cose_verify_cmd = sub.add_parser(
+        "verify-cose-source-atom-statement",
+        help="Verify a local COSE_Sign1 source-atom statement signature against the statement JSON",
+    )
+    cose_verify_cmd.add_argument("cose", help="Path to COSE_Sign1 CBOR artifact")
+    cose_verify_cmd.add_argument("--public-key", required=True, help="Ed25519 public key PEM")
+    cose_verify_cmd.add_argument("--statement", required=True, help="Path to source-atom statement JSON")
+    cose_verify_cmd.add_argument("--out", help="Optional verification result JSON path")
+    cose_verify_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
 
     completeness_cmd = sub.add_parser(
         "profile-completeness",
@@ -1291,6 +1319,57 @@ def main(argv: list[str] | None = None) -> int:
             for field, m in (verdict.get("mismatches") or {}).items():
                 print(f"      {field}: committed={m['committed']} recomputed={m['recomputed']}")
         return 0 if verdict["ok"] else 1
+
+    if args.command == "generate-cose-dev-keypair":
+        try:
+            from actproof_events.cose_signing import write_dev_keypair
+            meta = write_dev_keypair(args.out_dir, kid=args.kid)
+        except Exception as exc:
+            print(f"actproof-events: generate-cose-dev-keypair failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote development keypair to {args.out_dir}")
+        print(f"  kid: {meta.get('kid')}")
+        print("  warning: development-only; do not use for production trust artifacts")
+        return 0
+
+    if args.command == "sign-cose-source-atom-statement":
+        try:
+            from actproof_events.cose_signing import load_json, sign_source_atom_statement, write_cose_artifact, write_json
+            statement = load_json(args.statement)
+            result = sign_source_atom_statement(statement, private_key_path=args.key, kid=args.kid)
+            write_cose_artifact(result, args.out)
+            if args.metadata_out:
+                write_json(result, args.metadata_out, compact=args.compact)
+        except Exception as exc:
+            print(f"actproof-events: sign-cose-source-atom-statement failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote local COSE_Sign1 prototype: {args.out}")
+        print(f"  statement_hash: {result.get('statement_hash')}")
+        print(f"  cose_sha256: {result.get('cose_sha256')}")
+        print(f"  cose_status: {result.get('cose_status')}")
+        print(f"  scitt_registration_status: {result.get('scitt_registration_status')}")
+        return 0
+
+    if args.command == "verify-cose-source-atom-statement":
+        try:
+            from actproof_events.cose_signing import load_json, verify_cose_source_atom_statement, write_json
+            statement = load_json(args.statement)
+            result = verify_cose_source_atom_statement(args.cose, public_key_path=args.public_key, statement=statement)
+            if args.out:
+                write_json(result, args.out)
+        except Exception as exc:
+            print(f"actproof-events: verify-cose-source-atom-statement failed: {exc}", file=sys.stderr)
+            return 1
+        if args.json:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        else:
+            print(f"COSE source-atom verification: {'PASS' if result.get('ok') else 'FAIL'}")
+            print(f"  reason: {result.get('reason')}")
+            print(f"  signature_valid: {result.get('signature_valid')}")
+            print(f"  payload_matches_statement_hash: {result.get('payload_matches_statement_hash')}")
+            print(f"  scitt_registration_status: {result.get('scitt_registration_status')}")
+            print(f"  receipt_present: {result.get('receipt_present')}")
+        return 0 if result.get('ok') else 1
 
     if args.command == "profile-completeness":
         from actproof_events.source_binding import get_profile_completeness as _comp

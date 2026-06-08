@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "actproof-events"
-version = "2.6.0"
+version = "2.7.0"
 description = "Open catalogue, JSON schemas, source-bound act profiles, and CC0 conformance vectors for machine-readable organisational acts."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -63,6 +63,17 @@ dependencies = []
 # install this extra: pip install "actproof-events[schema-validation]"
 schema-validation = [
   "jsonschema>=4.21",
+]
+
+# Local COSE_Sign1 signing/verification of source-atom statements (2.7.0):
+#   pip install "actproof-events[cose-signing]"   (alias: [cose])
+# Ed25519 / COSE EdDSA (-8). CBOR is hand-rolled, so only cryptography is needed.
+# Base package stays dependency-free; only signers install this.
+cose-signing = [
+  "cryptography>=42",
+]
+cose = [
+  "cryptography>=42",
 ]
 
 # The optional REST API (developer face): pip install "actproof-events[api]"
@@ -126,6 +137,9 @@ packages = ["actproof_events"]
 "spec/scitt" = "actproof_events/data/scitt"
 "docs/SCITT_SOURCE_ATOM_PROFILE.v1.md" = "actproof_events/data/docs/SCITT_SOURCE_ATOM_PROFILE.v1.md"
 "docs/COSE_SOURCE_ATOM_STATEMENT.v1.md" = "actproof_events/data/docs/COSE_SOURCE_ATOM_STATEMENT.v1.md"
+"docs/COSE_SOURCE_ATOM_SIGNING_PROTOTYPE.v1.md" = "actproof_events/data/docs/COSE_SOURCE_ATOM_SIGNING_PROTOTYPE.v1.md"
+"docs/COSE_SIGNING_BOUNDARIES.v1.md" = "actproof_events/data/docs/COSE_SIGNING_BOUNDARIES.v1.md"
+"examples/cose/source-atom.verify-result.example.json" = "actproof_events/data/examples/cose/source-atom.verify-result.example.json"
 "examples/scitt/source-atom.statement.example.json" = "actproof_events/data/examples/scitt/source-atom.statement.example.json"
 "examples/scitt/source-atom-manifest.example.json" = "actproof_events/data/examples/scitt/source-atom-manifest.example.json"
 # Field-level source binding (1.8.0) ships via the source_bindings mapping below.
