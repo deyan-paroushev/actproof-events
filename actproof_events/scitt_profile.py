@@ -33,6 +33,16 @@ PAYLOAD_MODE = "hash_commitment"
 COSE_TYP = "actproof/source-atom/v1"
 SCITT_REGISTRATION_STATUS = "not_registered"
 
+# ActProof-as-SCITT-Issuer binding. The SCITT media types are defined in the
+# SCITT architecture draft (an Active Internet-Draft in the RFC Editor queue,
+# not yet a published RFC) with IANA registration requested; they are named
+# here as the INTENDED types for a future external receipt. The package does
+# not emit them and does not register with any external Transparency Service.
+SCITT_SIGNED_STATEMENT_MEDIA_TYPE = "application/scitt-statement+cose"
+SCITT_RECEIPT_MEDIA_TYPE = "application/scitt-receipt+cose"
+ACTPROOF_SOURCE_ATOM_PROFILE_TYPE = "actproof/source-atom/v1"
+ISSUER_MODEL = "actproof_as_scitt_issuer"
+
 
 NON_CLAIMS = [
     "Statement export does not prove legal correctness.",
@@ -164,6 +174,24 @@ def build_source_atom_statement(
             ),
         },
         "dependencies": deps,
+        "scitt_binding": {
+            "issuer_model": ISSUER_MODEL,
+            "signed_statement_media_type": SCITT_SIGNED_STATEMENT_MEDIA_TYPE,
+            "receipt_media_type": SCITT_RECEIPT_MEDIA_TYPE,
+            "payload_profile_type": ACTPROOF_SOURCE_ATOM_PROFILE_TYPE,
+            "payload_profile": SCITT_SOURCE_ATOM_PROFILE_ID,
+            "payload_mode": PAYLOAD_MODE,
+            "public_registration_policy": (
+                "do_not_register_publicly_until_reviewed"
+                if atom.get("review_status", "draft") == "draft"
+                else "eligible_for_policy_controlled_registration"
+            ),
+            "transparency_service_model": (
+                "service_selected_by_deployment; local pilot in 2.8.x; "
+                "external SCITT Transparency Service deferred"
+            ),
+            "media_type_status": "defined_in_scitt_architecture_draft; iana_registration_pending_rfc_publication",
+        },
         "verification": {
             "canonicalization": CANONICALIZATION,
             "hash_algorithm": HASH_ALGORITHM,
@@ -234,6 +262,13 @@ def validate_source_atom_statement(statement: dict[str, Any]) -> list[str]:
         recomputed = compute_statement_hash(statement)
         if recomputed != stored:
             errors.append(f"statement_hash mismatch: stored {stored}, recomputed {recomputed}")
+    binding = statement.get("scitt_binding") or {}
+    if binding.get("issuer_model") != ISSUER_MODEL:
+        errors.append(f"scitt_binding.issuer_model must be {ISSUER_MODEL}")
+    if binding.get("signed_statement_media_type") != SCITT_SIGNED_STATEMENT_MEDIA_TYPE:
+        errors.append(f"scitt_binding.signed_statement_media_type must be {SCITT_SIGNED_STATEMENT_MEDIA_TYPE}")
+    if binding.get("receipt_media_type") != SCITT_RECEIPT_MEDIA_TYPE:
+        errors.append(f"scitt_binding.receipt_media_type must be {SCITT_RECEIPT_MEDIA_TYPE}")
     if not statement.get("non_claims"):
         errors.append("non_claims are required")
     return errors

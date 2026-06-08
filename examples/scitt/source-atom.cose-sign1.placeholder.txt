@@ -1,1 +1,0 @@
-2.6.0 defines the statement payload only. COSE_Sign1 signing is reserved for a later release.

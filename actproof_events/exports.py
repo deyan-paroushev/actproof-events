@@ -854,6 +854,35 @@ def main(argv: list[str] | None = None) -> int:
     cose_verify_cmd.add_argument("--out", help="Optional verification result JSON path")
     cose_verify_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
 
+    scitt_log_init_cmd = sub.add_parser(
+        "init-scitt-local-log",
+        help="Initialise a local SCITT-style append-only log (pilot; not an external transparency service)",
+    )
+    scitt_log_init_cmd.add_argument("--out", required=True, help="Output local log JSON path")
+    scitt_log_init_cmd.add_argument("--label", default=None, help="Optional log label")
+
+    scitt_register_cmd = sub.add_parser(
+        "register-scitt-local-source-atom-statement",
+        help="Append a signed COSE_Sign1 source-atom statement to a local log and issue a local receipt",
+    )
+    scitt_register_cmd.add_argument("statement", help="Path to source-atom statement JSON")
+    scitt_register_cmd.add_argument("--cose", required=True, help="Path to the COSE_Sign1 CBOR for that statement")
+    scitt_register_cmd.add_argument("--log", required=True, help="Path to the local SCITT log JSON")
+    scitt_register_cmd.add_argument("--out", required=True, help="Output local receipt JSON path")
+    scitt_register_cmd.add_argument("--compact", action="store_true", help="Write compact JSON receipt")
+
+    scitt_verify_receipt_cmd = sub.add_parser(
+        "verify-scitt-local-receipt",
+        help="Verify a local SCITT-style receipt: inclusion proof + COSE signature + commitment match (log not required)",
+    )
+    scitt_verify_receipt_cmd.add_argument("receipt", help="Path to local receipt JSON")
+    scitt_verify_receipt_cmd.add_argument("--cose", required=True, help="Path to the COSE_Sign1 CBOR")
+    scitt_verify_receipt_cmd.add_argument("--statement", required=True, help="Path to source-atom statement JSON")
+    scitt_verify_receipt_cmd.add_argument("--public-key", required=True, help="Ed25519 public key PEM")
+    scitt_verify_receipt_cmd.add_argument("--log", default=None, help="Optional local log JSON for auditor cross-check")
+    scitt_verify_receipt_cmd.add_argument("--out", help="Optional verification result JSON path")
+    scitt_verify_receipt_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
 
     completeness_cmd = sub.add_parser(
         "profile-completeness",
@@ -1370,6 +1399,71 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  scitt_registration_status: {result.get('scitt_registration_status')}")
             print(f"  receipt_present: {result.get('receipt_present')}")
         return 0 if result.get('ok') else 1
+
+    if args.command == "init-scitt-local-log":
+        try:
+            from actproof_events.scitt_registration import init_local_log
+            log = init_local_log(args.out, label=args.label)
+        except Exception as exc:
+            print(f"actproof-events: init-scitt-local-log failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote local SCITT-style log: {args.out}")
+        print(f"  log_root: {log.get('log_root')}")
+        print(f"  entry_count: {log.get('entry_count')}")
+        print(f"  registration_status: {log.get('registration_status')}")
+        print("  note: local pilot log; not an external SCITT transparency service")
+        return 0
+
+    if args.command == "register-scitt-local-source-atom-statement":
+        try:
+            from actproof_events.scitt_registration import (
+                load_json as _load,
+                register_signed_statement,
+                write_json as _wj,
+            )
+            statement = _load(args.statement)
+            receipt = register_signed_statement(args.log, cose_path=args.cose, statement=statement)
+            _wj(receipt, args.out, compact=args.compact)
+        except Exception as exc:
+            print(f"actproof-events: register-scitt-local-source-atom-statement failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote local SCITT-style receipt: {args.out}")
+        print(f"  log_index: {receipt.get('log', {}).get('log_index')}")
+        print(f"  log_root: {receipt.get('log', {}).get('log_root')}")
+        print(f"  statement_hash: {receipt.get('statement_hash')}")
+        print(f"  registration_time: {receipt.get('registration_time')}")
+        print(f"  registration_status: {receipt.get('registration_status')}")
+        print(f"  receipt_status: {receipt.get('receipt_status')}")
+        return 0
+
+    if args.command == "verify-scitt-local-receipt":
+        try:
+            from actproof_events.scitt_registration import (
+                load_json as _load,
+                verify_local_receipt,
+                verify_local_receipt_against_log,
+                write_json as _wj,
+            )
+            receipt = _load(args.receipt)
+            statement = _load(args.statement)
+            result = verify_local_receipt(
+                receipt, cose_path=args.cose, statement=statement, public_key_path=args.public_key
+            )
+            if args.log:
+                result["live_log_cross_check"] = verify_local_receipt_against_log(receipt, log_path=args.log)
+            if args.out:
+                _wj(result, args.out)
+        except Exception as exc:
+            print(f"actproof-events: verify-scitt-local-receipt failed: {exc}", file=sys.stderr)
+            return 1
+        if args.json:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        else:
+            print(f"local SCITT receipt verification: {'PASS' if result.get('ok') else 'FAIL'}")
+            print(f"  reason: {result.get('reason')}")
+            for name, ok in (result.get("checks") or {}).items():
+                print(f"  [{'ok' if ok else 'FAIL'}] {name}")
+        return 0 if result.get("ok") else 1
 
     if args.command == "profile-completeness":
         from actproof_events.source_binding import get_profile_completeness as _comp

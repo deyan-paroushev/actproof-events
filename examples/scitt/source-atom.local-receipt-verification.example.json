@@ -1,0 +1,52 @@
+{
+  "schema": "actproof.scitt_local_receipt_verification.v1",
+  "package": {
+    "name": "actproof-events",
+    "version": "2.8.0"
+  },
+  "registration_status": "registered_local_transparency_pilot",
+  "receipt_status": "local_receipt_pilot",
+  "registration_time": "2026-06-08T15:59:18Z",
+  "checks": {
+    "receipt_well_formed": true,
+    "receipt_hash_matches": true,
+    "statement_hash_matches": true,
+    "cose_signature": true,
+    "cose_sha256_matches_receipt": true,
+    "inclusion_proof_root": true,
+    "log_entry_present": true,
+    "receipt_profile_commitments": true,
+    "receipt_source_atom_commitments": true,
+    "policy_digest_matches": true
+  },
+  "trust_boundary": "local SCITT-style inclusion proof plus local COSE_Sign1 signature only; no external transparency-service registration in this release",
+  "non_claims": [
+    "Local registration adds the signed statement to a local append-only log only.",
+    "The local receipt proves local inclusion plus a local COSE signature, nothing more.",
+    "This release does not register statements with an external SCITT Transparency Service.",
+    "This release does not emit application/scitt-receipt+cose CBOR receipts.",
+    "This release does not claim conformance to the CCF or MMR COSE Receipt profiles.",
+    "This release does not claim conformance to the ACTA or ASQAV signed-action-receipt drafts; vocabulary is aligned where mechanics coincide, not conformed.",
+    "The SCITT architecture is an Active Internet-Draft in the RFC Editor queue and is not yet a published RFC.",
+    "The SCITT media types are defined in the draft with registration requested; IANA registration is pending RFC publication.",
+    "A local receipt does not prove legal correctness, compliance certification, bank approval or supervisory approval.",
+    "Draft atom statements should not be treated as reviewed public trust artifacts."
+  ],
+  "cose_verification": {
+    "ok": true,
+    "reason": "signature_valid_local_only",
+    "signature_valid": true,
+    "cose_sha256": "sha256:0cc6fbe23d14578cc93b761df93339300c7b8e36b4095c0923c01550a5e95c39"
+  },
+  "recomputed_log_root": "sha256:1b800fde8d709b2b844477359b8f9d01e3198b0201bdbe77dd076b802a224986",
+  "ok": true,
+  "reason": "local_receipt_verified",
+  "live_log_cross_check": {
+    "ok": true,
+    "leaf_present_at_index": true,
+    "chain_consistent": true,
+    "receipt_log_root": "sha256:1b800fde8d709b2b844477359b8f9d01e3198b0201bdbe77dd076b802a224986",
+    "live_log_root": "sha256:1b800fde8d709b2b844477359b8f9d01e3198b0201bdbe77dd076b802a224986",
+    "log_root_matches": true
+  }
+}

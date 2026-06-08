@@ -1,0 +1,61 @@
+{
+  "schema": "actproof.scitt_local_transparency_log.v1",
+  "label": "dora-pilot",
+  "package": {
+    "name": "actproof-events",
+    "version": "2.8.0"
+  },
+  "registration_status": "registered_local_transparency_pilot",
+  "transparency_service_model": "service_selected_by_deployment; local pilot in 2.8.x; external SCITT Transparency Service deferred",
+  "canonicalization": "JCS/RFC8785",
+  "canonicalization_detail": "jcs-rfc8785-compatible-json-sort-keys-compact-v1",
+  "hash_algorithm": "sha256",
+  "merkle_scheme": "rfc6962-style-sha256-duplicate-last-domain-separated",
+  "created_at": "2026-06-08T15:59:18Z",
+  "entry_count": 1,
+  "entries": [
+    {
+      "schema": "actproof.scitt_local_log_entry.v1",
+      "log_index": 0,
+      "leaf_hash": "sha256:1b800fde8d709b2b844477359b8f9d01e3198b0201bdbe77dd076b802a224986",
+      "statement_ref": "sha256:bea267a58fdb75ec0799fbfbca676a9c971f10c1dd218ce46d7b0bb6d07a7e40",
+      "statement_hash": "sha256:bea267a58fdb75ec0799fbfbca676a9c971f10c1dd218ce46d7b0bb6d07a7e40",
+      "cose_sha256": "sha256:0cc6fbe23d14578cc93b761df93339300c7b8e36b4095c0923c01550a5e95c39",
+      "kid": "actproof-dev-ed25519-001",
+      "registration_time": "2026-06-08T15:59:18Z",
+      "registration_time_semantics": "timestamp_when_local_transparency_pilot_added_signed_statement_to_log",
+      "previous_receipt_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "policy_digest": "sha256:68a5c5ee6dab42ca25b1fdf117079f148594c09aaf141342dee8ef3f6cae4f34",
+      "subject": {
+        "act_id": "op:eu.dora.ict_incident_notification_initial.v1",
+        "atom_id": "src.eu.dora.32022R2554.art19.reporting_obligation"
+      },
+      "profile_commitments": {
+        "profile_semantic_hash": "sha256:098380f08b518f485f85dbadb9dfe411a7d4a26186d0c0f74c2f315d1015899e",
+        "profile_artifact_hash": "sha256:098380f08b518f485f85dbadb9dfe411a7d4a26186d0c0f74c2f315d1015899e"
+      },
+      "source_atom_commitments": {
+        "atom_identity_sha256": "sha256:5523f32eef854c2a1690261bb8e43bcca843bc34c39c378dcd49b1a2dba7335e",
+        "canonical_atom_json_sha256": "sha256:0681d793ef95b1667e3352ed1ee7499d3f6eaa5c2c0a34b05e443c165ae281d1",
+        "official_text_sha256": "sha256:72e756f2c6ef29b33f06c0fbb31a0d3908fe921d6d0d7a084a1468af2421c432",
+        "dependency_root": "sha256:2c4bb2e77612637d21b8296a929af72db540da48e9acd23abe37f657f71bea82"
+      },
+      "statement_media_type": "application/scitt-statement+cose",
+      "receipt_hash": "sha256:e6409bd295a096905c8f4872256ca5933e837909a85fb5d574aa97648f833bf7"
+    }
+  ],
+  "log_root": "sha256:1b800fde8d709b2b844477359b8f9d01e3198b0201bdbe77dd076b802a224986",
+  "non_claims": [
+    "Local registration adds the signed statement to a local append-only log only.",
+    "The local receipt proves local inclusion plus a local COSE signature, nothing more.",
+    "This release does not register statements with an external SCITT Transparency Service.",
+    "This release does not emit application/scitt-receipt+cose CBOR receipts.",
+    "This release does not claim conformance to the CCF or MMR COSE Receipt profiles.",
+    "This release does not claim conformance to the ACTA or ASQAV signed-action-receipt drafts; vocabulary is aligned where mechanics coincide, not conformed.",
+    "The SCITT architecture is an Active Internet-Draft in the RFC Editor queue and is not yet a published RFC.",
+    "The SCITT media types are defined in the draft with registration requested; IANA registration is pending RFC publication.",
+    "A local receipt does not prove legal correctness, compliance certification, bank approval or supervisory approval.",
+    "Draft atom statements should not be treated as reviewed public trust artifacts."
+  ],
+  "updated_at": "2026-06-08T15:59:18Z"
+}

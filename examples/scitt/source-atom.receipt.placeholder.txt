@@ -1,1 +1,0 @@
-2.6.0 does not register statements and does not produce SCITT receipts.
