@@ -1,0 +1,312 @@
+{
+  "schema": "actproof.scitt.source_atom_manifest.v1",
+  "profile": "actproof.scitt.source_atom_statement.v1",
+  "act_id": "op:eu.dora.ict_incident_notification_initial.v1",
+  "package": {
+    "name": "actproof-events",
+    "version": "2.6.0"
+  },
+  "statement_type": "actproof/source-atom/v1",
+  "statement_count": 26,
+  "entries": [
+    {
+      "atom_id": "src.eu.dora.32022R2554.art19.reporting_obligation",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:87d9b2018ace387586547059376ed176a9be3872a06945d389637455c5f4ba00",
+      "atom_identity_sha256": "sha256:5523f32eef854c2a1690261bb8e43bcca843bc34c39c378dcd49b1a2dba7335e",
+      "canonical_atom_json_sha256": "sha256:0681d793ef95b1667e3352ed1ee7499d3f6eaa5c2c0a34b05e443c165ae281d1",
+      "official_text_sha256": "sha256:72e756f2c6ef29b33f06c0fbb31a0d3908fe921d6d0d7a084a1468af2421c432",
+      "review_status": "draft",
+      "text_capture_status": "captured_draft",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32022R2554.art19.p4.initial_intermediate_final",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:bd5a648d6d76b453922d24e7ee56e95e0e5c3d682a674bd5392b4c7c5b2d3178",
+      "atom_identity_sha256": "sha256:55831936c77680f9d799e35a6c3c73b21120bfa5a011146304a1e4ba46b9042a",
+      "canonical_atom_json_sha256": "sha256:39d08d0ca2dc13114c99b3518e48e1677e2f5605b4ce7e228bf49f665a5304fc",
+      "official_text_sha256": "sha256:84749ea8cbc0bd2dd2a7a9b73745b9f4ea81e84be3b23f91e4ba3aa040fe8588",
+      "review_status": "draft",
+      "text_capture_status": "captured_draft",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32022R2554.art19.competent_authority_channel",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:db812f3d0b5432888f9f704750afee9899f6aa8cbc39233334f04d513e0f8c16",
+      "atom_identity_sha256": "sha256:5a352fa940634dd3bb0dc85211c46d74cead1b245da5ccf29ec4010d305a3179",
+      "canonical_atom_json_sha256": "sha256:4494e51ba245a815bc52b96dbe68c3a51ba6da9900b66c822e951c97440a231b",
+      "official_text_sha256": "sha256:18c2014a6baa3627a2cea1ca7254d55ec6125060e380b0ece6a2d03af2b942b7",
+      "review_status": "draft",
+      "text_capture_status": "captured_draft",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0301.art1.content_rules",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:e1e336057728f83aa457b0878043febfa1f40f29191933b4acbf9fbc66040c81",
+      "atom_identity_sha256": "sha256:b59ea406b673b8bed37dbdd123430d811e421da8364ba0ece8d9837be7a6d651",
+      "canonical_atom_json_sha256": "sha256:f45923627e3f1b86737a54d147bcaec8ab9dee34b86592985916c2547a2a7022",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0301.art2.initial_notification_content",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:b993fea5d0d4f5c16fb38800c2da1dafb2f71a0ecc04394b84bad03a966116eb",
+      "atom_identity_sha256": "sha256:2adfb1967067006371705e12f843b575f3f2d7f653c21383043ee707f39bf672",
+      "canonical_atom_json_sha256": "sha256:07740f10ab6f6e1bf94c9f14a1a85f43fdfb92cd61156fbe67e2205a9292a3a4",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0301.art5.time_limits",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:e6a0ebe1aa677fc717d3b7c911914ebb3dbab9c082fb6c709eef7fa81c71c9e3",
+      "atom_identity_sha256": "sha256:0843e55d0f7d0ad16742d2bb03fe78d5f7c01369feb054985cfaddae6af62db8",
+      "canonical_atom_json_sha256": "sha256:369d38ba18915ac7cd100016de700340e01d8d019dd77c990b1492fa534b89ae",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.general_information",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:2c392f5966987b57a64654f5d4e98b8a94f54e978e3af0f0d6a269dba1afce12",
+      "atom_identity_sha256": "sha256:1046485644457d0f15fcc57aef038503c833726cf42e2692aa20206d2362929b",
+      "canonical_atom_json_sha256": "sha256:003516000c5c34a7d801ac5d298f70e306cf0c32a659951645b81c151781987d",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.initial_notification",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:7af6a6603f1a9a05c12603cfa0bf8b244029865e6d538f079e77c2f5874fd54d",
+      "atom_identity_sha256": "sha256:e635f18e65202798ce0a75a5e047975108a794cbd5f3a8d69f44247226387601",
+      "canonical_atom_json_sha256": "sha256:73e4294e6eb4b421a88a41ffc202a77deaefab4e9afe64871281573f2db21dcd",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexII.data_glossary",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:e83a70759d1626f2af72e386cd8d19bab21404f542f06056ba5c184f466b003d",
+      "atom_identity_sha256": "sha256:dd24c0f5cd7ad1ea73df88c6775aed7f85962c32b4e75d2c0f1f9ae3f7f2aa34",
+      "canonical_atom_json_sha256": "sha256:4e09939a1afdf925dfdbc9ea5fef0ca6a2843d6434cd3e574294cee26e419481",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.entity_lei",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:07c1767360bba91dc1a35eec5a3cf7f4d429c8135df271a17af4d50c30225356",
+      "atom_identity_sha256": "sha256:b2c9094d0f6f77cd15e686f1a3db2f7f075f81f97dd316fdd1accaec5f9aa792",
+      "canonical_atom_json_sha256": "sha256:92ce751b0dd99e4ed1beff3c6ce31fd5d04b2a352f8e41d73884a89e8ce59be7",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.entity_name",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:0c498b5e19b5f99cfcd2b1196726b5d1426367d489406d47cd5446b6bceceb5f",
+      "atom_identity_sha256": "sha256:a0d7cb4d1bc38956a9f983b22405891f996ffb03a222e6bdcb141e4ee5ce74f7",
+      "canonical_atom_json_sha256": "sha256:4291f03ce7f1aa65c39f66d31873e531649c39857e212ea6158731141ab9c6c0",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.financial_entity_type",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:7bdb614feeb4be780034f85348870f356121ecae45fc35283469ffdd225cece3",
+      "atom_identity_sha256": "sha256:c3e6201986ace7715a69046d3dbb135445c0abe2048c8b554d17f7fc48281136",
+      "canonical_atom_json_sha256": "sha256:be8897d6d54fc805568240d8f8419aecd3c391f64c42a62be0135b662ea49e33",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.submission_type",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:2e4fb61fb76db3dfb3e16f98841f90876842d5e10e02fe65eeace30dd4aba433",
+      "atom_identity_sha256": "sha256:a5d460c543dbf76d74b29ad93e41403ef0881e0f818398568b962da4bbe986c7",
+      "canonical_atom_json_sha256": "sha256:3ebedbbcecfeca76bde1a0d9c1b05d6c81b19bef8109ce816a60c79ebc2eef65",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.incident_reference_code",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:3d2549ddbb8564345ef20ab287e3979b50118391ed78e797dade0cfa62640f91",
+      "atom_identity_sha256": "sha256:ae28fca9591f227e62f3ba61c69e19614a3bdea46647948744eb327bdeb9e609",
+      "canonical_atom_json_sha256": "sha256:54241b78b38691aea326a178826f8fee05f99641817a8373712a1a7ceed5a8d9",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.detection_datetime",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:29a661ea985b386c91d6dc90a097b989f250474e6d79f215837a15d114dc39af",
+      "atom_identity_sha256": "sha256:677501c720757559146774b3e949d5ba00d79fe868e22fb5c3fa05c7c113b29f",
+      "canonical_atom_json_sha256": "sha256:b02e41bf3aecc1ff9dcece39bbe48f1561739b426adc2a739a85b1637b67d1ad",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.classification_datetime",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:c840edc3773a1961d09533b09cb7a33c181e75066737e76b5e5f6222861c35cd",
+      "atom_identity_sha256": "sha256:41eae1b35a32263a7ab87a5a486d810db763c7a0923024b3bd29115225629d2f",
+      "canonical_atom_json_sha256": "sha256:36f83835ff86baa894aea58c30d10a6ed76200077187e006e96aecc23e66c8b0",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.classification_criteria",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:8518e67347f6ef648656956521775eb773cddd5e849cea41ae40bdaab85260c2",
+      "atom_identity_sha256": "sha256:6aedfb7e9c6e7b8b50bff55b68625d15321bdac6ea6ff5cfaabe706ab4ec9ebf",
+      "canonical_atom_json_sha256": "sha256:2d294ed572d14b388bc56da721e45f86c37ec6ed9d9d9c2dde34ea08d8079ba5",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.affected_member_states",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:fc034145f2ebf6e745551142737fc49a2d1e48b17d0d353efc4187f5d766d530",
+      "atom_identity_sha256": "sha256:5b94caea38605870f6a1e3a9fb1c2ad48e0d62f2a1333b5a2ac58718ce64f2c2",
+      "canonical_atom_json_sha256": "sha256:738bebe712d442677231cd7b30e67ab9781fa8c308e7cd6124ac24a0c5b79d81",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.discovery_method",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:a54e449ed4f0a7572c23e2f0b910e99d9df4672678d4767aebbeae431a469ebf",
+      "atom_identity_sha256": "sha256:3c99d37fab371833f1cac2d241fe5b009ba6c7415404595f74ba46e10b34e7df",
+      "canonical_atom_json_sha256": "sha256:4c678b3aa06d763e556201961216ed1a5fd819fdabb2d69e93588f0a2ff8a16b",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.bcp_activated",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:75fff86a546ef32d58aa18db988b36cc7de3f1f1c18186e777ff23481d92adf4",
+      "atom_identity_sha256": "sha256:17b0f5adf5e69ca45d61c8f4f035f1d28a043135f6923adbaf6bb686c4acee62",
+      "canonical_atom_json_sha256": "sha256:2d137aa8055ed156acf251bab6edd9c6bcaa9ff91dd3733d0698164af5690a42",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.initial_impact_description",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:046130095f54f1232d8badd85273e0ec1d47028d1ce377f238836f44f50ea394",
+      "atom_identity_sha256": "sha256:4615d79f4aeb4faf6dd0b53bb80d6ebe1639d48cfd9c82fd835066661b31ade3",
+      "canonical_atom_json_sha256": "sha256:695dd18766b28fd1395a39f26319868b16b4ebb17ad23e11d2a485bdd2248da6",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.primary_contact_name",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:25a591557936a2f0a7bd24e2c0703907dfe27adc5e9238810c3bb2910e635409",
+      "atom_identity_sha256": "sha256:2b99549b67a83a681ce245104cc1a66a2350ace2927abeef7ab353f7399e2adf",
+      "canonical_atom_json_sha256": "sha256:0cd26d6c2eac5fff710ee243ba38f71230a5e28dc9c7f15b3d41239e48bfda9a",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.primary_contact_email",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:6b12a5c9e6eb7bdf66811b06706edf8a791ed82dbbe867f50423ab1fff5108f4",
+      "atom_identity_sha256": "sha256:d553997c15165825e522838231ed2c67ce975e50419447e669d3acb2534bb127",
+      "canonical_atom_json_sha256": "sha256:a3b25258e9045b79f2018a8a4ac765d62bc7b850605c76752289be2fd971294c",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32025R0302.annexI.competent_authority",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:ff1b794397eda14a3bce7a309291c6e29cdf501b38ed2f1515648bdb2694a908",
+      "atom_identity_sha256": "sha256:b8367917da801a8a8f8a6cfdfae06ae3141ebb274726bf8e92419cce5575580b",
+      "canonical_atom_json_sha256": "sha256:0d4fb2bef20b78eabcc1758d4d9745bc1928e224946a7fa8929b2cd8cc3fd24f",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32024R1772.art1to7.classification_criteria",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:5c92d55fbadf90ff9c0689d9bf1933de344037af821d0f5da28d7c74fd7ba8a6",
+      "atom_identity_sha256": "sha256:5d38d61205f2a92e05a0a3a8add2ca2749c6a064c779645226e23ce878a9527c",
+      "canonical_atom_json_sha256": "sha256:855259d0a8b83b5863422a40b74661bdb570d5cb0a666d06456d55fe1a3d8a9f",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    },
+    {
+      "atom_id": "src.eu.dora.32024R1772.art8.major_incident_determination",
+      "statement_type": "actproof/source-atom/v1",
+      "statement_hash": "sha256:191aa495cab393f0a5876d5fec82d7ca6e30c3af954c5166f461a69107c4533d",
+      "atom_identity_sha256": "sha256:b4d4425b08d002862fe2edde8a0b5406f676a791f2b8831ab68cb6eaf5fb6857",
+      "canonical_atom_json_sha256": "sha256:3bd725fcc8d91573b8184a0d079403acbd1cc9e8a4a51a74edefd152077ea2a9",
+      "official_text_sha256": null,
+      "review_status": "draft",
+      "text_capture_status": "not_captured",
+      "scitt_registration_status": "not_registered"
+    }
+  ],
+  "manifest_root_hash_basis": "sha256 over canonical JSON of act_id + entries",
+  "manifest_root_hash": "sha256:bc206aea85164559b3a0c2afa5b5d8d43952bc7e43af1248f6535c7a1a1bd6ac",
+  "scitt_registration_status": "not_registered",
+  "boundary": "2.6.0 defines statement payloads and hashes only. It does not create COSE signatures, SCITT receipts or transparency-service registrations.",
+  "non_claims": [
+    "Statement export does not prove legal correctness.",
+    "The official legal source remains the source of law.",
+    "The statement does not provide legal advice, compliance certification, bank approval or supervisory approval.",
+    "A draft atom statement is a development artifact and should not be treated as a reviewed trust artifact.",
+    "SCITT registration, when added later, will prove registration of an issuer statement, not legal truth."
+  ],
+  "manifest_hash_basis": "sha256 over canonical JSON excluding manifest_hash",
+  "manifest_hash": "sha256:65509222b3e1f6a6ca2232708859d7b02e775470f5c612eaaebd94277f26fba0"
+}

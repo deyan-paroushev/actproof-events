@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actproof.org/schemas/scitt_source_atom_statement.v1.schema.json",
+  "title": "ActProof SCITT source-atom statement v1",
+  "type": "object",
+  "required": ["schema", "statement_type", "profile", "issuer", "subject", "commitments", "maturity", "verification", "non_claims", "statement_hash"],
+  "properties": {
+    "schema": {"const": "actproof.scitt.source_atom_statement.v1"},
+    "statement_type": {"const": "actproof/source-atom/v1"},
+    "profile": {"const": "actproof.scitt.source_atom_statement.v1"},
+    "package": {"type": "object"},
+    "issuer": {"type": "object"},
+    "subject": {
+      "type": "object",
+      "required": ["subject_type", "act_id", "atom_id"],
+      "properties": {
+        "subject_type": {"const": "source_atom"},
+        "act_id": {"type": "string"},
+        "atom_id": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "commitments": {
+      "type": "object",
+      "required": ["atom_identity_sha256", "canonical_atom_json_sha256", "profile_semantic_hash", "dependency_root"],
+      "properties": {
+        "atom_identity_sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "canonical_atom_json_sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "official_text_sha256": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+        "profile_semantic_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "profile_artifact_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "dependency_root": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      },
+      "additionalProperties": true
+    },
+    "maturity": {"type": "object"},
+    "dependencies": {"type": "object"},
+    "verification": {
+      "type": "object",
+      "required": ["canonicalization", "hash_algorithm", "payload_mode", "cose_typ", "cose_status", "scitt_registration_status"],
+      "properties": {
+        "payload_mode": {"const": "hash_commitment"},
+        "cose_typ": {"const": "actproof/source-atom/v1"},
+        "cose_status": {"const": "profile_defined_not_signed"},
+        "scitt_registration_status": {"const": "not_registered"}
+      },
+      "additionalProperties": true
+    },
+    "future_scitt_mapping": {"type": "object"},
+    "non_claims": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "statement_hash_basis": {"type": "string"},
+    "statement_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  },
+  "additionalProperties": true
+}

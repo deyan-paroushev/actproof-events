@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "actproof-events"
-version = "2.5.0"
+version = "2.6.0"
 description = "Open catalogue, JSON schemas, source-bound act profiles, and CC0 conformance vectors for machine-readable organisational acts."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -123,6 +123,11 @@ packages = ["actproof_events"]
 # accessors in actproof_events/__init__.py resolve files under that root.
 "catalogue/acts" = "actproof_events/data/catalogue/acts"
 "spec/schemas" = "actproof_events/data/schemas"
+"spec/scitt" = "actproof_events/data/scitt"
+"docs/SCITT_SOURCE_ATOM_PROFILE.v1.md" = "actproof_events/data/docs/SCITT_SOURCE_ATOM_PROFILE.v1.md"
+"docs/COSE_SOURCE_ATOM_STATEMENT.v1.md" = "actproof_events/data/docs/COSE_SOURCE_ATOM_STATEMENT.v1.md"
+"examples/scitt/source-atom.statement.example.json" = "actproof_events/data/examples/scitt/source-atom.statement.example.json"
+"examples/scitt/source-atom-manifest.example.json" = "actproof_events/data/examples/scitt/source-atom-manifest.example.json"
 # Field-level source binding (1.8.0) ships via the source_bindings mapping below.
 "docs/REVIEW_METHOD.v1.md" = "actproof_events/data/docs/REVIEW_METHOD.v1.md"
 "docs/BANK_IMPLEMENTATION_GUIDE.v1.md" = "actproof_events/data/docs/BANK_IMPLEMENTATION_GUIDE.v1.md"

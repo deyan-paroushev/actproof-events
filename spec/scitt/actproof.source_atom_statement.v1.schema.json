@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actproof.org/spec/scitt/actproof.source_atom_statement.v1.schema.json",
+  "title": "ActProof SCITT source-atom statement profile payload v1",
+  "description": "Profile copy of the SCITT source atom statement schema. The packaged schema under spec/schemas is authoritative for validation.",
+  "$ref": "../schemas/scitt_source_atom_statement.v1.schema.json"
+}

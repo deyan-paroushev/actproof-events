@@ -789,6 +789,43 @@ def main(argv: list[str] | None = None) -> int:
     atom_inventory_cmd.add_argument("--out", required=True, help="Output JSON path")
     atom_inventory_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
 
+    scitt_stmt_cmd = sub.add_parser(
+        "export-scitt-source-atom-statement",
+        help="Export a SCITT/COSE-ready actproof/source-atom/v1 statement payload (not signed, not registered)",
+    )
+    scitt_stmt_cmd.add_argument("act_id", help="ActProof act_type_id")
+    scitt_stmt_cmd.add_argument("--atom-id", required=True, help="Source atom id to export")
+    scitt_stmt_cmd.add_argument("--out", required=True, help="Output JSON path")
+    scitt_stmt_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
+    scitt_manifest_cmd = sub.add_parser(
+        "export-scitt-source-atom-manifest",
+        help="Export a manifest of SCITT/COSE-ready source-atom statement hashes for a profile",
+    )
+    scitt_manifest_cmd.add_argument("act_id", help="ActProof act_type_id")
+    scitt_manifest_cmd.add_argument("--out", required=True, help="Output JSON path")
+    scitt_manifest_cmd.add_argument("--compact", action="store_true", help="Write compact JSON instead of indented JSON")
+
+    scitt_validate_stmt_cmd = sub.add_parser(
+        "validate-scitt-source-atom-statement",
+        help="Validate the internal consistency of an exported actproof/source-atom/v1 statement",
+    )
+    scitt_validate_stmt_cmd.add_argument("path", help="Path to source-atom statement JSON")
+
+    scitt_validate_manifest_cmd = sub.add_parser(
+        "validate-scitt-source-atom-manifest",
+        help="Validate the internal consistency of an exported source-atom SCITT manifest",
+    )
+    scitt_validate_manifest_cmd.add_argument("path", help="Path to source-atom statement manifest JSON")
+
+    scitt_verify_stmt_cmd = sub.add_parser(
+        "verify-scitt-source-atom-statement",
+        help="Verify a statement against the LIVE atom by recomputing its committed hashes",
+    )
+    scitt_verify_stmt_cmd.add_argument("act_id", help="ActProof act_type_id")
+    scitt_verify_stmt_cmd.add_argument("path", help="Path to source-atom statement JSON")
+    scitt_verify_stmt_cmd.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+
 
     completeness_cmd = sub.add_parser(
         "profile-completeness",
@@ -1172,6 +1209,88 @@ def main(argv: list[str] | None = None) -> int:
         print(f"atoms: {len(payload.get('atoms', []))}")
         print(f"text_captured_and_hashed: {payload.get('coverage', {}).get('text_captured_and_hashed')}")
         return 0
+
+    if args.command == "export-scitt-source-atom-statement":
+        from actproof_events.scitt_profile import build_source_atom_statement, validate_source_atom_statement, write_json
+        try:
+            payload = build_source_atom_statement(args.act_id, args.atom_id)
+            errors = validate_source_atom_statement(payload)
+            if errors:
+                raise ValueError("; ".join(errors))
+            write_json(payload, args.out, compact=args.compact)
+        except Exception as exc:
+            print(f"actproof-events: export-scitt-source-atom-statement failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote SCITT source-atom statement: {args.out}")
+        print(f"  statement_type: {payload.get('statement_type')}")
+        print(f"  atom_id: {payload.get('subject', {}).get('atom_id')}")
+        print(f"  statement_hash: {payload.get('statement_hash')}")
+        print(f"  registration_recommendation: {payload.get('maturity', {}).get('registration_recommendation')}")
+        print(f"  scitt_registration_status: {payload.get('verification', {}).get('scitt_registration_status')}")
+        return 0
+
+    if args.command == "export-scitt-source-atom-manifest":
+        from actproof_events.scitt_profile import build_source_atom_manifest, validate_source_atom_manifest, write_json
+        try:
+            payload = build_source_atom_manifest(args.act_id)
+            errors = validate_source_atom_manifest(payload)
+            if errors:
+                raise ValueError("; ".join(errors))
+            write_json(payload, args.out, compact=args.compact)
+        except Exception as exc:
+            print(f"actproof-events: export-scitt-source-atom-manifest failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"wrote SCITT source-atom manifest: {args.out}")
+        print(f"  statements: {payload.get('statement_count')}")
+        print(f"  manifest_root_hash: {payload.get('manifest_root_hash')}")
+        print(f"  scitt_registration_status: {payload.get('scitt_registration_status')}")
+        return 0
+
+    if args.command == "validate-scitt-source-atom-statement":
+        from actproof_events.scitt_profile import load_json, validate_source_atom_statement
+        try:
+            errors = validate_source_atom_statement(load_json(args.path))
+        except Exception as exc:
+            print(f"actproof-events: validate-scitt-source-atom-statement failed: {exc}", file=sys.stderr)
+            return 1
+        if errors:
+            print("SCITT source-atom statement validation: FAIL")
+            for e in errors:
+                print(f"  error: {e}")
+            return 1
+        print("SCITT source-atom statement validation: PASS")
+        return 0
+
+    if args.command == "validate-scitt-source-atom-manifest":
+        from actproof_events.scitt_profile import load_json, validate_source_atom_manifest
+        try:
+            errors = validate_source_atom_manifest(load_json(args.path))
+        except Exception as exc:
+            print(f"actproof-events: validate-scitt-source-atom-manifest failed: {exc}", file=sys.stderr)
+            return 1
+        if errors:
+            print("SCITT source-atom manifest validation: FAIL")
+            for e in errors:
+                print(f"  error: {e}")
+            return 1
+        print("SCITT source-atom manifest validation: PASS")
+        return 0
+
+    if args.command == "verify-scitt-source-atom-statement":
+        from actproof_events.scitt_profile import load_json, verify_source_atom_statement
+        try:
+            statement = load_json(args.path)
+        except Exception as exc:
+            print(f"actproof-events: verify-scitt-source-atom-statement failed: {exc}", file=sys.stderr)
+            return 1
+        verdict = verify_source_atom_statement(statement, args.act_id)
+        if args.json:
+            print(json.dumps(verdict, ensure_ascii=False, indent=2))
+        else:
+            print(f"  [{'OK' if verdict['ok'] else 'FAIL'}] {verdict.get('atom')}  ({verdict['reason']})")
+            for field, m in (verdict.get("mismatches") or {}).items():
+                print(f"      {field}: committed={m['committed']} recomputed={m['recomputed']}")
+        return 0 if verdict["ok"] else 1
 
     if args.command == "profile-completeness":
         from actproof_events.source_binding import get_profile_completeness as _comp
