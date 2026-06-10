@@ -32,6 +32,10 @@ from actproof_events.scitt_profile import (
     load_json,
     validate_source_atom_statement,
 )
+from actproof_events.statement_profiles import (
+    compute_statement_hash_for_type,
+    validate_statement,
+)
 
 _INSTALL_HINT = (
     "COSE signing requires the optional extra. Install it with:\n"
@@ -264,29 +268,30 @@ def _kid_bytes(kid: str) -> bytes:
 
 
 def _payload_for_statement(statement: dict[str, Any]) -> bytes:
-    errors = validate_source_atom_statement(statement)
+    """Return the detached COSE payload for any supported statement type."""
+    errors = validate_statement(statement)
     if errors:
-        raise ValueError("invalid source-atom statement: " + "; ".join(errors))
+        raise ValueError("invalid statement: " + "; ".join(errors))
     stored = statement.get("statement_hash")
-    recomputed = compute_statement_hash(statement)
+    recomputed = compute_statement_hash_for_type(statement)
     if stored != recomputed:
         raise ValueError(f"statement_hash mismatch: stored {stored}, recomputed {recomputed}")
     return str(stored).encode("utf-8")
 
 
-def _protected_header(kid: str | None = None) -> dict[Any, Any]:
+def _protected_header(kid: str | None = None, *, cose_typ: str = COSE_TYP) -> dict[Any, Any]:
     # kid is kept unprotected so relying parties can inspect it without parsing
     # protected bstr. Protected headers bind alg and typ to the signature.
     return {
         COSE_HEADER_ALG: COSE_ALG_EDDSA,
-        COSE_HEADER_TYP: COSE_TYP,
+        COSE_HEADER_TYP: cose_typ,
     }
 
 
-def _unprotected_header(kid: str) -> dict[Any, Any]:
+def _unprotected_header(kid: str, *, profile: str = "actproof.cose_statement_sign1.v1") -> dict[Any, Any]:
     return {
         COSE_HEADER_KID: _kid_bytes(kid),
-        "actproof-profile": "actproof.cose_source_atom_sign1.v1",
+        "actproof-profile": profile,
         "payload-format": PAYLOAD_FORMAT,
         "scitt-registration-status": SCITT_REGISTRATION_STATUS,
     }
@@ -296,37 +301,40 @@ def _sig_structure(protected_bstr: bytes, payload: bytes, external_aad: bytes = 
     return cbor_encode(["Signature1", protected_bstr, external_aad, payload])
 
 
-def sign_source_atom_statement(
+def sign_statement(
     statement: dict[str, Any],
     *,
     private_key_path: str | Path,
     kid: str = "actproof-dev-ed25519-001",
+    cose_typ: str | None = None,
 ) -> dict[str, Any]:
-    """Sign a source-atom statement and return COSE bytes + metadata.
+    """Sign any supported ActProof statement profile.
 
     The COSE payload is the UTF-8 ``statement_hash`` string. The verifier must
-    supply the statement JSON and recompute the statement hash before verifying
-    the signature. This is a detached/hash-commitment prototype rather than a
-    SCITT registration artifact.
+    supply the statement JSON and recompute the hash before verifying the
+    signature. This keeps the object small while preserving a deterministic
+    commitment to the statement content.
     """
     payload = _payload_for_statement(statement)
-    protected = _protected_header()
+    typ = cose_typ or str(statement.get("statement_type") or COSE_TYP)
+    protected = _protected_header(cose_typ=typ)
     protected_bstr = cbor_encode(protected)
-    unprotected = _unprotected_header(kid)
+    profile = "actproof.cose_source_atom_sign1.v1" if statement.get("statement_type") == SCITT_SOURCE_ATOM_STATEMENT_TYPE else "actproof.cose_statement_sign1.v1"
+    unprotected = _unprotected_header(kid, profile=profile)
     to_sign = _sig_structure(protected_bstr, payload)
     key = load_private_key(private_key_path)
     signature = key.sign(to_sign)
     cose_obj = CBORTag(COSE_SIGN1_TAG, [protected_bstr, unprotected, payload, signature])
     cose_bytes = cbor_encode(cose_obj)
     return {
-        "schema": COSE_SOURCE_ATOM_SIGNING_SCHEMA,
+        "schema": COSE_SOURCE_ATOM_SIGNING_SCHEMA if statement.get("statement_type") == SCITT_SOURCE_ATOM_STATEMENT_TYPE else "actproof.cose_statement_sign1.v1",
         "statement_type": statement.get("statement_type"),
         "statement_hash": statement.get("statement_hash"),
         "statement_subject": statement.get("subject", {}),
         "cose_status": COSE_STATUS_SIGNED_LOCAL,
         "cose_sign1_tag": COSE_SIGN1_TAG,
         "cose_alg": "Ed25519 / COSE EdDSA (-8)",
-        "cose_typ": COSE_TYP,
+        "cose_typ": typ,
         "kid": kid,
         "payload_format": PAYLOAD_FORMAT,
         "payload_sha256": sha256_bytes(payload),
@@ -339,6 +347,15 @@ def sign_source_atom_statement(
         "non_claims": list(NON_CLAIMS),
     }
 
+
+def sign_source_atom_statement(
+    statement: dict[str, Any],
+    *,
+    private_key_path: str | Path,
+    kid: str = "actproof-dev-ed25519-001",
+) -> dict[str, Any]:
+    """Sign a source-atom statement and return COSE bytes + metadata."""
+    return sign_statement(statement, private_key_path=private_key_path, kid=kid, cose_typ=COSE_TYP)
 
 def write_cose_artifact(signing_result: dict[str, Any], out_path: str | Path) -> None:
     b64 = signing_result.get("cose_base64url")
@@ -380,15 +397,16 @@ def load_cose_sign1(path: str | Path) -> dict[str, Any]:
     }
 
 
-def verify_cose_source_atom_statement(
+def verify_cose_statement(
     cose_path: str | Path,
     *,
     public_key_path: str | Path,
     statement: dict[str, Any],
+    expected_cose_typ: str | None = None,
 ) -> dict[str, Any]:
-    """Verify a local COSE_Sign1 prototype against a statement JSON."""
+    """Verify a local COSE_Sign1 prototype against any supported statement JSON."""
     result_base: dict[str, Any] = {
-        "schema": COSE_SOURCE_ATOM_VERIFICATION_SCHEMA,
+        "schema": COSE_SOURCE_ATOM_VERIFICATION_SCHEMA if statement.get("statement_type") == SCITT_SOURCE_ATOM_STATEMENT_TYPE else "actproof.cose_statement_verification.v1",
         "statement_type": statement.get("statement_type"),
         "statement_hash": statement.get("statement_hash"),
         "cose_typ": None,
@@ -397,14 +415,14 @@ def verify_cose_source_atom_statement(
         "payload_matches_statement_hash": False,
         "scitt_registration_status": SCITT_REGISTRATION_STATUS,
         "receipt_present": False,
-        "trust_boundary": "local COSE_Sign1 signature verification only; no SCITT transparency-service receipt in 2.7.0",
+        "trust_boundary": "local COSE_Sign1 signature verification only; no external SCITT transparency-service receipt in this release",
         "non_claims": list(NON_CLAIMS),
     }
-    statement_errors = validate_source_atom_statement(statement)
+    statement_errors = validate_statement(statement)
     if statement_errors:
         result_base.update({"ok": False, "reason": "invalid_statement", "errors": statement_errors})
         return result_base
-    recomputed = compute_statement_hash(statement)
+    recomputed = compute_statement_hash_for_type(statement)
     result_base["statement_hash_matches"] = recomputed == statement.get("statement_hash")
     if not result_base["statement_hash_matches"]:
         result_base.update({"ok": False, "reason": "statement_hash_mismatch", "recomputed_statement_hash": recomputed})
@@ -428,7 +446,7 @@ def verify_cose_source_atom_statement(
     if protected.get(COSE_HEADER_ALG) != COSE_ALG_EDDSA:
         result_base.update({"ok": False, "reason": "unsupported_alg", "alg": protected.get(COSE_HEADER_ALG)})
         return result_base
-    if protected.get(COSE_HEADER_TYP) != COSE_TYP:
+    if expected_cose_typ is not None and protected.get(COSE_HEADER_TYP) != expected_cose_typ:
         result_base.update({"ok": False, "reason": "unexpected_cose_typ", "typ": protected.get(COSE_HEADER_TYP)})
         return result_base
     if not payload_ok:
@@ -445,3 +463,13 @@ def verify_cose_source_atom_statement(
     except InvalidSignature:
         result_base.update({"ok": False, "reason": "invalid_signature"})
     return result_base
+
+
+def verify_cose_source_atom_statement(
+    cose_path: str | Path,
+    *,
+    public_key_path: str | Path,
+    statement: dict[str, Any],
+) -> dict[str, Any]:
+    """Verify a local COSE_Sign1 prototype against a source-atom statement JSON."""
+    return verify_cose_statement(cose_path, public_key_path=public_key_path, statement=statement, expected_cose_typ=COSE_TYP)

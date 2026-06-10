@@ -1,0 +1,9 @@
+# Install (the demo signs/verifies COSE, which needs the optional extra)
+pip install "actproof-events[cose-signing]"
+
+# Official worked example
+python -m actproof_events demo dora-301-302-continuity --out /tmp/actproof-dora-demo
+python -m actproof_events demo dora-301-302-continuity --verbose --out /tmp/actproof-dora-demo-verbose
+
+# Installed console command path
+actproof-events demo dora-301-302-continuity --out /tmp/actproof-dora-demo

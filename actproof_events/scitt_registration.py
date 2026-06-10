@@ -15,8 +15,7 @@ and the corresponding verification:
     local receipt + COSE_Sign1 + statement JSON + issuer public key
         -> re-check the COSE signature over the statement hash
         -> recompute the inclusion proof to the committed log root
-        -> confirm the receipt carries the same profile-view and source-atom
-           commitments as the signed statement
+        -> confirm the receipt carries the same typed commitments as the signed statement
 
 Design decisions for this release, each grounded in the live SCITT architecture
 draft (draft-ietf-scitt-architecture, an Active Internet-Draft in the RFC Editor
@@ -49,7 +48,7 @@ queue, not yet a published RFC) and the COSE Receipts draft
    with the signed-action-receipt family (ACTA / ASQAV), this release uses the
    shared names: canonicalization "JCS/RFC8785", policy_digest,
    previous_receipt_hash, and statement_ref (the ActProof analogue of an action
-   receipt's action_ref, but referring to a source-atom statement rather than
+   receipt's action_ref, but referring to an ActProof typed statement rather than
    an agent action). ActProof-native commitment names are kept. This is
    alignment, not conformance: ACTA and ASQAV are individual / Independent
    Internet-Drafts, not IETF consensus, and no conformance is claimed.
@@ -72,13 +71,18 @@ from actproof_events.cose_signing import (
     COSE_HEADER_KID,
     load_cose_sign1,
     sha256_bytes,
-    verify_cose_source_atom_statement,
+    verify_cose_statement,
 )
 from actproof_events.scitt_profile import (
     CANONICALIZATION,
     HASH_ALGORITHM,
-    compute_statement_hash,
-    validate_source_atom_statement,
+)
+from actproof_events.statement_profiles import (
+    compute_statement_hash_for_type,
+    validate_statement,
+    profile_commitments as _typed_profile_commitments,
+    source_atom_commitments as _typed_source_atom_commitments,
+    statement_subject as _typed_statement_subject,
 )
 
 # --- profile identifiers --------------------------------------------------
@@ -218,21 +222,11 @@ def _root_from_path(leaf: str, path: list[dict[str, str]]) -> str:
 # ---------------------------------------------------------------------------
 
 def _profile_commitments(statement: dict[str, Any]) -> dict[str, Any]:
-    c = statement.get("commitments") or {}
-    return {
-        "profile_semantic_hash": c.get("profile_semantic_hash"),
-        "profile_artifact_hash": c.get("profile_artifact_hash"),
-    }
+    return _typed_profile_commitments(statement)
 
 
 def _source_atom_commitments(statement: dict[str, Any]) -> dict[str, Any]:
-    c = statement.get("commitments") or {}
-    return {
-        "atom_identity_sha256": c.get("atom_identity_sha256"),
-        "canonical_atom_json_sha256": c.get("canonical_atom_json_sha256"),
-        "official_text_sha256": c.get("official_text_sha256"),
-        "dependency_root": c.get("dependency_root"),
-    }
+    return _typed_source_atom_commitments(statement)
 
 
 def _policy_digest(statement: dict[str, Any]) -> str:
@@ -303,22 +297,22 @@ def register_signed_statement(
     cose_path: str | Path,
     statement: dict[str, Any],
 ) -> dict[str, Any]:
-    """Append a signed source-atom statement to the local log and issue a receipt.
+    """Append a signed supported ActProof statement to the local log and issue a receipt.
 
-    The statement must be a valid ``actproof/source-atom/v1`` statement whose
-    ``statement_hash`` matches its content, and the COSE_Sign1 artifact must
-    carry that same statement hash as its payload. The signature itself is
-    verified at receipt-verification time, where the relying party supplies the
-    public key.
+    The statement must be a valid typed statement whose ``statement_hash``
+    matches its content, and the COSE_Sign1 artifact must carry that same
+    statement hash as its payload. The signature itself is verified at
+    receipt-verification time, where the relying party supplies the public key.
 
-    Returns the issued local receipt dict.
+    Supported statement types include ``actproof/source-atom/v1`` and
+    ``actproof/profile-dependency/v1``. Returns the issued local receipt dict.
     """
-    errors = validate_source_atom_statement(statement)
+    errors = validate_statement(statement)
     if errors:
-        raise ValueError("invalid source-atom statement: " + "; ".join(errors))
+        raise ValueError("invalid statement: " + "; ".join(errors))
 
     statement_hash = statement.get("statement_hash")
-    if statement_hash != compute_statement_hash(statement):
+    if statement_hash != compute_statement_hash_for_type(statement):
         raise ValueError("statement_hash does not match statement content")
 
     cose = load_cose_sign1(cose_path)
@@ -347,7 +341,7 @@ def register_signed_statement(
     profile_commitments = _profile_commitments(statement)
     source_atom_commitments = _source_atom_commitments(statement)
     policy_digest = _policy_digest(statement)
-    subject = statement.get("subject") or {}
+    subject = _typed_statement_subject(statement)
     statement_ref = str(statement_hash)
 
     entry = {
@@ -362,10 +356,8 @@ def register_signed_statement(
         "registration_time_semantics": "timestamp_when_local_transparency_pilot_added_signed_statement_to_log",
         "previous_receipt_hash": previous_receipt_hash,
         "policy_digest": policy_digest,
-        "subject": {
-            "act_id": subject.get("act_id"),
-            "atom_id": subject.get("atom_id"),
-        },
+        "subject": subject,
+        "statement_type": statement.get("statement_type"),
         "profile_commitments": profile_commitments,
         "source_atom_commitments": source_atom_commitments,
         "statement_media_type": SCITT_STATEMENT_MEDIA_TYPE,
@@ -382,7 +374,7 @@ def register_signed_statement(
         "schema": LOCAL_RECEIPT_SCHEMA,
         "package": {"name": "actproof-events", "version": __version__},
         "issuer_model": ISSUER_MODEL,
-        "payload_profile_type": PAYLOAD_PROFILE_TYPE,
+        "payload_profile_type": statement.get("statement_type") or PAYLOAD_PROFILE_TYPE,
         "registration_status": REGISTRATION_STATUS_LOCAL,
         "receipt_status": RECEIPT_STATUS_LOCAL,
         "transparency_service_model": TRANSPARENCY_SERVICE_MODEL,
@@ -392,10 +384,8 @@ def register_signed_statement(
         "canonicalization": CANONICALIZATION_LABEL,
         "canonicalization_detail": CANONICALIZATION,
         "hash_algorithm": HASH_ALGORITHM,
-        "subject": {
-            "act_id": subject.get("act_id"),
-            "atom_id": subject.get("atom_id"),
-        },
+        "subject": subject,
+        "statement_type": statement.get("statement_type"),
         "statement_ref": statement_ref,
         "statement_hash": statement_hash,
         "cose_sha256": cose_sha256,
@@ -418,7 +408,7 @@ def register_signed_statement(
         "vocabulary_alignment_note": (
             "statement_ref/policy_digest/previous_receipt_hash/canonicalization are named for "
             "mechanism compatibility with the ACTA/ASQAV signed-action-receipt family; this is "
-            "alignment, not conformance. statement_ref refers to an ActProof source-atom statement, "
+            "alignment, not conformance. statement_ref refers to an ActProof typed statement, "
             "not an agent action."
         ),
         "non_claims": list(NON_CLAIMS),
@@ -463,8 +453,7 @@ def verify_local_receipt(
     3. The COSE_Sign1 signature over the statement hash is valid (2.7.0 verifier).
     4. The receipt's ``cose_sha256`` matches the COSE bytes on disk.
     5. The Merkle inclusion path recomputes to the committed ``log_root``.
-    6. The receipt's profile-view and source-atom commitments equal the
-       commitments inside the signed statement.
+    6. The receipt's typed commitments equal the commitments inside the signed statement.
     7. The receipt's ``policy_digest`` recomputes from the statement.
     """
     result: dict[str, Any] = {
@@ -502,17 +491,21 @@ def verify_local_receipt(
         return result
     result["checks"]["receipt_hash_matches"] = True
 
-    statement_errors = validate_source_atom_statement(statement)
+    statement_errors = validate_statement(statement)
     if statement_errors:
         result.update({"ok": False, "reason": "invalid_statement", "errors": statement_errors})
         return result
     if statement.get("statement_hash") != receipt.get("statement_hash"):
         result.update({"ok": False, "reason": "statement_hash_does_not_match_receipt"})
         return result
+    if compute_statement_hash_for_type(statement) != statement.get("statement_hash"):
+        result.update({"ok": False, "reason": "statement_hash_does_not_match_content"})
+        return result
     result["checks"]["statement_hash_matches"] = True
 
-    cose_verdict = verify_cose_source_atom_statement(
-        cose_path, public_key_path=public_key_path, statement=statement
+    cose_verdict = verify_cose_statement(
+        cose_path, public_key_path=public_key_path, statement=statement,
+        expected_cose_typ=statement.get("statement_type"),
     )
     result["cose_verification"] = {
         "ok": cose_verdict.get("ok"),

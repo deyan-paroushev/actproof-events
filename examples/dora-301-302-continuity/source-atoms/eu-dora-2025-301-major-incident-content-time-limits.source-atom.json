@@ -1,0 +1,14 @@
+{
+  "atom_id": "eu.dora.2025-301.major-incident-content-time-limits",
+  "source_type": "eu_regulation",
+  "source_role": "summary_descriptor",
+  "celex": "32025R0301",
+  "eli": "http://data.europa.eu/eli/reg_del/2025/301/oj",
+  "summary_text_sha256": "sha256:e75d0706067ac2448146ce4788ffd973d97fef2591b38fd6a55a31b1e684be04",
+  "summary_text_hash_basis": "sha256 over a SUMMARY DESCRIPTOR, NOT the verbatim official text",
+  "summary": "Specifies content and time limits for the initial notification, intermediate report and final report on major ICT-related incidents.",
+  "note": "Descriptor-level dependency used for demo scope control; not an official-text atom.",
+  "dependency_role": "content_and_time_limits",
+  "dependency_status": "required",
+  "canonical_atom_json_sha256": "sha256:f79e0f5ffc239d2ebf91be8052346fc4ebf42f9ec51f9811518626f47b7a646c"
+}

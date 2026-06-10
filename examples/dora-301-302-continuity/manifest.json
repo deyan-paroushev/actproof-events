@@ -1,0 +1,12 @@
+{
+  "schema": "actproof.demo.manifest.v1",
+  "demo": "dora-301-302-continuity",
+  "profile_id": "eu.dora.major-ict-incident-reporting.profile",
+  "continuity_state": "NEEDS_REVIEW",
+  "receipted_statements": [
+    "profile-dependency-statement.v1.json",
+    "profile-dependency-statement.v2.json",
+    "source-atom.statement.json"
+  ],
+  "boundary": "Local reproducible worked example; not legal advice or production external SCITT registration."
+}

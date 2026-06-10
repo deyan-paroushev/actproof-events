@@ -1,0 +1,47 @@
+{
+  "schema": "actproof.profile_dependency_statement.v1",
+  "statement_type": "actproof/profile-dependency/v1",
+  "profile_id": "eu.dora.major-ict-incident-reporting.profile",
+  "profile_version": "v1",
+  "profile_policy": "Article 19(1) + 2025/301.",
+  "expected_dependencies": [
+    "eu.dora.2022-2554.article-19-1.first-sentence",
+    "eu.dora.2025-301.major-incident-content-time-limits"
+  ],
+  "dependency_root": "sha256:4cd7efba833d44ec3af647551efeb64fc3b60c1d256aaf814044de7bc0c85aca",
+  "dependency_root_envelope": {
+    "root_type": "actproof.profile_dependency_root.v1",
+    "hash_algorithm": "SHA-256",
+    "canonicalization": "JCS / RFC 8785 compatible JSON (sort keys, compact separators)",
+    "profile_id": "eu.dora.major-ict-incident-reporting.profile",
+    "dependency_basis": [
+      {
+        "atom_id": "eu.dora.2022-2554.article-19-1.first-sentence",
+        "dependency_role": "base_obligation",
+        "dependency_status": "required",
+        "source_role": "verbatim_official_text_excerpt",
+        "canonical_atom_json_sha256": "sha256:6fa9ac3ddc32ec0b8c398175fa0b10f3fc7b2d10e20bb3564b0c3c3797065b80",
+        "official_text_sha256": "sha256:e4b2581c3c03769f370158ea97449e796510e6893306779e0616de5bad84f890",
+        "summary_text_sha256": null
+      },
+      {
+        "atom_id": "eu.dora.2025-301.major-incident-content-time-limits",
+        "dependency_role": "content_and_time_limits",
+        "dependency_status": "required",
+        "source_role": "summary_descriptor",
+        "canonical_atom_json_sha256": "sha256:f79e0f5ffc239d2ebf91be8052346fc4ebf42f9ec51f9811518626f47b7a646c",
+        "official_text_sha256": null,
+        "summary_text_sha256": "sha256:e75d0706067ac2448146ce4788ffd973d97fef2591b38fd6a55a31b1e684be04"
+      }
+    ]
+  },
+  "receipt_status": "eligible_for_local_cose_receipt",
+  "non_claims": [
+    "This demo does not determine legal compliance or legal sufficiency.",
+    "The official legal source remains authoritative.",
+    "NEEDS_REVIEW means the maintained source-dependency basis moved; it is not a non-compliance finding.",
+    "Local COSE receipts in this demo are local transparency-pilot receipts, not external SCITT service receipts."
+  ],
+  "statement_hash": "sha256:ec8a5ae5c012cd030883f1b27fae2ac343ae8b86db0a348519e90449fa34acda",
+  "profile_dependency_statement_hash": "sha256:ec8a5ae5c012cd030883f1b27fae2ac343ae8b86db0a348519e90449fa34acda"
+}

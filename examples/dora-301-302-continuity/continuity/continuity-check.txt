@@ -1,0 +1,5 @@
+Result: NEEDS_REVIEW
+
+The downstream binding was created against the v1 receipted dependency root.
+The current v2 receipted dependency root adds EU 2025/302 dependencies.
+ActProof shows source-basis movement only; compliance is not assessed.

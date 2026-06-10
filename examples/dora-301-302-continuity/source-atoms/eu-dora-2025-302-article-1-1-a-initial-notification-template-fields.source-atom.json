@@ -1,0 +1,14 @@
+{
+  "atom_id": "eu.dora.2025-302.article-1-1-a.initial-notification-template-fields",
+  "source_type": "eu_regulation",
+  "source_role": "verbatim_official_text_excerpt",
+  "locator": "Article 1(1), opening sentence and point (a)",
+  "celex": "32025R0302",
+  "eli": "http://data.europa.eu/eli/reg_impl/2025/302/oj",
+  "official_text_sha256": "sha256:06f9d2a5db632ece1fd26a18d4c2dcbdcb7951eeb3647d074dadd411315b9cc2",
+  "official_text_hash_basis": "verbatim official text excerpt; actproof normalisation v1",
+  "text_excerpt": "Financial entities shall use the template laid down in Annex I to submit the initial notification, the intermediate report, and the final report referred to in Article 19(4) of Regulation (EU) 2022/2554 as follows:\n(a) financial entities that submit an initial notification shall complete the data fields of the template which correspond to the information to be provided in accordance with Article 2 of Commission Delegated Regulation (EU) 2025/301, and may, where they already have that information, complete those data fields the completion of which is not required for an initial notification but is required for an intermediate or final report.\n",
+  "dependency_role": "initial_notification_template_field_completion_rule",
+  "dependency_status": "required",
+  "canonical_atom_json_sha256": "sha256:ea316fc57d72bf09728871d6a826f4a79dea61811abedb9f253111f08ec114ff"
+}

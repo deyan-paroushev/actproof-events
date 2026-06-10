@@ -1,0 +1,21 @@
+{
+  "schema": "actproof.demo.continuity_assessment.v1",
+  "artifact_id": "bank-x.dora.major-incident-reporting-form.v1",
+  "artifact_relied_on_root": "sha256:4cd7efba833d44ec3af647551efeb64fc3b60c1d256aaf814044de7bc0c85aca",
+  "artifact_relied_on_statement_hash": "sha256:ec8a5ae5c012cd030883f1b27fae2ac343ae8b86db0a348519e90449fa34acda",
+  "artifact_relied_on_receipt_hash": "sha256:6cb725351c4c9c72f9f61188a048fd5335ca8d146d472165f7bb3fcf0993854a",
+  "current_profile_root": "sha256:380df67bb665fbb8e98a2f5309b41d243388b2d73b6101c7df7c4a9c669c480c",
+  "current_profile_statement_hash": "sha256:027b2fb6d3210d05784f4df6b0983a9ead0c0d8ce60d1caa94a09318cb878165",
+  "current_profile_receipt_hash": "sha256:c9a059ebebe8dd5a93aee0c6baa5054fa45effdf9fc60088b35c01d62432fec7",
+  "roots_match": false,
+  "continuity_state": "NEEDS_REVIEW",
+  "added_dependencies": [
+    "eu.dora.2025-302.article-1-1-a.initial-notification-template-fields",
+    "eu.dora.2025-302.forms-templates-procedures"
+  ],
+  "removed_dependencies": [],
+  "replacements": [],
+  "legal_conclusion": "not_assessed",
+  "meaning": "The artifact relied on an older receipted source-dependency statement. Current reliance needs review against the current receipted profile statement.",
+  "boundary": "ActProof does not determine compliance or legal sufficiency."
+}

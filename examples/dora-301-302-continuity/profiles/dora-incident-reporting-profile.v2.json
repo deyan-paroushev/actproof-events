@@ -1,0 +1,13 @@
+{
+  "profile_id": "eu.dora.major-ict-incident-reporting.profile",
+  "profile_version": "v2",
+  "expected_dependencies": [
+    "eu.dora.2022-2554.article-19-1.first-sentence",
+    "eu.dora.2025-301.major-incident-content-time-limits",
+    "eu.dora.2025-302.forms-templates-procedures",
+    "eu.dora.2025-302.article-1-1-a.initial-notification-template-fields"
+  ],
+  "dependency_root": "sha256:380df67bb665fbb8e98a2f5309b41d243388b2d73b6101c7df7c4a9c669c480c",
+  "profile_dependency_statement_hash": "sha256:027b2fb6d3210d05784f4df6b0983a9ead0c0d8ce60d1caa94a09318cb878165",
+  "profile_dependency_receipt_hash": "sha256:c9a059ebebe8dd5a93aee0c6baa5054fa45effdf9fc60088b35c01d62432fec7"
+}

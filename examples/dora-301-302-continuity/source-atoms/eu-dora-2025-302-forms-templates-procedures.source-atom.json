@@ -1,0 +1,14 @@
+{
+  "atom_id": "eu.dora.2025-302.forms-templates-procedures",
+  "source_type": "eu_regulation",
+  "source_role": "summary_descriptor",
+  "celex": "32025R0302",
+  "eli": "http://data.europa.eu/eli/reg_impl/2025/302/oj",
+  "summary_text_sha256": "sha256:60a4c158265137a4830e53c0cfb6ec39be9e4c72a6c37e175b6e06cb8ce7e702",
+  "summary_text_hash_basis": "sha256 over a SUMMARY DESCRIPTOR, NOT the verbatim official text",
+  "summary": "Lays down standard forms, templates and procedures for reporting major ICT-related incidents; binds to content in 2025/301 Articles 2 to 4.",
+  "note": "Descriptor-level dependency used for demo scope control; not an official-text atom.",
+  "dependency_role": "forms_templates_procedures",
+  "dependency_status": "required",
+  "canonical_atom_json_sha256": "sha256:4d99b270242feed3e0f6a3fb6d81430f820f02ffaf2bb86e7f0ada2c6d6bb4d8"
+}

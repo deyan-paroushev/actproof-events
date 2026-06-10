@@ -1,0 +1,68 @@
+{
+  "schema": "actproof.scitt_local_receipt.v1",
+  "package": {
+    "name": "actproof-events",
+    "version": "2.8.0"
+  },
+  "issuer_model": "actproof_as_scitt_issuer",
+  "payload_profile_type": "actproof/profile-dependency/v1",
+  "registration_status": "registered_local_transparency_pilot",
+  "receipt_status": "local_receipt_pilot",
+  "transparency_service_model": "service_selected_by_deployment; local pilot in 2.8.x; external SCITT Transparency Service deferred",
+  "public_registration_policy": "do_not_register_publicly_until_reviewed",
+  "statement_media_type": "application/scitt-statement+cose",
+  "receipt_media_type_intended": "application/scitt-receipt+cose",
+  "canonicalization": "JCS/RFC8785",
+  "canonicalization_detail": "jcs-rfc8785-compatible-json-sort-keys-compact-v1",
+  "hash_algorithm": "sha256",
+  "subject": {
+    "subject_type": "profile_dependency",
+    "profile_id": "eu.dora.major-ict-incident-reporting.profile",
+    "profile_version": "v2"
+  },
+  "statement_type": "actproof/profile-dependency/v1",
+  "statement_ref": "sha256:027b2fb6d3210d05784f4df6b0983a9ead0c0d8ce60d1caa94a09318cb878165",
+  "statement_hash": "sha256:027b2fb6d3210d05784f4df6b0983a9ead0c0d8ce60d1caa94a09318cb878165",
+  "cose_sha256": "sha256:964c513814a6daf8933e601e6676dc01fa2f3d321e528fbb473891b90562d02d",
+  "kid": "actproof-continuity-ed25519",
+  "registration_time": "2026-06-10T06:17:26Z",
+  "registration_time_semantics": "timestamp_when_local_transparency_pilot_added_signed_statement_to_log",
+  "previous_receipt_hash": "sha256:6cb725351c4c9c72f9f61188a048fd5335ca8d146d472165f7bb3fcf0993854a",
+  "policy_digest": "sha256:ecdfb7406ffc38fdbbfe208ab1a9dcbfbd60e8596943ce19ac3b61147ee9803e",
+  "log": {
+    "label": "dora 301-302 continuity demo local pilot",
+    "log_index": 1,
+    "entry_count": 2,
+    "leaf_hash": "sha256:dc5eb6558faf24aada41f84908f2275c7c32e1ef54fddbccd6d697daca2acd3a",
+    "inclusion_path": [
+      {
+        "sibling": "sha256:58d2d356306d9aa10fe592648435ee80488bf7af9daab31d25883c72b70e30b0",
+        "side": "left"
+      }
+    ],
+    "log_root": "sha256:9d61deedf4f6bd685dfdae9b19c466673cb8bb36a97e0c494839546066958cb9",
+    "merkle_scheme": "rfc6962-style-sha256-duplicate-last-domain-separated"
+  },
+  "profile_commitments": {
+    "profile_id": "eu.dora.major-ict-incident-reporting.profile",
+    "profile_version": "v2",
+    "dependency_root": "sha256:380df67bb665fbb8e98a2f5309b41d243388b2d73b6101c7df7c4a9c669c480c",
+    "profile_dependency_statement_hash": "sha256:027b2fb6d3210d05784f4df6b0983a9ead0c0d8ce60d1caa94a09318cb878165"
+  },
+  "source_atom_commitments": {},
+  "vocabulary_alignment_note": "statement_ref/policy_digest/previous_receipt_hash/canonicalization are named for mechanism compatibility with the ACTA/ASQAV signed-action-receipt family; this is alignment, not conformance. statement_ref refers to an ActProof source-atom statement, not an agent action.",
+  "non_claims": [
+    "Local registration adds the signed statement to a local append-only log only.",
+    "The local receipt proves local inclusion plus a local COSE signature, nothing more.",
+    "This release does not register statements with an external SCITT Transparency Service.",
+    "This release does not emit application/scitt-receipt+cose CBOR receipts.",
+    "This release does not claim conformance to the CCF or MMR COSE Receipt profiles.",
+    "This release does not claim conformance to the ACTA or ASQAV signed-action-receipt drafts; vocabulary is aligned where mechanics coincide, not conformed.",
+    "The SCITT architecture is an Active Internet-Draft in the RFC Editor queue and is not yet a published RFC.",
+    "The SCITT media types are defined in the draft with registration requested; IANA registration is pending RFC publication.",
+    "A local receipt does not prove legal correctness, compliance certification, bank approval or supervisory approval.",
+    "Draft atom statements should not be treated as reviewed public trust artifacts."
+  ],
+  "receipt_hash_basis": "sha256 over canonical JSON excluding receipt_hash",
+  "receipt_hash": "sha256:c9a059ebebe8dd5a93aee0c6baa5054fa45effdf9fc60088b35c01d62432fec7"
+}

@@ -1,0 +1,14 @@
+{
+  "atom_id": "eu.dora.2022-2554.article-19-1.first-sentence",
+  "source_type": "eu_regulation",
+  "source_role": "verbatim_official_text_excerpt",
+  "locator": "Article 19(1), first subparagraph, first sentence",
+  "celex": "32022R2554",
+  "eli": "http://data.europa.eu/eli/reg/2022/2554/art_19",
+  "official_text_sha256": "sha256:e4b2581c3c03769f370158ea97449e796510e6893306779e0616de5bad84f890",
+  "official_text_hash_basis": "verbatim official text excerpt; actproof normalisation v1",
+  "text_excerpt": "Financial entities shall report major ICT-related incidents to the relevant competent authority as referred to in Article 46 in accordance with paragraph 4 of this Article.\n",
+  "dependency_role": "base_obligation",
+  "dependency_status": "required",
+  "canonical_atom_json_sha256": "sha256:6fa9ac3ddc32ec0b8c398175fa0b10f3fc7b2d10e20bb3564b0c3c3797065b80"
+}

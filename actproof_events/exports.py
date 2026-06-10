@@ -705,6 +705,14 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="actproof-events", description="ActProof Events export utilities")
     sub = parser.add_subparsers(dest="command")
 
+    demo_cmd = sub.add_parser(
+        "demo",
+        help="Run packaged reproducible worked examples",
+    )
+    demo_cmd.add_argument("name", choices=["dora-301-302-continuity"], help="Demo name")
+    demo_cmd.add_argument("--out", default=None, help="Output directory for generated demo artifacts")
+    demo_cmd.add_argument("--verbose", action="store_true", help="Print detailed hashes and receipt checks")
+
     export = sub.add_parser("export-profile-view", help="Generate a public profile-view JSON projection")
     export.add_argument("act_id", help="ActProof act_type_id to export")
     export.add_argument("--out", required=True, help="Output JSON path")
@@ -1101,6 +1109,17 @@ def main(argv: list[str] | None = None) -> int:
     if args.command is None:
         _print_usage()
         return 0
+
+    if args.command == "demo":
+        from actproof_events.dora_continuity_demo import main as demo_main
+        rest = [args.name]
+        # dora_continuity_demo.main expects only its options after the demo name.
+        demo_args = []
+        if args.out:
+            demo_args.extend(["--out", args.out])
+        if args.verbose:
+            demo_args.append("--verbose")
+        return demo_main(demo_args)
 
     if args.command == "verify-profile-view":
         try:

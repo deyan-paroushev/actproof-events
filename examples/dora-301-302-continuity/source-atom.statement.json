@@ -1,0 +1,115 @@
+{
+  "schema": "actproof.scitt.source_atom_statement.v1",
+  "statement_type": "actproof/source-atom/v1",
+  "profile": "actproof.scitt.source_atom_statement.v1",
+  "package": {
+    "name": "actproof-events",
+    "version": "2.8.0"
+  },
+  "issuer": {
+    "issuer_name": "ActProof Events",
+    "issuer_role": "profile_maintainer",
+    "issuer_key_id": null
+  },
+  "subject": {
+    "subject_type": "source_atom",
+    "act_id": "op:eu.dora.ict_incident_notification_initial.v1",
+    "atom_id": "src.eu.dora.32022R2554.art19.reporting_obligation",
+    "jurisdiction": "EU",
+    "source_system": "EUR-Lex",
+    "source_id": "CELEX:32022R2554",
+    "celex": "32022R2554",
+    "eli": "http://data.europa.eu/eli/reg/2022/2554/oj",
+    "instrument": "Regulation (EU) 2022/2554 (Digital Operational Resilience Act)",
+    "authority": "European Parliament and Council of the European Union",
+    "language": "en",
+    "source_document_sha256": "sha256:85307f9e2a0409826dd0f54489645935816d16e929f0db4db3ef15badd11d38c",
+    "locator": {
+      "article": "19"
+    },
+    "text_locator": {
+      "article": "19",
+      "paragraph": "1"
+    },
+    "atom_type": "article",
+    "source_role": "base_obligation",
+    "normative_weight": "primary"
+  },
+  "commitments": {
+    "atom_identity_sha256": "sha256:5523f32eef854c2a1690261bb8e43bcca843bc34c39c378dcd49b1a2dba7335e",
+    "canonical_atom_json_sha256": "sha256:0681d793ef95b1667e3352ed1ee7499d3f6eaa5c2c0a34b05e443c165ae281d1",
+    "official_text_sha256": "sha256:72e756f2c6ef29b33f06c0fbb31a0d3908fe921d6d0d7a084a1468af2421c432",
+    "official_text_hash_basis": "sha256:utf8:actproof.official_text_normalisation.v1",
+    "profile_semantic_hash": "sha256:098380f08b518f485f85dbadb9dfe411a7d4a26186d0c0f74c2f315d1015899e",
+    "profile_artifact_hash": "sha256:098380f08b518f485f85dbadb9dfe411a7d4a26186d0c0f74c2f315d1015899e",
+    "dependency_root": "sha256:2c4bb2e77612637d21b8296a929af72db540da48e9acd23abe37f657f71bea82"
+  },
+  "maturity": {
+    "binding_status": "provisional",
+    "review_status": "draft",
+    "text_capture_status": "captured_draft",
+    "text_review_status": "draft",
+    "registration_recommendation": "do_not_register_publicly_until_reviewed"
+  },
+  "dependencies": {
+    "atom_id": "src.eu.dora.32022R2554.art19.reporting_obligation",
+    "used_by_fields": [
+      "financial_entity_type",
+      "linked_gdpr_breach_notification_reference",
+      "linked_nis2_notification_reference",
+      "linked_threat_notification_reference"
+    ],
+    "used_by_derivations": [
+      "financial_entity_type",
+      "linked_gdpr_breach_notification_reference",
+      "linked_nis2_notification_reference",
+      "linked_threat_notification_reference"
+    ],
+    "dependency_count": 4,
+    "dependency_root": "sha256:2c4bb2e77612637d21b8296a929af72db540da48e9acd23abe37f657f71bea82"
+  },
+  "scitt_binding": {
+    "issuer_model": "actproof_as_scitt_issuer",
+    "signed_statement_media_type": "application/scitt-statement+cose",
+    "receipt_media_type": "application/scitt-receipt+cose",
+    "payload_profile_type": "actproof/source-atom/v1",
+    "payload_profile": "actproof.scitt.source_atom_statement.v1",
+    "payload_mode": "hash_commitment",
+    "public_registration_policy": "do_not_register_publicly_until_reviewed",
+    "transparency_service_model": "service_selected_by_deployment; local pilot in 2.8.x; external SCITT Transparency Service deferred",
+    "media_type_status": "defined_in_scitt_architecture_draft; iana_registration_pending_rfc_publication"
+  },
+  "verification": {
+    "canonicalization": "jcs-rfc8785-compatible-json-sort-keys-compact-v1",
+    "hash_algorithm": "sha256",
+    "payload_mode": "hash_commitment",
+    "cose_typ": "actproof/source-atom/v1",
+    "cose_status": "profile_defined_not_signed",
+    "scitt_registration_status": "not_registered",
+    "scitt_receipt_status": "no_receipt_in_2_6_0",
+    "official_text_verification": {
+      "ok": true,
+      "atom": "src.eu.dora.32022R2554.art19.reporting_obligation",
+      "stored_official_text_sha256": "sha256:72e756f2c6ef29b33f06c0fbb31a0d3908fe921d6d0d7a084a1468af2421c432",
+      "recomputed_official_text_sha256": "sha256:72e756f2c6ef29b33f06c0fbb31a0d3908fe921d6d0d7a084a1468af2421c432",
+      "reason": "match"
+    }
+  },
+  "future_scitt_mapping": {
+    "issuer": "issuer of the future COSE/SCITT Signed Statement",
+    "statement": "this JSON payload or a hash envelope over its canonical hash",
+    "subject": "source atom and official-source locator",
+    "transparency_service": "SCITT Transparency Service selected by relying party or deployment",
+    "receipt": "future verifiable registration proof; not produced in 2.6.0",
+    "relying_party": "bank, reviewer, auditor, agent, GRC system or regulator verifying the statement and receipt"
+  },
+  "non_claims": [
+    "Statement export does not prove legal correctness.",
+    "The official legal source remains the source of law.",
+    "The statement does not provide legal advice, compliance certification, bank approval or supervisory approval.",
+    "A draft atom statement is a development artifact and should not be treated as a reviewed trust artifact.",
+    "SCITT registration, when added later, will prove registration of an issuer statement, not legal truth."
+  ],
+  "statement_hash_basis": "sha256 over canonical JSON excluding statement_hash",
+  "statement_hash": "sha256:bea267a58fdb75ec0799fbfbca676a9c971f10c1dd218ce46d7b0bb6d07a7e40"
+}

@@ -1,0 +1,16 @@
+{
+  "record_type": "actproof.demo.downstream_binding.v1",
+  "binding_status": "not_a_receipt",
+  "note": "Downstream binding record. It binds an example artifact to the receipted profile-dependency statement it relied on at build time.",
+  "artifact": {
+    "artifact_id": "bank-x.dora.major-incident-reporting-form.v1",
+    "artifact_kind": "example_internal_reporting_form",
+    "relied_on_profile": "eu.dora.major-ict-incident-reporting.profile",
+    "relied_on_profile_version": "v1"
+  },
+  "artifact_sha256": "sha256:e761eaf4dd07173debddf68e8abe5e303b3d26a63a331de09948e925a25a9ebd",
+  "relied_on_dependency_root": "sha256:4cd7efba833d44ec3af647551efeb64fc3b60c1d256aaf814044de7bc0c85aca",
+  "relied_on_profile_dependency_statement_hash": "sha256:ec8a5ae5c012cd030883f1b27fae2ac343ae8b86db0a348519e90449fa34acda",
+  "relied_on_profile_dependency_receipt_hash": "sha256:6cb725351c4c9c72f9f61188a048fd5335ca8d146d472165f7bb3fcf0993854a",
+  "downstream_binding_record_hash": "sha256:b1c3f689294252a4e717df3ebdf324babab5651d886d20f485517ea9b374bf21"
+}
